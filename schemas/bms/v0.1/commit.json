@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "CommitChange": {
+      "additionalProperties": false,
+      "description": "Represents a discrete mutation in a memory commit.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "$ref": "#/$defs/CommitOperation",
+          "description": "Mutation operation type"
+        },
+        "record_id": {
+          "description": "Target record ID",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Record Id",
+          "type": "string"
+        },
+        "record_type": {
+          "description": "Target record type name",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Record Type",
+          "type": "string"
+        },
+        "before_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State hash or revision before change; null for creates",
+          "title": "Before Revision"
+        },
+        "after_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State hash or revision after change; null for deletes",
+          "title": "After Revision"
+        }
+      },
+      "required": [
+        "operation",
+        "record_id",
+        "record_type"
+      ],
+      "title": "CommitChange",
+      "type": "object"
+    },
+    "CommitOperation": {
+      "enum": [
+        "create",
+        "update",
+        "delete"
+      ],
+      "title": "CommitOperation",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Structured representation of a point-in-time memory state snapshot.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "commit",
+      "default": "commit",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "parent_commit_ids": {
+      "description": "List of parent commit IDs in the DAG",
+      "items": {
+        "type": "string"
+      },
+      "title": "Parent Commit Ids",
+      "type": "array"
+    },
+    "author_id": {
+      "description": "Agent ID or user ID author",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Author Id",
+      "type": "string"
+    },
+    "message": {
+      "description": "Commit message summarizing changes",
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "changes": {
+      "description": "List of changes in this commit",
+      "items": {
+        "$ref": "#/$defs/CommitChange"
+      },
+      "title": "Changes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "author_id",
+    "message"
+  ],
+  "title": "BMS v0.1 MemoryCommit",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

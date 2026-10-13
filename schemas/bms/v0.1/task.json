@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "TaskPriority": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "TaskPriority",
+      "type": "string"
+    },
+    "TaskStatus": {
+      "enum": [
+        "todo",
+        "in_progress",
+        "blocked",
+        "completed",
+        "cancelled"
+      ],
+      "title": "TaskStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Represents a discrete task or unit of work.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "task",
+      "default": "task",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "title": {
+      "description": "Task title",
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "description": "Detailed task requirements and scope",
+      "title": "Description",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/TaskStatus",
+      "default": "todo",
+      "description": "Task execution status"
+    },
+    "priority": {
+      "$ref": "#/$defs/TaskPriority",
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "dependencies": {
+      "description": "IDs of tasks that must precede this",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "assigned_agent_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional assigned agent ID; null when unassigned",
+      "title": "Assigned Agent Id"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "description": "UTC last-update timestamp",
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "title"
+  ],
+  "title": "BMS v0.1 TaskRecord",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

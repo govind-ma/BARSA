@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "ProjectStatus": {
+      "enum": [
+        "active",
+        "paused",
+        "archived",
+        "completed"
+      ],
+      "title": "ProjectStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Represents an individual project inside a workspace.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "description": "Arbitrary structured metadata dictionary for custom extensibility",
+      "title": "Metadata",
+      "type": "object"
+    },
+    "record_type": {
+      "const": "project",
+      "default": "project",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "workspace_id": {
+      "description": "ID of parent workspace",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "Project name",
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ProjectStatus",
+      "default": "active",
+      "description": "Current project status"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "description": "UTC last-update timestamp",
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional project description",
+      "title": "Description"
+    },
+    "goals": {
+      "description": "List of primary project goals",
+      "items": {
+        "type": "string"
+      },
+      "title": "Goals",
+      "type": "array"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "name"
+  ],
+  "title": "BMS v0.1 Project",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,1226 @@
+{
+  "$defs": {
+    "AgentRecord": {
+      "additionalProperties": false,
+      "description": "Represents an AI agent, model configuration, or human collaborator.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Arbitrary structured metadata dictionary for custom extensibility",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "record_type": {
+          "const": "agent",
+          "default": "agent",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable agent name",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "provider": {
+          "description": "Provider or runtime name (e.g., 'anthropic', 'openai', 'google', 'local')",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "capabilities": {
+          "description": "List of declared capabilities (e.g. 'coding', 'reasoning')",
+          "items": {
+            "type": "string"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Model identifier (e.g. 'claude-3-7-sonnet')",
+          "title": "Model"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Agent role description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "provider"
+      ],
+      "title": "AgentRecord",
+      "type": "object"
+    },
+    "ArtifactReference": {
+      "additionalProperties": false,
+      "description": "Represents an external or locally stored resource (source file, doc, spec, dataset).",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "artifact",
+          "default": "artifact",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "artifact_type": {
+          "$ref": "#/$defs/ArtifactType",
+          "description": "Categorization of the artifact"
+        },
+        "uri": {
+          "description": "URI or relative file path pointing to resource",
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "content_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cryptographic hash (e.g. SHA-256) of artifact content",
+          "title": "Content Hash"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Size in bytes if known",
+          "title": "Size Bytes"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MIME media type (e.g., 'text/markdown', 'application/json')",
+          "title": "Media Type"
+        },
+        "repository_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Git commit hash or repository revision",
+          "title": "Repository Revision"
+        }
+      },
+      "required": [
+        "project_id",
+        "artifact_type",
+        "uri"
+      ],
+      "title": "ArtifactReference",
+      "type": "object"
+    },
+    "ArtifactType": {
+      "enum": [
+        "source_code",
+        "documentation",
+        "config",
+        "specification",
+        "dataset",
+        "image",
+        "model",
+        "other"
+      ],
+      "title": "ArtifactType",
+      "type": "string"
+    },
+    "CheckpointStatus": {
+      "enum": [
+        "active",
+        "paused",
+        "completed",
+        "blocked"
+      ],
+      "title": "CheckpointStatus",
+      "type": "string"
+    },
+    "CommitChange": {
+      "additionalProperties": false,
+      "description": "Represents a discrete mutation in a memory commit.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "$ref": "#/$defs/CommitOperation",
+          "description": "Mutation operation type"
+        },
+        "record_id": {
+          "description": "Target record ID",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Record Id",
+          "type": "string"
+        },
+        "record_type": {
+          "description": "Target record type name",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Record Type",
+          "type": "string"
+        },
+        "before_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State hash or revision before change; null for creates",
+          "title": "Before Revision"
+        },
+        "after_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State hash or revision after change; null for deletes",
+          "title": "After Revision"
+        }
+      },
+      "required": [
+        "operation",
+        "record_id",
+        "record_type"
+      ],
+      "title": "CommitChange",
+      "type": "object"
+    },
+    "CommitOperation": {
+      "enum": [
+        "create",
+        "update",
+        "delete"
+      ],
+      "title": "CommitOperation",
+      "type": "string"
+    },
+    "DecisionRecord": {
+      "additionalProperties": false,
+      "description": "Represents an architectural, technical, or business decision.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "decision",
+          "default": "decision",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "title": {
+          "description": "Decision summary title",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "decision": {
+          "description": "Description of the adopted decision",
+          "minLength": 1,
+          "title": "Decision",
+          "type": "string"
+        },
+        "rationale": {
+          "description": "Justification and technical rationale",
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionStatus",
+          "default": "proposed",
+          "description": "Decision status"
+        },
+        "created_by": {
+          "description": "Author agent or user ID",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "alternatives": {
+          "description": "Considered alternatives",
+          "items": {
+            "type": "string"
+          },
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "description": "References to knowledge or artifact IDs supporting this decision",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "title",
+        "decision",
+        "rationale",
+        "created_by"
+      ],
+      "title": "DecisionRecord",
+      "type": "object"
+    },
+    "DecisionStatus": {
+      "enum": [
+        "proposed",
+        "approved",
+        "rejected",
+        "superseded"
+      ],
+      "title": "DecisionStatus",
+      "type": "string"
+    },
+    "KnowledgeRecord": {
+      "additionalProperties": false,
+      "description": "Represents an individual claim, concept, fact, or piece of project knowledge.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "knowledge",
+          "default": "knowledge",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "content": {
+          "description": "Structured knowledge content or markdown",
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "knowledge_type": {
+          "$ref": "#/$defs/KnowledgeType",
+          "description": "Categorization of knowledge"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus",
+          "default": "unverified",
+          "description": "Verification state"
+        },
+        "created_by": {
+          "description": "Author agent ID or user ID",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "content",
+        "knowledge_type",
+        "created_by"
+      ],
+      "title": "KnowledgeRecord",
+      "type": "object"
+    },
+    "KnowledgeType": {
+      "enum": [
+        "fact",
+        "observation",
+        "hypothesis",
+        "reference"
+      ],
+      "title": "KnowledgeType",
+      "type": "string"
+    },
+    "MemoryCommit": {
+      "additionalProperties": false,
+      "description": "Structured representation of a point-in-time memory state snapshot.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "commit",
+          "default": "commit",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "parent_commit_ids": {
+          "description": "List of parent commit IDs in the DAG",
+          "items": {
+            "type": "string"
+          },
+          "title": "Parent Commit Ids",
+          "type": "array"
+        },
+        "author_id": {
+          "description": "Agent ID or user ID author",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Author Id",
+          "type": "string"
+        },
+        "message": {
+          "description": "Commit message summarizing changes",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "changes": {
+          "description": "List of changes in this commit",
+          "items": {
+            "$ref": "#/$defs/CommitChange"
+          },
+          "title": "Changes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "author_id",
+        "message"
+      ],
+      "title": "MemoryCommit",
+      "type": "object"
+    },
+    "PackageRecords": {
+      "additionalProperties": false,
+      "description": "Collection of categorized BMS records contained within a package.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "knowledge": {
+          "items": {
+            "$ref": "#/$defs/KnowledgeRecord"
+          },
+          "title": "Knowledge",
+          "type": "array"
+        },
+        "decisions": {
+          "items": {
+            "$ref": "#/$defs/DecisionRecord"
+          },
+          "title": "Decisions",
+          "type": "array"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/$defs/TaskRecord"
+          },
+          "title": "Tasks",
+          "type": "array"
+        },
+        "agents": {
+          "items": {
+            "$ref": "#/$defs/AgentRecord"
+          },
+          "title": "Agents",
+          "type": "array"
+        },
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/ArtifactReference"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "checkpoints": {
+          "items": {
+            "$ref": "#/$defs/ResumeCheckpoint"
+          },
+          "title": "Checkpoints",
+          "type": "array"
+        }
+      },
+      "title": "PackageRecords",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "description": "Represents an individual project inside a workspace.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Arbitrary structured metadata dictionary for custom extensibility",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "record_type": {
+          "const": "project",
+          "default": "project",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "workspace_id": {
+          "description": "ID of parent workspace",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Project name",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ProjectStatus",
+          "default": "active",
+          "description": "Current project status"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "UTC last-update timestamp",
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional project description",
+          "title": "Description"
+        },
+        "goals": {
+          "description": "List of primary project goals",
+          "items": {
+            "type": "string"
+          },
+          "title": "Goals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "ProjectStatus": {
+      "enum": [
+        "active",
+        "paused",
+        "archived",
+        "completed"
+      ],
+      "title": "ProjectStatus",
+      "type": "string"
+    },
+    "RelationshipRecord": {
+      "additionalProperties": false,
+      "description": "Represents graph-compatible connections between records.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "relationship",
+          "default": "relationship",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Origin record ID",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "target_id": {
+          "description": "Target record ID",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Target Id",
+          "type": "string"
+        },
+        "relationship_type": {
+          "$ref": "#/$defs/RelationshipType",
+          "description": "Directed relationship type between source and target"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "source_id",
+        "target_id",
+        "relationship_type"
+      ],
+      "title": "RelationshipRecord",
+      "type": "object"
+    },
+    "RelationshipType": {
+      "enum": [
+        "depends_on",
+        "implements",
+        "references",
+        "supersedes",
+        "created_by",
+        "related_to",
+        "supports",
+        "blocks"
+      ],
+      "title": "RelationshipType",
+      "type": "string"
+    },
+    "ResumeCheckpoint": {
+      "additionalProperties": false,
+      "description": "Critical state snapshot enabling any compatible AI agent to resume paused work.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "checkpoint",
+          "default": "checkpoint",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "task_id": {
+          "description": "ID of the task currently being resumed",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CheckpointStatus",
+          "description": "Current status of the checkpoint workstream"
+        },
+        "completed_actions": {
+          "description": "Concrete actions successfully completed so far",
+          "items": {
+            "type": "string"
+          },
+          "title": "Completed Actions",
+          "type": "array"
+        },
+        "pending_actions": {
+          "description": "Pending actions scheduled for execution",
+          "items": {
+            "type": "string"
+          },
+          "title": "Pending Actions",
+          "type": "array"
+        },
+        "next_action": {
+          "description": "Immediate next action the resuming agent must take",
+          "minLength": 1,
+          "title": "Next Action",
+          "type": "string"
+        },
+        "blockers": {
+          "description": "Known blockers or missing inputs preventing progress",
+          "items": {
+            "type": "string"
+          },
+          "title": "Blockers",
+          "type": "array"
+        },
+        "decision_refs": {
+          "description": "IDs of decision records guiding this checkpoint",
+          "items": {
+            "type": "string"
+          },
+          "title": "Decision Refs",
+          "type": "array"
+        },
+        "artifact_refs": {
+          "description": "IDs of artifact references relevant to this work",
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "base_revision": {
+          "description": "Base commit hash or state revision this checkpoint builds on",
+          "minLength": 1,
+          "title": "Base Revision",
+          "type": "string"
+        },
+        "created_by": {
+          "description": "Agent or user ID that generated the checkpoint",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "environment_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Details of execution environment (Python 3.12, Windows, etc.)",
+          "title": "Environment Description"
+        },
+        "verification_results": {
+          "additionalProperties": true,
+          "description": "Test results, lint outcomes, or validation status",
+          "title": "Verification Results",
+          "type": "object"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Executive narrative summary of the current work state",
+          "title": "Summary"
+        },
+        "context_refs": {
+          "description": "IDs of knowledge records or context references",
+          "items": {
+            "type": "string"
+          },
+          "title": "Context Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "task_id",
+        "status",
+        "next_action",
+        "base_revision",
+        "created_by"
+      ],
+      "title": "ResumeCheckpoint",
+      "type": "object"
+    },
+    "TaskPriority": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "TaskPriority",
+      "type": "string"
+    },
+    "TaskRecord": {
+      "additionalProperties": false,
+      "description": "Represents a discrete task or unit of work.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "record_type": {
+          "const": "task",
+          "default": "task",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "ID of associated project",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "title": {
+          "description": "Task title",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Detailed task requirements and scope",
+          "title": "Description",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/TaskStatus",
+          "default": "todo",
+          "description": "Task execution status"
+        },
+        "priority": {
+          "$ref": "#/$defs/TaskPriority",
+          "default": "medium",
+          "description": "Task priority"
+        },
+        "dependencies": {
+          "description": "IDs of tasks that must precede this",
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "assigned_agent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional assigned agent ID; null when unassigned",
+          "title": "Assigned Agent Id"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "UTC last-update timestamp",
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "title"
+      ],
+      "title": "TaskRecord",
+      "type": "object"
+    },
+    "TaskStatus": {
+      "enum": [
+        "todo",
+        "in_progress",
+        "blocked",
+        "completed",
+        "cancelled"
+      ],
+      "title": "TaskStatus",
+      "type": "string"
+    },
+    "VerificationStatus": {
+      "enum": [
+        "unverified",
+        "verified",
+        "disputed",
+        "superseded"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    },
+    "Workspace": {
+      "additionalProperties": false,
+      "description": "Represents a user-controlled or team-controlled knowledge space.",
+      "properties": {
+        "schema_version": {
+          "default": "0.1",
+          "description": "BMS Schema Version (e.g. '0.1')",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "description": "Globally unique identifier for the record",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Arbitrary structured metadata dictionary for custom extensibility",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "record_type": {
+          "const": "workspace",
+          "default": "workspace",
+          "title": "Record Type",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable workspace name",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "description": "Owner identifier (user or org)",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "UTC creation timestamp",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional workspace description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "owner_id"
+      ],
+      "title": "Workspace",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Standard portable container for cross-agent project memory exchange.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "format": {
+      "const": "barsa-memory-package",
+      "default": "barsa-memory-package",
+      "description": "Format identifier constant",
+      "title": "Format",
+      "type": "string"
+    },
+    "bms_version": {
+      "default": "0.1",
+      "description": "BMS version identifier",
+      "title": "Bms Version",
+      "type": "string"
+    },
+    "exported_at": {
+      "description": "UTC export timestamp",
+      "format": "date-time",
+      "title": "Exported At",
+      "type": "string"
+    },
+    "workspace": {
+      "$ref": "#/$defs/Workspace",
+      "description": "Root workspace record"
+    },
+    "project": {
+      "$ref": "#/$defs/Project",
+      "description": "Associated project record"
+    },
+    "records": {
+      "$ref": "#/$defs/PackageRecords",
+      "description": "All project records"
+    },
+    "relationships": {
+      "description": "Graph relationships between records",
+      "items": {
+        "$ref": "#/$defs/RelationshipRecord"
+      },
+      "title": "Relationships",
+      "type": "array"
+    },
+    "latest_checkpoint_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional ID of the most recent active resume checkpoint",
+      "title": "Latest Checkpoint Id"
+    },
+    "commits": {
+      "description": "Optional chronological memory commits",
+      "items": {
+        "$ref": "#/$defs/MemoryCommit"
+      },
+      "title": "Commits",
+      "type": "array"
+    }
+  },
+  "required": [
+    "workspace",
+    "project"
+  ],
+  "title": "BMS v0.1 BarsaMemoryPackage",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

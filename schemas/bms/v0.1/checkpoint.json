@@ -1,0 +1,171 @@
+{
+  "$defs": {
+    "CheckpointStatus": {
+      "enum": [
+        "active",
+        "paused",
+        "completed",
+        "blocked"
+      ],
+      "title": "CheckpointStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Critical state snapshot enabling any compatible AI agent to resume paused work.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "checkpoint",
+      "default": "checkpoint",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "task_id": {
+      "description": "ID of the task currently being resumed",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Task Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CheckpointStatus",
+      "description": "Current status of the checkpoint workstream"
+    },
+    "completed_actions": {
+      "description": "Concrete actions successfully completed so far",
+      "items": {
+        "type": "string"
+      },
+      "title": "Completed Actions",
+      "type": "array"
+    },
+    "pending_actions": {
+      "description": "Pending actions scheduled for execution",
+      "items": {
+        "type": "string"
+      },
+      "title": "Pending Actions",
+      "type": "array"
+    },
+    "next_action": {
+      "description": "Immediate next action the resuming agent must take",
+      "minLength": 1,
+      "title": "Next Action",
+      "type": "string"
+    },
+    "blockers": {
+      "description": "Known blockers or missing inputs preventing progress",
+      "items": {
+        "type": "string"
+      },
+      "title": "Blockers",
+      "type": "array"
+    },
+    "decision_refs": {
+      "description": "IDs of decision records guiding this checkpoint",
+      "items": {
+        "type": "string"
+      },
+      "title": "Decision Refs",
+      "type": "array"
+    },
+    "artifact_refs": {
+      "description": "IDs of artifact references relevant to this work",
+      "items": {
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "base_revision": {
+      "description": "Base commit hash or state revision this checkpoint builds on",
+      "minLength": 1,
+      "title": "Base Revision",
+      "type": "string"
+    },
+    "created_by": {
+      "description": "Agent or user ID that generated the checkpoint",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "environment_description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Details of execution environment (Python 3.12, Windows, etc.)",
+      "title": "Environment Description"
+    },
+    "verification_results": {
+      "additionalProperties": true,
+      "description": "Test results, lint outcomes, or validation status",
+      "title": "Verification Results",
+      "type": "object"
+    },
+    "summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Executive narrative summary of the current work state",
+      "title": "Summary"
+    },
+    "context_refs": {
+      "description": "IDs of knowledge records or context references",
+      "items": {
+        "type": "string"
+      },
+      "title": "Context Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "task_id",
+    "status",
+    "next_action",
+    "base_revision",
+    "created_by"
+  ],
+  "title": "BMS v0.1 ResumeCheckpoint",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "KnowledgeType": {
+      "enum": [
+        "fact",
+        "observation",
+        "hypothesis",
+        "reference"
+      ],
+      "title": "KnowledgeType",
+      "type": "string"
+    },
+    "VerificationStatus": {
+      "enum": [
+        "unverified",
+        "verified",
+        "disputed",
+        "superseded"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Represents an individual claim, concept, fact, or piece of project knowledge.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "knowledge",
+      "default": "knowledge",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "content": {
+      "description": "Structured knowledge content or markdown",
+      "minLength": 1,
+      "title": "Content",
+      "type": "string"
+    },
+    "knowledge_type": {
+      "$ref": "#/$defs/KnowledgeType",
+      "description": "Categorization of knowledge"
+    },
+    "verification_status": {
+      "$ref": "#/$defs/VerificationStatus",
+      "default": "unverified",
+      "description": "Verification state"
+    },
+    "created_by": {
+      "description": "Author agent ID or user ID",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "content",
+    "knowledge_type",
+    "created_by"
+  ],
+  "title": "BMS v0.1 KnowledgeRecord",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

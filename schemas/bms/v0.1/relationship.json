@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "RelationshipType": {
+      "enum": [
+        "depends_on",
+        "implements",
+        "references",
+        "supersedes",
+        "created_by",
+        "related_to",
+        "supports",
+        "blocks"
+      ],
+      "title": "RelationshipType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Represents graph-compatible connections between records.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "relationship",
+      "default": "relationship",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "Origin record ID",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Source Id",
+      "type": "string"
+    },
+    "target_id": {
+      "description": "Target record ID",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    },
+    "relationship_type": {
+      "$ref": "#/$defs/RelationshipType",
+      "description": "Directed relationship type between source and target"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "source_id",
+    "target_id",
+    "relationship_type"
+  ],
+  "title": "BMS v0.1 RelationshipRecord",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

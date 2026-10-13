@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "DecisionStatus": {
+      "enum": [
+        "proposed",
+        "approved",
+        "rejected",
+        "superseded"
+      ],
+      "title": "DecisionStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Represents an architectural, technical, or business decision.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "decision",
+      "default": "decision",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "title": {
+      "description": "Decision summary title",
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "decision": {
+      "description": "Description of the adopted decision",
+      "minLength": 1,
+      "title": "Decision",
+      "type": "string"
+    },
+    "rationale": {
+      "description": "Justification and technical rationale",
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/DecisionStatus",
+      "default": "proposed",
+      "description": "Decision status"
+    },
+    "created_by": {
+      "description": "Author agent or user ID",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "alternatives": {
+      "description": "Considered alternatives",
+      "items": {
+        "type": "string"
+      },
+      "title": "Alternatives",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "description": "References to knowledge or artifact IDs supporting this decision",
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "title",
+    "decision",
+    "rationale",
+    "created_by"
+  ],
+  "title": "BMS v0.1 DecisionRecord",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "description": "Represents a user-controlled or team-controlled knowledge space.",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "description": "Arbitrary structured metadata dictionary for custom extensibility",
+      "title": "Metadata",
+      "type": "object"
+    },
+    "record_type": {
+      "const": "workspace",
+      "default": "workspace",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "name": {
+      "description": "Human-readable workspace name",
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "owner_id": {
+      "description": "Owner identifier (user or org)",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional workspace description",
+      "title": "Description"
+    }
+  },
+  "required": [
+    "name",
+    "owner_id"
+  ],
+  "title": "BMS v0.1 Workspace",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

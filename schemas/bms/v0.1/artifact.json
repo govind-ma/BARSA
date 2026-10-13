@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "ArtifactType": {
+      "enum": [
+        "source_code",
+        "documentation",
+        "config",
+        "specification",
+        "dataset",
+        "image",
+        "model",
+        "other"
+      ],
+      "title": "ArtifactType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Represents an external or locally stored resource (source file, doc, spec, dataset).",
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "description": "BMS Schema Version (e.g. '0.1')",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "description": "Globally unique identifier for the record",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "artifact",
+      "default": "artifact",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "project_id": {
+      "description": "ID of associated project",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "artifact_type": {
+      "$ref": "#/$defs/ArtifactType",
+      "description": "Categorization of the artifact"
+    },
+    "uri": {
+      "description": "URI or relative file path pointing to resource",
+      "minLength": 1,
+      "title": "Uri",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "UTC creation timestamp",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "content_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Cryptographic hash (e.g. SHA-256) of artifact content",
+      "title": "Content Hash"
+    },
+    "size_bytes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Size in bytes if known",
+      "title": "Size Bytes"
+    },
+    "media_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "MIME media type (e.g., 'text/markdown', 'application/json')",
+      "title": "Media Type"
+    },
+    "repository_revision": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Git commit hash or repository revision",
+      "title": "Repository Revision"
+    }
+  },
+  "required": [
+    "project_id",
+    "artifact_type",
+    "uri"
+  ],
+  "title": "BMS v0.1 ArtifactReference",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
