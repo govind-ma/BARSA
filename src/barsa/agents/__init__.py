@@ -17,8 +17,6 @@ class AgentCoordinator(Protocol):
         ...
 
     @abstractmethod
-    async def handoff_task(
-        self, task_id: str, from_agent: str, to_agent: str, context: dict[str, Any]
-    ) -> None:
+    async def handoff_task(self, task_id: str, from_agent: str, to_agent: str, context: dict[str, Any]) -> None:
         """Coordinate work progress handoff between two AI agents."""
         ...

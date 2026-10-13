@@ -27,6 +27,7 @@ dependencies = [
     "uvicorn[standard]>=0.29.0",
     "pydantic>=2.7.0",
     "pydantic-settings>=2.2.0",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
@@ -42,7 +43,7 @@ packages = ["src/barsa"]
 
 [tool.ruff]
 target-version = "py312"
-line-length = 100
+line-length = 120
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -59,10 +60,19 @@ select = [
     "TCH", # flake8-type-checking
     "PTH", # flake8-use-pathlib
 ]
-ignore = []
+ignore = ["E501"]
 
 [tool.ruff.lint.flake8-bugbear]
-extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends"]
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.params.Depends",
+    "fastapi.File",
+    "fastapi.params.File",
+    "fastapi.Form",
+    "fastapi.params.Form",
+    "fastapi.Query",
+    "fastapi.params.Query",
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["barsa"]

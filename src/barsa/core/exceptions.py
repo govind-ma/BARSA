@@ -72,3 +72,15 @@ class ValidationError(BarsaError):
             status_code=422,
             details=details,
         )
+
+
+class ConflictError(BarsaError):
+    """Raised when an optimistic concurrency conflict or uniqueness violation occurs."""
+
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
+        super().__init__(
+            message=message,
+            code="CONFLICT_ERROR",
+            status_code=409,
+            details=details,
+        )

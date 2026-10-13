@@ -17,11 +17,7 @@ def export_all_json_schemas(output_dir: Path | str | None = None) -> dict[str, P
     Writes to schemas/bms/v0.1/ by default.
     Returns mapping of record_type -> schema file path.
     """
-    if output_dir is None:
-        target_dir = Path("schemas") / "bms" / f"v{BMS_VERSION}"
-    else:
-        target_dir = Path(output_dir)
-
+    target_dir = Path("schemas") / "bms" / f"v{BMS_VERSION}" if output_dir is None else Path(output_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
     generated_files: dict[str, Path] = {}
 

@@ -41,6 +41,7 @@ def test_storage_provider_protocol_runtime_check() -> None:
 
 def test_storage_factory_unimplemented_provider(test_settings: Settings) -> None:
     """Storage provider factory raises clean error when provider not registered."""
+    test_settings.storage_provider = StorageProviderType.S3
     with pytest.raises(StorageError) as exc_info:
         get_storage_provider(test_settings)
     assert exc_info.value.code == "STORAGE_PROVIDER_NOT_IMPLEMENTED"

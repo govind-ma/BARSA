@@ -188,9 +188,7 @@ def test_invalid_enums() -> None:
 def test_naive_timestamps_rejected() -> None:
     """Verify that naive datetimes (lacking timezone information) are strictly rejected."""
     naive_dt = datetime(2026, 10, 13, 12, 0, 0)  # noqa: DTZ001
-    with pytest.raises(
-        ValueError, match="naive datetimes are prohibited" if False else "timezone-aware"
-    ):
+    with pytest.raises(ValueError, match="naive datetimes are prohibited" if False else "timezone-aware"):
         Workspace(
             name="Test WS",
             owner_id="user-1",

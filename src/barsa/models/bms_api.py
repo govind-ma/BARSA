@@ -20,7 +20,5 @@ class BMSValidationResponse(BaseModel):
     valid: bool = Field(..., description="Whether validation succeeded")
     record_type: str | None = Field(default=None, description="Record type if validating a record")
     record_id: str | None = Field(default=None, description="Record ID if available")
-    errors: list[str] = Field(
-        default_factory=list, description="Validation error messages if invalid"
-    )
+    errors: list[str] = Field(default_factory=list, description="Validation error messages if invalid")
     details: dict[str, Any] = Field(default_factory=dict, description="Diagnostic details")

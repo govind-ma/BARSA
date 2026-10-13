@@ -39,9 +39,7 @@ def register_error_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(RequestValidationError)
-    async def validation_error_handler(
-        request: Request, exc: RequestValidationError
-    ) -> JSONResponse:
+    async def validation_error_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
         logger.info(
             "Request validation failed on path %s: %s",
             request.url.path,

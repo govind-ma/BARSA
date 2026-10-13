@@ -1,5 +1,5 @@
-"""Application configuration using Pydantic Settings."""
-
+import os
+import sys
 from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
@@ -21,6 +21,24 @@ class StorageProviderType(StrEnum):
     MEMORY = "memory"
     GITHUB = "github"
     S3 = "s3"
+
+
+def get_platform_default_data_dir() -> Path:
+    """Return platform-standard default data directory.
+
+    Windows: %LOCALAPPDATA%\\Barsa\\data (or ~/.local/share/barsa)
+    macOS: ~/Library/Application Support/Barsa
+    Linux/Other: ~/.local/share/barsa
+    """
+    home = Path.home()
+    if sys.platform == "win32":
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        if local_app_data:
+            return Path(local_app_data) / "Barsa" / "data"
+        return home / "AppData" / "Local" / "Barsa" / "data"
+    if sys.platform == "darwin":
+        return home / "Library" / "Application Support" / "Barsa"
+    return home / ".local" / "share" / "barsa"
 
 
 class Settings(BaseSettings):
@@ -52,12 +70,18 @@ class Settings(BaseSettings):
 
     # Storage Settings (Local-first & storage-independent)
     data_dir: Path = Field(
-        default=Path(".barsa"),
+        default_factory=get_platform_default_data_dir,
         description="Local data directory for local-first storage",
     )
     storage_provider: StorageProviderType = Field(
         default=StorageProviderType.LOCAL,
         description="Active storage backend provider type",
+    )
+
+    # Artifact Storage Settings
+    max_artifact_size_bytes: int = Field(
+        default=50 * 1024 * 1024,  # 50 MB
+        description="Maximum artifact file size in bytes",
     )
 
     # Logging & Diagnostics
@@ -71,9 +95,7 @@ class Settings(BaseSettings):
     )
 
     # Security & Authentication (Phase 1 placeholders; safe secrets handling)
-    secret_key: Annotated[
-        SecretStr | None, Field(default=None, description="Internal signing secret")
-    ]
+    secret_key: Annotated[SecretStr | None, Field(default=None, description="Internal signing secret")]
 
     @field_validator("data_dir", mode="after")
     @classmethod
@@ -92,10 +114,33 @@ class Settings(BaseSettings):
             raise ValueError(msg)
         return upper
 
+    @property
+    def db_path(self) -> Path:
+        """Path to main SQLite database."""
+        return self.data_dir.resolve() / "barsa.db"
+
+    @property
+    def artifacts_dir(self) -> Path:
+        """Directory for local managed artifact byte storage."""
+        return self.data_dir.resolve() / "artifacts"
+
+    @property
+    def exports_dir(self) -> Path:
+        """Directory for exported packages."""
+        return self.data_dir.resolve() / "exports"
+
+    @property
+    def backups_dir(self) -> Path:
+        """Directory for database and artifact backups."""
+        return self.data_dir.resolve() / "backups"
+
     def ensure_data_dir(self) -> Path:
-        """Ensure the local data directory exists on the filesystem and return resolved path."""
+        """Ensure the local data directory and subdirectories exist on filesystem."""
         resolved = self.data_dir.resolve()
         resolved.mkdir(parents=True, exist_ok=True)
+        self.artifacts_dir.mkdir(parents=True, exist_ok=True)
+        self.exports_dir.mkdir(parents=True, exist_ok=True)
+        self.backups_dir.mkdir(parents=True, exist_ok=True)
         return resolved
 
 

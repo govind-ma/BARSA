@@ -142,8 +142,7 @@ def validate_bms_package(package: BarsaMemoryPackage) -> list[str]:
     # Latest checkpoint reference check
     if package.latest_checkpoint_id and package.latest_checkpoint_id not in checkpoint_ids:
         errors.append(
-            f"Package latest_checkpoint_id '{package.latest_checkpoint_id}' "
-            "does not exist in package checkpoints"
+            f"Package latest_checkpoint_id '{package.latest_checkpoint_id}' does not exist in package checkpoints"
         )
 
     # 7. Validate Relationships

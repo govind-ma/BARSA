@@ -39,14 +39,10 @@ class BarsaMemoryPackage(BMSBaseModel):
         Field(default=BMS_FORMAT_IDENTIFIER, description="Format identifier constant"),
     ]
     bms_version: Annotated[str, Field(default=BMS_VERSION, description="BMS version identifier")]
-    exported_at: Annotated[
-        datetime, Field(default_factory=utc_now, description="UTC export timestamp")
-    ]
+    exported_at: Annotated[datetime, Field(default_factory=utc_now, description="UTC export timestamp")]
     workspace: Annotated[Workspace, Field(description="Root workspace record")]
     project: Annotated[Project, Field(description="Associated project record")]
-    records: Annotated[
-        PackageRecords, Field(default_factory=PackageRecords, description="All project records")
-    ]
+    records: Annotated[PackageRecords, Field(default_factory=PackageRecords, description="All project records")]
     relationships: Annotated[
         list[RelationshipRecord],
         Field(default_factory=list, description="Graph relationships between records"),

@@ -80,9 +80,7 @@ async def validate_bms_record_endpoint(request: Request) -> JSONResponse:
             valid=False,
             errors=["Payload must be a JSON object"],
         )
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump()
-        )
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump())
 
     is_valid, record, errors = validate_record(body)
     if not is_valid:
@@ -92,9 +90,7 @@ async def validate_bms_record_endpoint(request: Request) -> JSONResponse:
             record_id=body.get("id"),
             errors=errors,
         )
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump()
-        )
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump())
 
     res = BMSValidationResponse(
         valid=True,
@@ -128,23 +124,17 @@ async def validate_bms_package_endpoint(request: Request) -> JSONResponse:
             valid=False,
             errors=["Package payload must be a JSON object"],
         )
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump()
-        )
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump())
 
     is_valid, pkg, errors = validate_package(body)
     if not is_valid:
         res = BMSValidationResponse(
             valid=False,
             record_type="package",
-            record_id=body.get("project", {}).get("id")
-            if isinstance(body.get("project"), dict)
-            else None,
+            record_id=body.get("project", {}).get("id") if isinstance(body.get("project"), dict) else None,
             errors=errors,
         )
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump()
-        )
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump())
 
     res = BMSValidationResponse(
         valid=True,

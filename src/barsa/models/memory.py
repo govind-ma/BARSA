@@ -28,9 +28,7 @@ class AgentIdentity(BaseModel):
 
     provider: str = Field(..., description="Provider name (e.g., anthropic, openai, google, local)")
     model: str = Field(..., description="Model identifier (e.g., claude-3-7-sonnet, gpt-4o)")
-    role: str = Field(
-        default="assistant", description="Role (e.g., architect, coder, reviewer, user)"
-    )
+    role: str = Field(default="assistant", description="Role (e.g., architect, coder, reviewer, user)")
     agent_id: str | None = Field(default=None, description="Optional unique agent session ID")
 
 
@@ -44,12 +42,8 @@ class MemoryItem(BaseModel):
     content: str = Field(..., description="Memory body text or serialized markdown/JSON")
     author: AgentIdentity = Field(..., description="Agent or user author identity")
     metadata: dict[str, Any] = Field(default_factory=dict, description="Custom metadata attributes")
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="Creation timestamp"
-    )
-    updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="Last update timestamp"
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), description="Creation timestamp")
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), description="Last update timestamp")
 
 
 class MemoryCommit(BaseModel):
@@ -58,11 +52,7 @@ class MemoryCommit(BaseModel):
     commit_id: UUID = Field(default_factory=uuid4, description="Unique commit ID")
     project_id: str = Field(..., description="Project identifier")
     parent_commit_id: UUID | None = Field(default=None, description="Parent commit ID in DAG")
-    message: str = Field(
-        ..., min_length=1, max_length=512, description="Commit message summarizing changes"
-    )
+    message: str = Field(..., min_length=1, max_length=512, description="Commit message summarizing changes")
     author: AgentIdentity = Field(..., description="Author of the commit")
-    timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="Commit timestamp"
-    )
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="Commit timestamp")
     item_count: int = Field(default=0, ge=0, description="Number of items included in this commit")

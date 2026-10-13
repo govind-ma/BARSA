@@ -37,9 +37,7 @@ class BMSBaseModel(BaseModel):
         str_strip_whitespace=True,
     )
 
-    schema_version: Annotated[
-        str, Field(default=BMS_VERSION, description="BMS Schema Version (e.g. '0.1')")
-    ]
+    schema_version: Annotated[str, Field(default=BMS_VERSION, description="BMS Schema Version (e.g. '0.1')")]
 
     @field_validator("schema_version")
     @classmethod
