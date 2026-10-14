@@ -243,6 +243,25 @@ class VersionControlEngine:
             state[r["record_id"]] = json.loads(r["record_data_json"])
         return state
 
+    def get_record_at_commit(self, project_id: str, record_id: str, commit_id: str) -> dict[str, Any] | None:
+        """Retrieve a specific record's state as of a historical commit."""
+        conn = self._get_conn()
+        if not self.get_commit(project_id, commit_id):
+            raise ResourceNotFoundError(f"Commit '{commit_id}' not found.", "Commit", commit_id)
+
+        cur = conn.execute(
+            """
+            SELECT record_data_json
+            FROM commit_record_states
+            WHERE project_id = ? AND commit_id = ? AND record_id = ? AND record_data_json IS NOT NULL;
+            """,
+            (project_id, commit_id, record_id),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return json.loads(row["record_data_json"])
+
     # =========================================================================
     # Commits
     # =========================================================================
