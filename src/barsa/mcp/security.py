@@ -106,10 +106,15 @@ def validate_changes_payload(changes: list[dict[str, Any]]) -> list[dict[str, An
     return changes
 
 
-def verify_project_access(project_id: str, storage: StorageProvider) -> Any:
+def verify_project_access(
+    project_id: str,
+    storage: StorageProvider,
+    principal: Any | None = None,
+    action: str = "project:read",
+) -> Any:
     """Verify project exists in authoritative storage and caller has access.
 
-    Raises BarsaMCPError if not found.
+    Raises BarsaMCPError if not found or access is denied.
     """
     clean_id = validate_identifier("project_id", project_id)
     try:
@@ -120,6 +125,30 @@ def verify_project_access(project_id: str, storage: StorageProvider) -> Any:
                 f"Project '{clean_id}' was not found in storage.",
                 {"project_id": clean_id},
             )
+        if principal:
+            from barsa.security.authorizer import CentralAuthorizer
+            from barsa.security.storage import SecurityStorage
+            from barsa.storage.sqlite import SQLiteStorageProvider
+
+            if isinstance(storage, SQLiteStorageProvider):
+                sec_storage = SecurityStorage(storage)
+                authorizer = CentralAuthorizer(sec_storage, storage)
+                try:
+                    authorizer.authorize(
+                        principal=principal,
+                        action=action,
+                        resource={"project_id": clean_id, "workspace_id": project.workspace_id},
+                    )
+                except Exception as auth_err:
+                    raise BarsaMCPError(
+                        MCPErrorCode.ACCESS_DENIED,
+                        f"Access denied to project '{clean_id}': {auth_err}",
+                        {
+                            "project_id": clean_id,
+                            "principal_id": getattr(principal, "principal_id", "unknown"),
+                            "action": action,
+                        },
+                    ) from auth_err
         return project
     except BarsaMCPError:
         raise

@@ -554,6 +554,15 @@ def propose_changes_tool(
                     MCPErrorCode.INVALID_BMS_RECORD,
                     f"Change at index {idx} has operation '{op_str}' but missing 'after_state'.",
                 )
+            # Secret detection check
+            from barsa.security.crypto import SecretScanner
+
+            detected = SecretScanner.scan_text(json.dumps(after_state))
+            if detected:
+                raise BarsaMCPError(
+                    MCPErrorCode.INVALID_INPUT,
+                    f"Security policy violation: Change {idx} contains sensitive secrets or credentials ({', '.join(detected)})",
+                )
             try:
                 # Validate against BMS schema
                 is_valid, _rec, errs = validate_record(after_state)

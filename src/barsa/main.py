@@ -71,6 +71,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["*"],
     )
 
+    @app.middleware("http")
+    async def validate_local_origin(request, call_next):
+        """Block state-changing cross-origin requests from unauthorized web pages."""
+        origin = request.headers.get("origin")
+        if origin and request.method in ("POST", "PUT", "PATCH", "DELETE"):
+            clean_origin = origin.rstrip("/")
+            if not any(
+                clean_origin == allowed.rstrip("/") or clean_origin.startswith(f"{allowed.rstrip('/')}:")
+                for allowed in allowed_origins
+            ):
+                from fastapi.responses import JSONResponse
+
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": f"Cross-origin request from '{origin}' is forbidden"},
+                )
+        return await call_next(request)
+
     # Centralized error handlers
     register_error_handlers(app)
 

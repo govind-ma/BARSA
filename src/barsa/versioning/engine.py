@@ -308,6 +308,17 @@ class VersionControlEngine:
             self.reconstruct_project_state(project_id, branch.head_commit_id) if branch.head_commit_id else {}
         )
 
+        # Security: Defense-in-depth secret scanner check
+        from barsa.security.crypto import SecretScanner
+
+        for chg in changes:
+            if chg.after_state:
+                detected_secrets = SecretScanner.scan_text(json.dumps(chg.after_state))
+                if detected_secrets:
+                    raise ValidationError(
+                        f"Security policy violation: Change contains sensitive secrets or credentials ({', '.join(detected_secrets)})"
+                    )
+
         # Step 4: Validate and apply changes to construct new state
         new_state = dict(current_state)
         for chg in changes:

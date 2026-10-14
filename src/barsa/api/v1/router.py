@@ -10,6 +10,7 @@ from barsa.api.v1.endpoints.graph import router as graph_router
 from barsa.api.v1.endpoints.info import router as info_router
 from barsa.api.v1.endpoints.packages import router as packages_router
 from barsa.api.v1.endpoints.records import router as records_router
+from barsa.api.v1.endpoints.security import router as security_router
 from barsa.api.v1.endpoints.versioning import router as versioning_router
 from barsa.api.v1.endpoints.workspaces import router as workspaces_router
 
@@ -24,3 +25,4 @@ api_v1_router.include_router(artifacts_router)
 api_v1_router.include_router(packages_router)
 api_v1_router.include_router(context_router)
 api_v1_router.include_router(coordination_router)
+api_v1_router.include_router(security_router)

@@ -84,3 +84,30 @@ class ConflictError(BarsaError):
             status_code=409,
             details=details,
         )
+
+
+class AuthenticationError(BarsaError):
+    """Raised when authentication credentials are missing, invalid, expired, or revoked."""
+
+    def __init__(self, message: str = "Authentication failed", details: dict[str, Any] | None = None) -> None:
+        super().__init__(
+            message=message,
+            code="AUTHENTICATION_FAILED",
+            status_code=401,
+            details=details,
+        )
+
+
+class AuthorizationError(BarsaError):
+    """Raised when an authenticated principal lacks required role, project access, or scope."""
+
+    def __init__(self, message: str = "Access denied", details: dict[str, Any] | None = None) -> None:
+        super().__init__(
+            message=message,
+            code="PERMISSION_DENIED",
+            status_code=403,
+            details=details,
+        )
+
+
+PermissionDeniedError = AuthorizationError

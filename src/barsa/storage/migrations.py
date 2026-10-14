@@ -379,6 +379,144 @@ MIGRATIONS: list[tuple[int, str, str]] = [
         CREATE INDEX IF NOT EXISTS idx_coord_events ON coordination_events(project_id, event_type, timestamp);
         """,
     ),
+    (
+        5,
+        "security_engine_schema",
+        """
+        -- Principals table: Human users, AI agents, and service accounts
+        CREATE TABLE IF NOT EXISTS principals (
+            principal_id TEXT PRIMARY KEY,
+            principal_type TEXT NOT NULL, -- 'human', 'agent', 'service'
+            display_name TEXT NOT NULL,
+            is_active INTEGER NOT NULL DEFAULT 1,
+            is_superuser INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            metadata_json TEXT NOT NULL DEFAULT '{}'
+        );
+        CREATE INDEX IF NOT EXISTS idx_principals_type ON principals(principal_type, is_active);
+
+        -- Identities table: Authentication credentials (passwords, external IDP links)
+        CREATE TABLE IF NOT EXISTS identities (
+            identity_id TEXT PRIMARY KEY,
+            principal_id TEXT NOT NULL,
+            provider TEXT NOT NULL DEFAULT 'local', -- 'local', 'oidc', etc.
+            identifier TEXT NOT NULL, -- username or email
+            password_hash TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (principal_id) REFERENCES principals(principal_id) ON DELETE CASCADE,
+            UNIQUE (provider, identifier)
+        );
+        CREATE INDEX IF NOT EXISTS idx_identities_lookup ON identities(provider, identifier);
+
+        -- Credentials table: Cryptographic API keys and tokens for agents and service principals
+        CREATE TABLE IF NOT EXISTS credentials (
+            credential_id TEXT PRIMARY KEY,
+            principal_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            key_prefix TEXT NOT NULL,
+            key_hash TEXT NOT NULL,
+            salt TEXT NOT NULL,
+            scopes_json TEXT NOT NULL DEFAULT '[]',
+            allowed_projects_json TEXT NOT NULL DEFAULT '["*"]',
+            expires_at TEXT,
+            revoked INTEGER NOT NULL DEFAULT 0,
+            revoked_at TEXT,
+            last_used_at TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (principal_id) REFERENCES principals(principal_id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_credentials_lookup ON credentials(key_prefix, revoked);
+
+        -- Sessions table: Active human or service sessions
+        CREATE TABLE IF NOT EXISTS sessions (
+            session_id TEXT PRIMARY KEY,
+            principal_id TEXT NOT NULL,
+            token_hash TEXT NOT NULL,
+            expires_at TEXT NOT NULL,
+            revoked INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (principal_id) REFERENCES principals(principal_id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash, revoked);
+
+        -- Workspace memberships table: Role-based access control per workspace
+        CREATE TABLE IF NOT EXISTS workspace_memberships (
+            workspace_id TEXT NOT NULL,
+            principal_id TEXT NOT NULL,
+            role TEXT NOT NULL, -- 'owner', 'admin', 'editor', 'reviewer', 'viewer'
+            granted_by TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (workspace_id, principal_id),
+            FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,
+            FOREIGN KEY (principal_id) REFERENCES principals(principal_id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_workspace_members ON workspace_memberships(workspace_id, role);
+
+        -- Project grants table: Project-level role overrides or scoped access
+        CREATE TABLE IF NOT EXISTS project_grants (
+            project_id TEXT NOT NULL,
+            principal_id TEXT NOT NULL,
+            role TEXT NOT NULL, -- 'owner', 'admin', 'editor', 'reviewer', 'viewer'
+            granted_by TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (project_id, principal_id),
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (principal_id) REFERENCES principals(principal_id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_project_grants ON project_grants(project_id, principal_id);
+
+        -- Agent scopes table: Fine-grained permissions per agent per project
+        CREATE TABLE IF NOT EXISTS agent_scopes (
+            agent_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            scope TEXT NOT NULL,
+            granted_by TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            PRIMARY KEY (agent_id, project_id, scope)
+        );
+        CREATE INDEX IF NOT EXISTS idx_agent_scopes ON agent_scopes(agent_id, project_id);
+
+        -- Audit events table: Append-only security audit log
+        CREATE TABLE IF NOT EXISTS audit_events (
+            event_id TEXT PRIMARY KEY,
+            timestamp TEXT NOT NULL,
+            principal_id TEXT NOT NULL,
+            action TEXT NOT NULL,
+            resource_type TEXT NOT NULL,
+            resource_id TEXT NOT NULL,
+            outcome TEXT NOT NULL, -- 'allow', 'deny'
+            correlation_id TEXT,
+            metadata_json TEXT NOT NULL DEFAULT '{}'
+        );
+        CREATE INDEX IF NOT EXISTS idx_audit_events_lookup ON audit_events(principal_id, action, timestamp);
+
+        -- Security policies table: Configurable workspace policies
+        CREATE TABLE IF NOT EXISTS security_policies (
+            policy_id TEXT PRIMARY KEY,
+            workspace_id TEXT NOT NULL,
+            policy_type TEXT NOT NULL,
+            config_json TEXT NOT NULL DEFAULT '{}',
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE
+        );
+
+        -- Migration safeguard: Ensure existing workspace owners are registered as principals and owners
+        INSERT OR IGNORE INTO principals (principal_id, principal_type, display_name, is_active, is_superuser, created_at, updated_at)
+        SELECT DISTINCT owner_id, 'human', owner_id, 1, 1, datetime('now', 'utc'), datetime('now', 'utc')
+        FROM workspaces
+        WHERE owner_id IS NOT NULL AND owner_id != '';
+
+        INSERT OR IGNORE INTO workspace_memberships (workspace_id, principal_id, role, granted_by, created_at, updated_at)
+        SELECT DISTINCT id, owner_id, 'owner', owner_id, datetime('now', 'utc'), datetime('now', 'utc')
+        FROM workspaces
+        WHERE owner_id IS NOT NULL AND owner_id != '';
+        """,
+    ),
 ]
 
 
