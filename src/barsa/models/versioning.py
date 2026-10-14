@@ -118,7 +118,16 @@ def compute_commit_id(
     """Compute deterministic SHA-256 commit ID from canonical commit content."""
     # Ensure parents are in stable sorted order for multi-parent merges
     parents = sorted(parent_commit_ids)
-    changes_dict = [c.model_dump(mode="json") for c in changes]
+    changes_dict = []
+    for c in changes:
+        cd = c.model_dump(mode="json")
+        if cd.get("after_state") and not cd.get("after_hash"):
+            canonical = json.dumps(cd["after_state"], sort_keys=True, separators=(",", ":"))
+            cd["after_hash"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        if cd.get("before_state") and not cd.get("before_hash"):
+            canonical = json.dumps(cd["before_state"], sort_keys=True, separators=(",", ":"))
+            cd["before_hash"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        changes_dict.append(cd)
     # Sort changes by record_id and operation
     changes_dict.sort(key=lambda x: (x["record_id"], x["operation"]))
 

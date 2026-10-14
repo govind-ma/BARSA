@@ -87,3 +87,16 @@ def get_coordinator_engine(
     if not isinstance(storage, SQLiteStorageProvider):
         raise RuntimeError("CoordinatorEngine requires SQLiteStorageProvider")
     yield CoordinatorEngine(storage=storage, vc=vc)
+
+
+def get_sync_service(
+    storage: StorageProvider = Depends(get_storage),
+    settings: Settings = Depends(get_app_settings),
+) -> Generator[Any, None, None]:
+    """Dependency that provides the SyncService."""
+    from barsa.storage.sqlite import SQLiteStorageProvider
+    from barsa.sync.service import SyncService
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise RuntimeError("SyncService requires SQLiteStorageProvider")
+    yield SyncService(storage=storage, settings=settings)

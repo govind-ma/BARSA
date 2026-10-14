@@ -322,6 +322,10 @@ class VersionControlEngine:
         # Step 4: Validate and apply changes to construct new state
         new_state = dict(current_state)
         for chg in changes:
+            if chg.before_state and not chg.before_hash:
+                chg.before_hash = hashlib.sha256(
+                    json.dumps(chg.before_state, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                ).hexdigest()
             if chg.operation == ChangeOperation.CREATE:
                 if not chg.after_state:
                     raise ValidationError(f"CREATE operation for record '{chg.record_id}' requires after_state")
@@ -332,6 +336,9 @@ class VersionControlEngine:
                 # Validate BMS data model
                 deserialize_record(chg.after_state)
                 new_state[chg.record_id] = chg.after_state
+                chg.after_hash = hashlib.sha256(
+                    json.dumps(chg.after_state, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                ).hexdigest()
             elif chg.operation == ChangeOperation.UPDATE:
                 if not chg.after_state:
                     raise ValidationError(f"UPDATE operation for record '{chg.record_id}' requires after_state")
@@ -341,6 +348,9 @@ class VersionControlEngine:
                     chg.after_state["schema_version"] = BMS_VERSION
                 deserialize_record(chg.after_state)
                 new_state[chg.record_id] = chg.after_state
+                chg.after_hash = hashlib.sha256(
+                    json.dumps(chg.after_state, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                ).hexdigest()
             elif chg.operation == ChangeOperation.DELETE:
                 if chg.record_id in new_state:
                     del new_state[chg.record_id]

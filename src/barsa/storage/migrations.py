@@ -517,6 +517,71 @@ MIGRATIONS: list[tuple[int, str, str]] = [
         WHERE owner_id IS NOT NULL AND owner_id != '';
         """,
     ),
+    (
+        6,
+        "cloud_sync_schema",
+        """
+        -- Remotes table: Configured remote repositories for project sync
+        CREATE TABLE IF NOT EXISTS remotes (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            provider_type TEXT NOT NULL, -- 'local', 's3', 'git'
+            config_json TEXT NOT NULL DEFAULT '{}',
+            is_active INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            UNIQUE(project_id, name)
+        );
+        CREATE INDEX IF NOT EXISTS idx_remotes_project ON remotes(project_id);
+
+        -- Remote references: Tracks known branch heads at remotes with concurrency tokens/etags
+        CREATE TABLE IF NOT EXISTS remote_refs (
+            remote_id TEXT NOT NULL,
+            branch_name TEXT NOT NULL,
+            commit_id TEXT NOT NULL,
+            etag TEXT,
+            updated_at TEXT NOT NULL,
+            PRIMARY KEY (remote_id, branch_name),
+            FOREIGN KEY (remote_id) REFERENCES remotes(id) ON DELETE CASCADE
+        );
+
+        -- Synchronization state: Local tracking of sync status, last pushed/pulled commits
+        CREATE TABLE IF NOT EXISTS sync_state (
+            id TEXT PRIMARY KEY,
+            remote_id TEXT NOT NULL,
+            branch_name TEXT NOT NULL,
+            last_pushed_commit_id TEXT,
+            last_pulled_commit_id TEXT,
+            last_synced_at TEXT,
+            status TEXT NOT NULL DEFAULT 'idle', -- 'idle', 'syncing', 'diverged', 'conflict', 'error'
+            last_error TEXT,
+            metadata_json TEXT NOT NULL DEFAULT '{}',
+            FOREIGN KEY (remote_id) REFERENCES remotes(id) ON DELETE CASCADE,
+            UNIQUE(remote_id, branch_name)
+        );
+        CREATE INDEX IF NOT EXISTS idx_sync_state_remote ON sync_state(remote_id);
+
+        -- Synchronization history: Audit log of all push/pull/init operations
+        CREATE TABLE IF NOT EXISTS sync_history (
+            id TEXT PRIMARY KEY,
+            remote_id TEXT NOT NULL,
+            operation TEXT NOT NULL, -- 'push', 'pull', 'init'
+            branch_name TEXT NOT NULL,
+            start_commit_id TEXT,
+            end_commit_id TEXT,
+            objects_transferred INTEGER NOT NULL DEFAULT 0,
+            bytes_transferred INTEGER NOT NULL DEFAULT 0,
+            duration_ms INTEGER NOT NULL DEFAULT 0,
+            status TEXT NOT NULL, -- 'success', 'conflict', 'failed'
+            error_message TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (remote_id) REFERENCES remotes(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_sync_history_remote ON sync_history(remote_id, created_at);
+        """,
+    ),
 ]
 
 

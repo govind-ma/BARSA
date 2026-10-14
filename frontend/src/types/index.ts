@@ -338,3 +338,57 @@ export interface SystemInfo {
   active_workspaces: number;
   total_projects: number;
 }
+
+// ==========================================
+// Cloud Synchronization & BYOS (Phase 13)
+// ==========================================
+
+export type RemoteProviderType = 'local' | 's3' | 'git';
+
+export interface RemoteResponse {
+  id: string;
+  project_id: string;
+  name: string;
+  provider_type: RemoteProviderType;
+  local_path?: string | null;
+  s3_endpoint_url?: string | null;
+  s3_bucket_name?: string | null;
+  s3_region?: string | null;
+  s3_prefix?: string;
+  encryption_enabled: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SyncResult {
+  operation: 'push' | 'pull' | 'init';
+  remote_id: string;
+  remote_name: string;
+  project_id: string;
+  branch_name: string;
+  status: 'up_to_date' | 'ahead' | 'behind' | 'diverged' | 'conflict' | 'error';
+  local_head_commit_id: string;
+  remote_head_commit_id?: string | null;
+  objects_uploaded: number;
+  objects_downloaded: number;
+  bytes_transferred: number;
+  duration_ms: number;
+  diverged: boolean;
+  error_message?: string | null;
+}
+
+export interface SyncStatusReport {
+  remote_id: string;
+  remote_name: string;
+  project_id: string;
+  branch_name: string;
+  local_head_commit_id: string;
+  remote_head_commit_id?: string | null;
+  status: 'up_to_date' | 'ahead' | 'behind' | 'diverged' | 'conflict' | 'error';
+  ahead_count: number;
+  behind_count: number;
+  diverged: boolean;
+  last_synced_at?: string | null;
+  last_error?: string | null;
+}

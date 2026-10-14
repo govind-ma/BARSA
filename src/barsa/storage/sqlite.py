@@ -513,16 +513,31 @@ class SQLiteStorageProvider:
         now_str = datetime.now(UTC).isoformat()
         record_json = record.model_dump_json()
 
-        table = "checkpoints" if record.record_type == "checkpoint" else "bms_records"
-
-        cur = conn.execute(
-            f"""
-            UPDATE {table}
-            SET data_json = ?, revision = revision + 1, updated_at = ?
-            WHERE project_id = ? AND id = ? AND revision = ?;
-            """,
-            (record_json, now_str, project_id, record.id, expected_revision),
-        )
+        if record.record_type == "checkpoint":
+            cur = conn.execute(
+                """
+                UPDATE checkpoints
+                SET task_id = ?, status = ?, data_json = ?, revision = revision + 1
+                WHERE project_id = ? AND id = ? AND revision = ?;
+                """,
+                (
+                    getattr(record, "task_id", ""),
+                    getattr(record, "status", ""),
+                    record_json,
+                    project_id,
+                    record.id,
+                    expected_revision,
+                ),
+            )
+        else:
+            cur = conn.execute(
+                """
+                UPDATE bms_records
+                SET data_json = ?, revision = revision + 1, updated_at = ?
+                WHERE project_id = ? AND id = ? AND revision = ?;
+                """,
+                (record_json, now_str, project_id, record.id, expected_revision),
+            )
 
         if cur.rowcount == 0:
             existing = self.get_record(project_id, record.id)

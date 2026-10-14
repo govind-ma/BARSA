@@ -108,6 +108,28 @@ In collaborative multi-agent environments:
    - Respect review requirements: reviewers cannot approve their own merge proposals.
 
 
+## Cloud Synchronization & BYOS Protocol (Phase 13)
+
+When operating with configured remote storage repositories (Local filesystem, user-owned S3/MinIO, Git):
+
+1. **Explicit User Policy for Sync:**
+   - Never automatically upload private project data or call `barsa_push_remote` simply because a local checkpoint was saved.
+   - Remote synchronization (push/pull) must be explicitly requested by the user or guided by a configured workspace policy.
+
+2. **Fetching Remote State & Divergence Detection:**
+   - Before beginning multi-session work, inspect sync status using `barsa_get_sync_status(remote_id, branch)`.
+   - If status is `BEHIND`, call `barsa_pull_remote(remote_id, branch)` to fast-forward local state.
+   - If status is `DIVERGED`, inform the user immediately. Do not push. A 3-way merge commit or review is required.
+
+3. **Avoiding Accidental Overwrites:**
+   - Pushes enforce optimistic concurrency tokens (ETags / commit parent hashes). If another agent pushed concurrently, `barsa_push_remote` will reject the push.
+   - Never force-push (`force=True`) unless the user explicitly commands an emergency overwrite.
+
+4. **Offline Mode & Error Recovery:**
+   - If remote storage is unreachable or network is interrupted, Barsa operates local-first. Continue working, creating local checkpoints and commits.
+   - When connectivity is restored, call `barsa_get_sync_status` and synchronize pending changes.
+
+
 ## Quick Reference & Progressive Disclosure
 
 For detailed instructions and schema contracts, consult the referenced manuals in `references/`:

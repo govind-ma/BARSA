@@ -646,6 +646,106 @@ def create_mcp_server(
             raise ToolError(f"[INTERNAL_ERROR] {e}") from e
 
     # =========================================================================
+    # Phase 13: BYOS & Cloud Synchronization Tools
+    # =========================================================================
+    from barsa.mcp.sync_tools import (
+        get_sync_status_tool,
+        list_remotes_tool,
+        pull_remote_tool,
+        push_remote_tool,
+    )
+
+    @server.tool(
+        name="barsa_list_remotes",
+        description="List all configured BYOS remotes (Local, S3) for a project.",
+    )
+    def barsa_list_remotes(
+        project_id: str,
+    ) -> list[dict[str, Any]]:
+        try:
+            return list_remotes_tool(
+                storage=storage,
+                settings=current_settings,
+                project_id=project_id,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_list_remotes")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_get_sync_status",
+        description="Inspect synchronization state between local branch and remote repository.",
+    )
+    async def barsa_get_sync_status(
+        remote_id: str,
+        branch: str = "main",
+        passphrase: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return await get_sync_status_tool(
+                storage=storage,
+                settings=current_settings,
+                remote_id=remote_id,
+                branch=branch,
+                passphrase=passphrase,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_get_sync_status")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_pull_remote",
+        description="Pull remote commits and content-addressed records from remote repository.",
+    )
+    async def barsa_pull_remote(
+        remote_id: str,
+        branch: str = "main",
+        passphrase: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return await pull_remote_tool(
+                storage=storage,
+                settings=current_settings,
+                remote_id=remote_id,
+                branch=branch,
+                passphrase=passphrase,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_pull_remote")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_push_remote",
+        description="Push local commits and content-addressed records to remote repository.",
+    )
+    async def barsa_push_remote(
+        remote_id: str,
+        branch: str = "main",
+        force: bool = False,
+        passphrase: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return await push_remote_tool(
+                storage=storage,
+                settings=current_settings,
+                remote_id=remote_id,
+                branch=branch,
+                force=force,
+                passphrase=passphrase,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_push_remote")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    # =========================================================================
     # Register Resources & Prompts
     # =========================================================================
     register_resources(server, current_settings, storage, vc, graph)
