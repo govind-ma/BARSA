@@ -94,6 +94,30 @@ class Settings(BaseSettings):
         description="Format log outputs as structured JSON",
     )
 
+    # FalkorDB Knowledge Graph Settings (Phase 5)
+    graph_enabled: bool = Field(
+        default=False,
+        description="Enable FalkorDB knowledge graph integration",
+    )
+    falkordb_host: str = Field(
+        default="localhost",
+        description="FalkorDB host address",
+    )
+    falkordb_port: int = Field(
+        default=6379,
+        ge=1,
+        le=65535,
+        description="FalkorDB port",
+    )
+    falkordb_password: Annotated[
+        SecretStr | None,
+        Field(default=None, description="FalkorDB password if required"),
+    ]
+    falkordb_graph_prefix: str = Field(
+        default="barsa",
+        description="Prefix for FalkorDB graph identifiers (e.g. 'barsa_project_<id>')",
+    )
+
     # Security & Authentication (Phase 1 placeholders; safe secrets handling)
     secret_key: Annotated[SecretStr | None, Field(default=None, description="Internal signing secret")]
 

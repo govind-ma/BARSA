@@ -28,7 +28,9 @@ dependencies = [
     "pydantic>=2.7.0",
     "pydantic-settings>=2.2.0",
     "python-multipart>=0.0.9",
+    "falkordb>=1.0.0",
 ]
+
 
 [project.optional-dependencies]
 dev = [

@@ -230,6 +230,42 @@ MIGRATIONS: list[tuple[int, str, str]] = [
         CREATE INDEX IF NOT EXISTS idx_conflicts_status ON conflicts(project_id, resolution_status);
         """,
     ),
+    (
+        3,
+        "knowledge_graph_outbox_schema",
+        """
+        -- Transactional outbox table for event-driven graph projections
+        CREATE TABLE IF NOT EXISTS graph_outbox (
+            event_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            commit_id TEXT NOT NULL,
+            event_type TEXT NOT NULL,  -- 'COMMIT_APPROVED', 'REBUILD_REQUESTED', etc.
+            payload_json TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'PENDING',  -- 'PENDING', 'PROCESSING', 'COMPLETED', 'FAILED'
+            retry_count INTEGER NOT NULL DEFAULT 0,
+            last_error TEXT,
+            created_at TEXT NOT NULL,
+            processed_at TEXT,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_graph_outbox_status ON graph_outbox(project_id, status, created_at);
+        CREATE INDEX IF NOT EXISTS idx_graph_outbox_commit ON graph_outbox(project_id, commit_id);
+
+        -- Graph projection metadata tracking per project
+        CREATE TABLE IF NOT EXISTS graph_projections (
+            project_id TEXT PRIMARY KEY,
+            applied_commit_id TEXT NOT NULL,
+            applied_revision INTEGER NOT NULL DEFAULT 0,
+            applied_state_hash TEXT NOT NULL,
+            node_count INTEGER NOT NULL DEFAULT 0,
+            relationship_count INTEGER NOT NULL DEFAULT 0,
+            status TEXT NOT NULL DEFAULT 'UP_TO_DATE',  -- 'UP_TO_DATE', 'LAGGING', 'REBUILDING', 'ERROR'
+            last_projected_at TEXT NOT NULL,
+            last_error TEXT,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        );
+        """,
+    ),
 ]
 
 

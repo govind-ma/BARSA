@@ -103,6 +103,24 @@ class VersionControlEngine:
                 """,
                 (project_id, root_commit_id, iso_now, iso_now),
             )
+
+            # Emit initial root commit outbox event
+            event_id = generate_uuid_str()
+            outbox_payload = {
+                "project_id": project_id,
+                "commit_id": root_commit_id,
+                "branch_name": "main",
+                "resulting_state_hash": empty_hash,
+            }
+            conn.execute(
+                """
+                INSERT INTO graph_outbox (
+                    event_id, project_id, commit_id, event_type, payload_json, status, created_at
+                ) VALUES (?, ?, ?, 'COMMIT_APPROVED', ?, 'PENDING', ?);
+                """,
+                (event_id, project_id, root_commit_id, json.dumps(outbox_payload), iso_now),
+            )
+
             conn.execute("COMMIT;")
         except Exception:
             conn.execute("ROLLBACK;")
@@ -390,6 +408,22 @@ class VersionControlEngine:
             # 6e: Synchronize active Phase 3 storage for branch == 'main'
             if branch_name == "main":
                 self._synchronize_active_storage(project_id, changes)
+                # 6f: Emit transactional outbox event for Knowledge Graph projection
+                event_id = generate_uuid_str()
+                outbox_payload = {
+                    "project_id": project_id,
+                    "commit_id": commit_id,
+                    "branch_name": branch_name,
+                    "resulting_state_hash": resulting_state_hash,
+                }
+                conn.execute(
+                    """
+                    INSERT INTO graph_outbox (
+                        event_id, project_id, commit_id, event_type, payload_json, status, created_at
+                    ) VALUES (?, ?, ?, 'COMMIT_APPROVED', ?, 'PENDING', ?);
+                    """,
+                    (event_id, project_id, commit_id, json.dumps(outbox_payload), now.isoformat()),
+                )
 
             conn.execute("COMMIT;")
             logger.info("Created commit %s on branch '%s'", commit_id[:8], branch_name)

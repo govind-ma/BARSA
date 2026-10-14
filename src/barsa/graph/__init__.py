@@ -1,33 +1,47 @@
-"""Graph module interfaces (Knowledge graph connecting tasks, decisions, agents, and artifacts)."""
+"""Graph module public API exports for BARSA (Phase 5)."""
 
-from abc import abstractmethod
-from typing import Any, Protocol, runtime_checkable
+from barsa.graph.factory import get_graph_provider
+from barsa.graph.falkordb import FalkorDBGraphProvider
+from barsa.graph.memory import InMemoryGraphProvider
+from barsa.graph.projection import GraphProjectionWorker
+from barsa.graph.protocol import GraphProvider
+from barsa.graph.retrieval import GraphRetrievalService
+from barsa.models.graph import (
+    AgentContributionsResult,
+    DecisionImpactResult,
+    GraphNode,
+    GraphNodeType,
+    GraphProjectionMetadata,
+    GraphRebuildResponse,
+    GraphRelationship,
+    GraphRelationshipType,
+    OutboxEvent,
+    OutboxEventStatus,
+    ProjectionStatus,
+    ProjectOverviewResult,
+    ResumeContextResult,
+    TaskDependenciesResult,
+)
 
-
-@runtime_checkable
-class GraphEngine(Protocol):
-    """Protocol for graph database operations (FalkorDB / Cypher queries).
-
-    Full implementation scheduled for Phase 4 (Knowledge Graph).
-    """
-
-    @abstractmethod
-    async def add_node(self, node_type: str, node_id: str, properties: dict[str, Any]) -> None:
-        """Add a graph node representing a task, decision, agent, or artifact."""
-        ...
-
-    @abstractmethod
-    async def add_edge(
-        self,
-        from_id: str,
-        to_id: str,
-        relation: str,
-        properties: dict[str, Any] | None = None,
-    ) -> None:
-        """Add a typed edge between two graph entities."""
-        ...
-
-    @abstractmethod
-    async def query(self, cypher: str, parameters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
-        """Execute a graph query."""
-        ...
+__all__ = [
+    "AgentContributionsResult",
+    "DecisionImpactResult",
+    "FalkorDBGraphProvider",
+    "GraphNode",
+    "GraphNodeType",
+    "GraphProjectionMetadata",
+    "GraphProvider",
+    "GraphRebuildResponse",
+    "GraphRelationship",
+    "GraphRelationshipType",
+    "GraphRetrievalService",
+    "InMemoryGraphProvider",
+    "OutboxEvent",
+    "OutboxEventStatus",
+    "ProjectOverviewResult",
+    "ProjectionStatus",
+    "ResumeContextResult",
+    "TaskDependenciesResult",
+    "GraphProjectionWorker",
+    "get_graph_provider",
+]
