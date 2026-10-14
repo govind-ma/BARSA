@@ -74,3 +74,16 @@ def get_context_engine(
     from barsa.context.engine import SmartContextEngine
 
     yield SmartContextEngine(storage=storage, vc=vc, graph_retrieval=graph_retrieval)
+
+
+def get_coordinator_engine(
+    storage: StorageProvider = Depends(get_storage),
+    vc: Any = Depends(get_version_control),
+) -> Generator[Any, None, None]:
+    """Dependency that provides the CoordinatorEngine."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise RuntimeError("CoordinatorEngine requires SQLiteStorageProvider")
+    yield CoordinatorEngine(storage=storage, vc=vc)

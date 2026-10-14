@@ -861,3 +861,280 @@ def build_context_tool(
     engine = SmartContextEngine(storage=storage, vc=vc, graph_retrieval=retrieval)
     pkg = engine.build_context(req)
     return pkg.model_dump(mode="json")
+
+
+# =========================================================================
+# Multi-Agent Coordination Tools (Phase 9)
+# =========================================================================
+
+
+def register_agent_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    agent_id: str,
+    display_name: str,
+    provider: str,
+    model: str | None = None,
+    claimed_capabilities: list[str] | None = None,
+    verified_capabilities: list[str] | None = None,
+    supported_tools: list[str] | None = None,
+    allowed_projects: list[str] | None = None,
+    maximum_concurrent_tasks: int = 2,
+) -> dict[str, Any]:
+    """Register agent identity and capabilities with the Barsa coordinator."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.coordination.models import AgentRegistration
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    reg = AgentRegistration(
+        agent_id=validate_identifier("agent_id", agent_id),
+        display_name=display_name.strip(),
+        provider=provider.strip(),
+        model=model.strip() if model else None,
+        claimed_capabilities=claimed_capabilities or [],
+        verified_capabilities=verified_capabilities or [],
+        supported_tools=supported_tools or [],
+        allowed_projects=allowed_projects or ["*"],
+        maximum_concurrent_tasks=maximum_concurrent_tasks,
+    )
+    profile = engine.register_agent(reg)
+    return profile.model_dump(mode="json")
+
+
+def get_available_tasks_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    project_id: str,
+    agent_id: str | None = None,
+) -> list[dict[str, Any]]:
+    """Discover tasks available to be claimed in a project."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    verify_project_access(project_id, storage)
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    tasks = engine.list_available_tasks(
+        project_id=validate_identifier("project_id", project_id),
+        agent_id=validate_identifier("agent_id", agent_id) if agent_id else None,
+    )
+    return [t.model_dump(mode="json") for t in tasks]
+
+
+def claim_task_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    task_id: str,
+    agent_id: str,
+    lease_duration_seconds: int | None = None,
+) -> dict[str, Any]:
+    """Atomically claim a task with compare-and-swap semantics and obtain a fencing token."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    try:
+        resp = engine.claim_task(
+            task_id=validate_identifier("task_id", task_id),
+            agent_id=validate_identifier("agent_id", agent_id),
+            lease_duration_seconds=lease_duration_seconds,
+        )
+        return resp.model_dump(mode="json")
+    except ConflictError as e:
+        raise BarsaMCPError(MCPErrorCode.MERGE_CONFLICT, str(e)) from e
+    except ValidationError as e:
+        raise BarsaMCPError(MCPErrorCode.INVALID_INPUT, str(e)) from e
+    except ResourceNotFoundError as e:
+        raise BarsaMCPError(MCPErrorCode.RECORD_NOT_FOUND, str(e)) from e
+
+
+def update_task_progress_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    task_id: str,
+    agent_id: str,
+    lease_token: str,
+    message: str,
+    progress_percent: float | None = None,
+    resource_usage: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Report task execution progress and record heartbeat."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    try:
+        task = engine.update_task_progress(
+            task_id=validate_identifier("task_id", task_id),
+            agent_id=validate_identifier("agent_id", agent_id),
+            lease_token=lease_token.strip(),
+            message=message.strip(),
+            progress_percent=progress_percent,
+            resource_usage=resource_usage,
+        )
+        return task.model_dump(mode="json")
+    except ConflictError as e:
+        raise BarsaMCPError(MCPErrorCode.MERGE_CONFLICT, str(e)) from e
+    except ResourceNotFoundError as e:
+        raise BarsaMCPError(MCPErrorCode.RECORD_NOT_FOUND, str(e)) from e
+
+
+def submit_task_result_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    task_id: str,
+    agent_id: str,
+    lease_token: str,
+    result: dict[str, Any],
+    commit_id: str | None = None,
+    requires_review: bool | None = None,
+    resource_usage: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Submit completed task results verifying fencing token."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    try:
+        task = engine.submit_task_result(
+            task_id=validate_identifier("task_id", task_id),
+            agent_id=validate_identifier("agent_id", agent_id),
+            lease_token=lease_token.strip(),
+            result=result,
+            commit_id=commit_id.strip() if commit_id else None,
+            requires_review=requires_review,
+            resource_usage=resource_usage,
+        )
+        return task.model_dump(mode="json")
+    except ConflictError as e:
+        raise BarsaMCPError(MCPErrorCode.MERGE_CONFLICT, str(e)) from e
+    except ResourceNotFoundError as e:
+        raise BarsaMCPError(MCPErrorCode.RECORD_NOT_FOUND, str(e)) from e
+
+
+def report_issue_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    project_id: str,
+    task_id: str,
+    author_agent_id: str,
+    title: str,
+    description: str,
+    evidence: dict[str, Any] | None = None,
+    required_capabilities: list[str] | None = None,
+) -> dict[str, Any]:
+    """Report an issue or impediment encountered during task execution."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    verify_project_access(project_id, storage)
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    issue = engine.report_issue(
+        project_id=validate_identifier("project_id", project_id),
+        task_id=validate_identifier("task_id", task_id),
+        author_agent_id=validate_identifier("author_agent_id", author_agent_id),
+        title=title.strip(),
+        description=description.strip(),
+        evidence=evidence,
+        required_capabilities=required_capabilities,
+    )
+    return issue.model_dump(mode="json")
+
+
+def request_help_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    project_id: str,
+    task_id: str,
+    requester_agent_id: str,
+    required_capabilities: list[str],
+    issue_id: str | None = None,
+    target_agent_id: str | None = None,
+) -> dict[str, Any]:
+    """Request assistance from other agents with specific capabilities."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    verify_project_access(project_id, storage)
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    req = engine.request_help(
+        project_id=validate_identifier("project_id", project_id),
+        task_id=validate_identifier("task_id", task_id),
+        requester_agent_id=validate_identifier("requester_agent_id", requester_agent_id),
+        required_capabilities=required_capabilities,
+        issue_id=validate_identifier("issue_id", issue_id) if issue_id else None,
+        target_agent_id=validate_identifier("target_agent_id", target_agent_id) if target_agent_id else None,
+    )
+    return req.model_dump(mode="json")
+
+
+def get_collaboration_messages_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    project_id: str,
+    task_id: str | None = None,
+) -> list[dict[str, Any]]:
+    """Retrieve collaboration message stream for a project or specific task."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    verify_project_access(project_id, storage)
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    messages = engine.list_comments(
+        project_id=validate_identifier("project_id", project_id),
+        task_id=validate_identifier("task_id", task_id) if task_id else None,
+    )
+    return [m.model_dump(mode="json") for m in messages]
+
+
+def get_assignment_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    task_id: str,
+) -> dict[str, Any]:
+    """Inspect current task assignment, lease token, and expiration status."""
+    from barsa.coordination.engine import CoordinatorEngine
+    from barsa.storage.sqlite import SQLiteStorageProvider
+
+    if not isinstance(storage, SQLiteStorageProvider):
+        raise BarsaMCPError(MCPErrorCode.STORAGE_UNAVAILABLE, "SQLite storage required")
+
+    engine = CoordinatorEngine(storage=storage, vc=vc)
+    try:
+        task = engine.get_task(validate_identifier("task_id", task_id))
+        return {
+            "task_id": task.task_id,
+            "project_id": task.project_id,
+            "status": task.status.value,
+            "assigned_agent_id": task.assigned_agent_id,
+            "lease_token": task.lease_token,
+            "lease_expires_at": task.lease_expires_at.isoformat() if task.lease_expires_at else None,
+            "attempt_count": task.attempt_count,
+            "max_attempts": task.max_attempts,
+        }
+    except ResourceNotFoundError as e:
+        raise BarsaMCPError(MCPErrorCode.RECORD_NOT_FOUND, str(e)) from e

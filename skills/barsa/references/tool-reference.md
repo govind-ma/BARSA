@@ -21,6 +21,15 @@ All Barsa operations MUST use these 12 registered MCP tools. Do not invent non-e
 | `barsa_list_conflicts` | Read | Inspect divergent branches and potential merge collisions |
 | `barsa_get_graph_context` | Read | Multi-hop task dependency and blocker analysis |
 | `barsa_build_context` | Read | Build token-optimized, 3-level context package with incremental delta sync |
+| `barsa_register_agent` | Write | Register agent identity, claimed & verified capabilities, and tools |
+| `barsa_get_available_tasks` | Read | Discover ready tasks matching capabilities in a project |
+| `barsa_claim_task` | Write | Atomically acquire exclusive task lease and obtain fencing token |
+| `barsa_update_task_progress` | Write | Send progress reports and renew task lease via heartbeat |
+| `barsa_submit_task_result` | Write | Submit completed task result verifying fencing token |
+| `barsa_report_issue` | Write | Raise an issue/impediment encountered during task execution |
+| `barsa_request_help` | Write | Request assistance from other capable agents |
+| `barsa_get_collaboration_messages` | Read | Inspect collaboration stream, comments, and updates |
+| `barsa_get_assignment` | Read | Inspect current task assignment, fencing token, and lease status |
 
 ---
 

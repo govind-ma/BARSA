@@ -80,6 +80,34 @@ When retrieving memory, follow token-efficiency rules:
 
 ---
 
+## Multi-Agent Coordination & Capability Protocols (Phase 9)
+
+In collaborative multi-agent environments:
+
+1. **Agent Registration:**
+   - Announce identity and capabilities via `barsa_register_agent(agent_id, display_name, provider, claimed_capabilities, supported_tools)`.
+   - Distinguish self-reported capabilities from verified capabilities. Do NOT attempt tasks requiring verified capabilities if not certified.
+
+2. **Discovering and Claiming Work:**
+   - Query available work via `barsa_get_available_tasks(project_id, agent_id)`.
+   - Atomically claim tasks via `barsa_claim_task(task_id, agent_id)`.
+   - Store the returned `lease_token`. This fencing token is required for all subsequent updates.
+
+3. **Progress Reporting & Lease Renewals:**
+   - Periodically call `barsa_update_task_progress(task_id, agent_id, lease_token, message, progress_percent)` to report milestones and renew the lease.
+   - If execution takes longer than the lease duration, renewal prevents the coordinator from reassigning the task.
+
+4. **Impediments & Help Requests:**
+   - If blocked or missing a capability, raise an issue via `barsa_report_issue(project_id, task_id, author_agent_id, title, description, evidence, required_capabilities)`.
+   - Broadcast or target a help request via `barsa_request_help(project_id, task_id, requester_agent_id, required_capabilities)`.
+   - Capable helper agents can investigate, propose resolutions, and commit assistance through feature branches without overwriting active work.
+
+5. **Submitting Results & Version Control:**
+   - Submit work via `barsa_submit_task_result(task_id, agent_id, lease_token, result, commit_id)`.
+   - All accepted knowledge changes MUST be committed via `barsa_commit` or proposed via `barsa_propose_changes`.
+   - Respect review requirements: reviewers cannot approve their own merge proposals.
+
+
 ## Quick Reference & Progressive Disclosure
 
 For detailed instructions and schema contracts, consult the referenced manuals in `references/`:

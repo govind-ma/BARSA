@@ -266,6 +266,119 @@ MIGRATIONS: list[tuple[int, str, str]] = [
         );
         """,
     ),
+    (
+        4,
+        "coordination_engine_schema",
+        """
+        -- Multi-Agent Coordination Schema (Phase 9)
+        CREATE TABLE IF NOT EXISTS agents (
+            agent_id TEXT PRIMARY KEY,
+            display_name TEXT NOT NULL,
+            provider TEXT NOT NULL,
+            model TEXT,
+            claimed_capabilities_json TEXT NOT NULL DEFAULT '[]',
+            verified_capabilities_json TEXT NOT NULL DEFAULT '[]',
+            supported_tools_json TEXT NOT NULL DEFAULT '[]',
+            allowed_projects_json TEXT NOT NULL DEFAULT '["*"]',
+            availability_status TEXT NOT NULL DEFAULT 'available',
+            last_heartbeat TEXT NOT NULL,
+            current_workload INTEGER NOT NULL DEFAULT 0,
+            maximum_concurrent_tasks INTEGER NOT NULL DEFAULT 2,
+            registered_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            metadata_json TEXT NOT NULL DEFAULT '{}'
+        );
+        CREATE INDEX IF NOT EXISTS idx_agents_status ON agents(availability_status, last_heartbeat);
+
+        CREATE TABLE IF NOT EXISTS coordination_tasks (
+            task_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            required_capabilities_json TEXT NOT NULL DEFAULT '[]',
+            required_tools_json TEXT NOT NULL DEFAULT '[]',
+            min_verified_level TEXT NOT NULL DEFAULT 'claimed',
+            priority TEXT NOT NULL DEFAULT 'medium',
+            dependencies_json TEXT NOT NULL DEFAULT '[]',
+            status TEXT NOT NULL DEFAULT 'pending',
+            assigned_agent_id TEXT,
+            lease_token TEXT,
+            lease_expires_at TEXT,
+            heartbeat_timeout_seconds INTEGER NOT NULL DEFAULT 60,
+            max_attempts INTEGER NOT NULL DEFAULT 3,
+            attempt_count INTEGER NOT NULL DEFAULT 0,
+            failure_reason TEXT,
+            result_json TEXT,
+            resource_usage_json TEXT NOT NULL DEFAULT '{}',
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            metadata_json TEXT NOT NULL DEFAULT '{}',
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_coord_tasks_status ON coordination_tasks(project_id, status);
+        CREATE INDEX IF NOT EXISTS idx_coord_tasks_assigned ON coordination_tasks(assigned_agent_id, status);
+        CREATE INDEX IF NOT EXISTS idx_coord_tasks_lease ON coordination_tasks(lease_expires_at);
+
+        CREATE TABLE IF NOT EXISTS collaboration_messages (
+            message_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            task_id TEXT,
+            author_agent_id TEXT NOT NULL,
+            message_type TEXT NOT NULL,
+            content TEXT NOT NULL,
+            related_record_refs_json TEXT NOT NULL DEFAULT '[]',
+            created_at TEXT NOT NULL,
+            metadata_json TEXT NOT NULL DEFAULT '{}',
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_collab_messages ON collaboration_messages(project_id, task_id, created_at);
+
+        CREATE TABLE IF NOT EXISTS coordination_issues (
+            issue_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            task_id TEXT NOT NULL,
+            author_agent_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            evidence_json TEXT NOT NULL DEFAULT '{}',
+            required_capabilities_json TEXT NOT NULL DEFAULT '[]',
+            status TEXT NOT NULL DEFAULT 'open',
+            resolver_agent_id TEXT,
+            resolution_proposal_json TEXT,
+            created_at TEXT NOT NULL,
+            resolved_at TEXT,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_coord_issues ON coordination_issues(project_id, task_id, status);
+
+        CREATE TABLE IF NOT EXISTS help_requests (
+            request_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            task_id TEXT NOT NULL,
+            issue_id TEXT,
+            requester_agent_id TEXT NOT NULL,
+            target_agent_id TEXT,
+            required_capabilities_json TEXT NOT NULL DEFAULT '[]',
+            status TEXT NOT NULL DEFAULT 'open',
+            assigned_helper_id TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_help_requests ON help_requests(project_id, status);
+
+        CREATE TABLE IF NOT EXISTS coordination_events (
+            event_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            event_type TEXT NOT NULL,
+            agent_id TEXT,
+            task_id TEXT,
+            payload_json TEXT NOT NULL DEFAULT '{}',
+            timestamp TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_coord_events ON coordination_events(project_id, event_type, timestamp);
+        """,
+    ),
 ]
 
 

@@ -1,0 +1,63 @@
+"""Multi-Agent Coordination & Capability-Based Task Distribution Package for BARSA (Phase 9)."""
+
+from barsa.coordination.engine import CoordinatorEngine
+from barsa.coordination.leases import compute_lease_expiration, generate_fencing_token, is_lease_expired
+from barsa.coordination.matching import CapabilityMatcher
+from barsa.coordination.models import (
+    AgentProfile,
+    AgentRegistration,
+    AgentState,
+    AssignmentDecision,
+    CollaborationMessage,
+    CoordinationEvent,
+    CoordinationIssue,
+    CoordinationTask,
+    CoordinationTaskStatus,
+    CoordinatorPolicy,
+    HelpRequest,
+    HelpRequestStatus,
+    IssueStatus,
+    MessageType,
+    Priority,
+    TaskClaimRequest,
+    TaskClaimResponse,
+    TaskHeartbeatRequest,
+    TaskProgressUpdate,
+    TaskReleaseRequest,
+    TaskStartRequest,
+    TaskSubmitRequest,
+    VerificationLevel,
+)
+from barsa.coordination.storage import CoordinationStorage
+
+__all__ = [
+    "AgentProfile",
+    "AgentRegistration",
+    "AgentState",
+    "AssignmentDecision",
+    "CapabilityMatcher",
+    "CollaborationMessage",
+    "CoordinationEvent",
+    "CoordinationIssue",
+    "CoordinationStorage",
+    "CoordinationTask",
+    "CoordinationTaskStatus",
+    "CoordinatorEngine",
+    "CoordinatorPolicy",
+    "HelpRequest",
+    "HelpRequestStatus",
+    "IssueStatus",
+    "MessageType",
+    "Priority",
+    "TaskClaimRequest",
+    "TaskClaimResponse",
+    "TaskHeartbeatRequest",
+    "TaskProgressUpdate",
+    "TaskReleaseRequest",
+    "TaskStartRequest",
+    "TaskSubmitRequest",
+    "VerificationLevel",
+    "compute_lease_expiration",
+    "generate_fencing_token",
+    "is_lease_expired",
+]

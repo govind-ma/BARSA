@@ -16,8 +16,12 @@ from barsa.mcp.prompts import register_prompts
 from barsa.mcp.resources import register_resources
 from barsa.mcp.tools import (
     build_context_tool,
+    claim_task_tool,
     commit_tool,
+    get_assignment_tool,
+    get_available_tasks_tool,
     get_checkpoint_tool,
+    get_collaboration_messages_tool,
     get_diff_tool,
     get_graph_context_tool,
     get_history_tool,
@@ -26,8 +30,13 @@ from barsa.mcp.tools import (
     list_conflicts_tool,
     list_projects_tool,
     propose_changes_tool,
+    register_agent_tool,
+    report_issue_tool,
+    request_help_tool,
     resume_tool,
     search_memory_tool,
+    submit_task_result_tool,
+    update_task_progress_tool,
 )
 from barsa.storage.factory import get_storage_provider
 from barsa.storage.protocol import StorageProvider
@@ -391,6 +400,249 @@ def create_mcp_server(
             raise ToolError(f"[{e.code}] {e.message}") from e
         except Exception as e:
             logger.exception("Unexpected error in barsa_build_context")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    # =========================================================================
+    # Multi-Agent Coordination MCP Tools (Phase 9)
+    # =========================================================================
+
+    @server.tool(
+        name="barsa_register_agent",
+        description="Register an agent's identity, capabilities, and tools with the Barsa coordinator.",
+    )
+    def barsa_register_agent(
+        agent_id: str,
+        display_name: str,
+        provider: str,
+        model: str | None = None,
+        claimed_capabilities: list[str] | None = None,
+        verified_capabilities: list[str] | None = None,
+        supported_tools: list[str] | None = None,
+        allowed_projects: list[str] | None = None,
+        maximum_concurrent_tasks: int = 2,
+    ) -> dict[str, Any]:
+        try:
+            return register_agent_tool(
+                storage=storage,
+                vc=vc,
+                agent_id=agent_id,
+                display_name=display_name,
+                provider=provider,
+                model=model,
+                claimed_capabilities=claimed_capabilities,
+                verified_capabilities=verified_capabilities,
+                supported_tools=supported_tools,
+                allowed_projects=allowed_projects,
+                maximum_concurrent_tasks=maximum_concurrent_tasks,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_register_agent")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_get_available_tasks",
+        description="Discover tasks ready to be claimed within a project.",
+    )
+    def barsa_get_available_tasks(
+        project_id: str,
+        agent_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        try:
+            return get_available_tasks_tool(
+                storage=storage,
+                vc=vc,
+                project_id=project_id,
+                agent_id=agent_id,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_get_available_tasks")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_claim_task",
+        description="Atomically claim an exclusive task lease and receive a fencing token.",
+    )
+    def barsa_claim_task(
+        task_id: str,
+        agent_id: str,
+        lease_duration_seconds: int | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return claim_task_tool(
+                storage=storage,
+                vc=vc,
+                task_id=task_id,
+                agent_id=agent_id,
+                lease_duration_seconds=lease_duration_seconds,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_claim_task")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_update_task_progress",
+        description="Report execution progress and renew task lease with a valid fencing token.",
+    )
+    def barsa_update_task_progress(
+        task_id: str,
+        agent_id: str,
+        lease_token: str,
+        message: str,
+        progress_percent: float | None = None,
+        resource_usage: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return update_task_progress_tool(
+                storage=storage,
+                vc=vc,
+                task_id=task_id,
+                agent_id=agent_id,
+                lease_token=lease_token,
+                message=message,
+                progress_percent=progress_percent,
+                resource_usage=resource_usage,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_update_task_progress")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_submit_task_result",
+        description="Submit completed task results verifying fencing token before committing.",
+    )
+    def barsa_submit_task_result(
+        task_id: str,
+        agent_id: str,
+        lease_token: str,
+        result: dict[str, Any],
+        commit_id: str | None = None,
+        requires_review: bool | None = None,
+        resource_usage: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return submit_task_result_tool(
+                storage=storage,
+                vc=vc,
+                task_id=task_id,
+                agent_id=agent_id,
+                lease_token=lease_token,
+                result=result,
+                commit_id=commit_id,
+                requires_review=requires_review,
+                resource_usage=resource_usage,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_submit_task_result")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_report_issue",
+        description="Report an impediment or issue encountered during task execution.",
+    )
+    def barsa_report_issue(
+        project_id: str,
+        task_id: str,
+        author_agent_id: str,
+        title: str,
+        description: str,
+        evidence: dict[str, Any] | None = None,
+        required_capabilities: list[str] | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return report_issue_tool(
+                storage=storage,
+                vc=vc,
+                project_id=project_id,
+                task_id=task_id,
+                author_agent_id=author_agent_id,
+                title=title,
+                description=description,
+                evidence=evidence,
+                required_capabilities=required_capabilities,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_report_issue")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_request_help",
+        description="Request assistance from other agents with specific technical capabilities.",
+    )
+    def barsa_request_help(
+        project_id: str,
+        task_id: str,
+        requester_agent_id: str,
+        required_capabilities: list[str],
+        issue_id: str | None = None,
+        target_agent_id: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return request_help_tool(
+                storage=storage,
+                vc=vc,
+                project_id=project_id,
+                task_id=task_id,
+                requester_agent_id=requester_agent_id,
+                required_capabilities=required_capabilities,
+                issue_id=issue_id,
+                target_agent_id=target_agent_id,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_request_help")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_get_collaboration_messages",
+        description="Retrieve the collaboration message stream for a project or specific task.",
+    )
+    def barsa_get_collaboration_messages(
+        project_id: str,
+        task_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        try:
+            return get_collaboration_messages_tool(
+                storage=storage,
+                vc=vc,
+                project_id=project_id,
+                task_id=task_id,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_get_collaboration_messages")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_get_assignment",
+        description="Inspect current task assignment, lease token, and expiration status.",
+    )
+    def barsa_get_assignment(
+        task_id: str,
+    ) -> dict[str, Any]:
+        try:
+            return get_assignment_tool(
+                storage=storage,
+                vc=vc,
+                task_id=task_id,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_get_assignment")
             raise ToolError(f"[INTERNAL_ERROR] {e}") from e
 
     # =========================================================================
