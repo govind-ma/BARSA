@@ -1,0 +1,80 @@
+{
+  "version": "1.0",
+  "scenarios": [
+    {
+      "id": "scenario_01_new_project",
+      "name": "Starting a new project",
+      "description": "Agent creates workspace, project, initializes main branch, and verifies root commit."
+    },
+    {
+      "id": "scenario_02_resume_session",
+      "name": "Resuming a project from another session",
+      "description": "Agent connects with no conversation history, calls barsa_resume, and retrieves latest checkpoint."
+    },
+    {
+      "id": "scenario_03_save_completed_task",
+      "name": "Saving a completed task",
+      "description": "Agent updates task status to completed and saves milestone checkpoint."
+    },
+    {
+      "id": "scenario_04_save_paused_task",
+      "name": "Saving a paused task",
+      "description": "Agent pauses in_progress task and records next_action for continuation."
+    },
+    {
+      "id": "scenario_05_read_historical_decision",
+      "name": "Reading a historical decision",
+      "description": "Agent retrieves historical decision record using commit SHA."
+    },
+    {
+      "id": "scenario_06_missing_checkpoint",
+      "name": "Handling a missing checkpoint",
+      "description": "Agent gracefully handles projects that have no saved checkpoint yet."
+    },
+    {
+      "id": "scenario_07_unavailable_artifact",
+      "name": "Handling an unavailable artifact",
+      "description": "Agent identifies that a referenced local artifact file is missing on disk and marks it unverified."
+    },
+    {
+      "id": "scenario_08_stale_commit",
+      "name": "Handling a stale commit",
+      "description": "Agent catches STALE_REVISION error when committing against outdated expected_head."
+    },
+    {
+      "id": "scenario_09_unresolved_conflict",
+      "name": "Handling an unresolved conflict",
+      "description": "Agent detects branch divergence and inspects conflicts via barsa_list_conflicts."
+    },
+    {
+      "id": "scenario_10_unauthorized_access",
+      "name": "Rejecting unauthorized project access",
+      "description": "Agent rejects attempts to access non-existent or unauthorized project IDs."
+    },
+    {
+      "id": "scenario_11_malicious_stored_instructions",
+      "name": "Treating malicious stored instructions as untrusted data",
+      "description": "Agent verifies prompt injection embedded in memory content is treated as untrusted text."
+    },
+    {
+      "id": "scenario_12_unverified_claims",
+      "name": "Preserving unverified claims as unverified",
+      "description": "Agent ensures speculative ideas are saved with verification_status='unverified'."
+    },
+    {
+      "id": "scenario_13_avoid_unnecessary_history",
+      "name": "Avoiding unnecessary full-history retrieval",
+      "description": "Agent retrieves only latest checkpoint and active task context without fetching full DAG."
+    },
+    {
+      "id": "scenario_14_unavailable_mcp_server",
+      "name": "Handling an unavailable MCP server",
+      "description": "Agent informs user cleanly when MCP server tools are not registered."
+    },
+    {
+      "id": "scenario_15_agent_handoff",
+      "name": "Performing agent-to-agent handoff",
+      "description": "Originating agent saves checkpoint and receiving agent resumes and executes next_action."
+    }
+  ]
+}

@@ -360,6 +360,55 @@ def resume_tool(
         artifacts = overview.relevant_artifacts
         blockers = []
 
+    # Normalize task_data so agents receive clean identifiers
+    normalized_task = None
+    if task_data:
+        if "properties" in task_data:
+            t_props = task_data.get("properties", {})
+            raw_id = task_data.get("raw_id", t_props.get("id", task_data.get("id")))
+            normalized_task = {
+                "id": raw_id,
+                "raw_id": raw_id,
+                **t_props,
+            }
+        else:
+            normalized_task = task_data
+            if "raw_id" not in normalized_task and "id" in normalized_task:
+                normalized_task["raw_id"] = normalized_task["id"]
+
+    # Normalize latest_cp so agents get complete, authoritative attributes
+    normalized_cp = None
+    try:
+        raw_cps = storage.list_records(proj.id, record_type="checkpoint")
+        if raw_cps:
+            matching_cps = []
+            for item in raw_cps:
+                c_obj = item[0] if isinstance(item, tuple) else item
+                if target_task_id:
+                    if getattr(c_obj, "task_id", None) == target_task_id:
+                        matching_cps.append(c_obj)
+                else:
+                    matching_cps.append(c_obj)
+            target_list = matching_cps or [item[0] if isinstance(item, tuple) else item for item in raw_cps]
+            target_list.sort(key=lambda x: str(getattr(x, "created_at", "")), reverse=True)
+            target = target_list[0].model_dump(mode="json")
+            normalized_cp = {
+                "checkpoint_id": target.get("id"),
+                **target,
+            }
+    except Exception:
+        pass
+
+    if not normalized_cp and latest_cp:
+        if "properties" in latest_cp:
+            props = latest_cp.get("properties", {})
+            normalized_cp = {
+                "checkpoint_id": latest_cp.get("raw_id", props.get("id", latest_cp.get("id"))),
+                **props,
+            }
+        else:
+            normalized_cp = latest_cp
+
     package = {
         "project_identity": {
             "project_id": proj.id,
@@ -369,8 +418,8 @@ def resume_tool(
         },
         "authoritative_revision": head_commit,
         "revision_warning": revision_warning,
-        "current_task": task_data,
-        "latest_checkpoint": latest_cp,
+        "current_task": normalized_task,
+        "latest_checkpoint": normalized_cp,
         "relevant_decisions": decisions,
         "requirements": requirements,
         "dependencies": dependencies,
