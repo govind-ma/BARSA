@@ -99,6 +99,7 @@ def test_mcp_tool_registration(mcp_test_env: dict) -> None:
         "barsa_commit",
         "barsa_list_conflicts",
         "barsa_get_graph_context",
+        "barsa_build_context",
     ]
 
     for tool_name in expected_tools:

@@ -9,6 +9,9 @@ import json
 from typing import Any
 
 from barsa.bms.serialization import validate_record
+from barsa.context.engine import SmartContextEngine
+from barsa.context.models import ContextLevel, ContextRequest
+from barsa.context.ranking import RelevanceRanker
 from barsa.core.exceptions import ConflictError, ResourceNotFoundError, ValidationError
 from barsa.graph.projection import GraphProjectionWorker
 from barsa.graph.protocol import GraphProvider
@@ -130,6 +133,7 @@ def search_memory_tool(
     raw_records = storage.list_records(project_id)
     matches = []
 
+    ranker = RelevanceRanker()
     for item in raw_records:
         rec = item[0] if isinstance(item, tuple) else item
         rec_data = rec.model_dump(mode="json")
@@ -156,10 +160,14 @@ def search_memory_tool(
             elif "title" in rec_data:
                 excerpt = str(rec_data["title"])[:200]
 
+            rank_res = ranker.rank_record(record=rec_data, query=safe_query)
+
             matches.append(
                 {
                     "record_id": rec.id,
                     "record_type": rec_type,
+                    "relevance_score": rank_res.relevance_score,
+                    "ranking_reasons": rank_res.reasons,
                     "excerpt": excerpt,
                     "properties": {
                         k: v for k, v in rec_data.items() if k in ("title", "status", "priority", "assignee_id")
@@ -167,6 +175,9 @@ def search_memory_tool(
                     "created_at": rec_data.get("created_at"),
                 }
             )
+
+    # Sort matches by algorithmic relevance score descending
+    matches.sort(key=lambda m: m["relevance_score"], reverse=True)
 
     # Check projection status
     proj_status = worker.get_projection_status(project_id)
@@ -811,3 +822,42 @@ def get_graph_context_tool(
         "overview": overview.model_dump(mode="json"),
         "freshness": freshness_info,
     }
+
+
+def build_context_tool(
+    storage: StorageProvider,
+    vc: VersionControlEngine,
+    retrieval: GraphRetrievalService,
+    project_id: str,
+    task_id: str | None = None,
+    query: str | None = None,
+    max_context_tokens: int = 4000,
+    context_level: str = "adaptive",
+    known_revision: str | None = None,
+    target_model: str | None = None,
+) -> dict[str, Any]:
+    """Build a validated, token-optimized context package using the Smart Context Engine (Phase 8)."""
+    verify_project_access(project_id, storage)
+    safe_proj_id = validate_identifier("project_id", project_id)
+    safe_task_id = validate_identifier("task_id", task_id) if task_id else None
+    safe_known_rev = validate_identifier("known_revision", known_revision) if known_revision else None
+    safe_query = validate_query_string(query) if query else None
+
+    try:
+        level_enum = ContextLevel(context_level.lower())
+    except ValueError:
+        level_enum = ContextLevel.ADAPTIVE
+
+    req = ContextRequest(
+        project_id=safe_proj_id,
+        task_id=safe_task_id,
+        query=safe_query,
+        max_context_tokens=max_context_tokens,
+        context_level=level_enum,
+        known_revision=safe_known_rev,
+        target_model=target_model,
+    )
+
+    engine = SmartContextEngine(storage=storage, vc=vc, graph_retrieval=retrieval)
+    pkg = engine.build_context(req)
+    return pkg.model_dump(mode="json")

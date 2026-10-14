@@ -15,6 +15,7 @@ from barsa.mcp.errors import BarsaMCPError
 from barsa.mcp.prompts import register_prompts
 from barsa.mcp.resources import register_resources
 from barsa.mcp.tools import (
+    build_context_tool,
     commit_tool,
     get_checkpoint_tool,
     get_diff_tool,
@@ -360,11 +361,43 @@ def create_mcp_server(
             logger.exception("Unexpected error in barsa_get_graph_context")
             raise ToolError(f"[INTERNAL_ERROR] {e}") from e
 
+    @server.tool(
+        name="barsa_build_context",
+        description="Build an optimized, token-budgeted, graph-aware context package for AI agent task continuation.",
+    )
+    def barsa_build_context(
+        project_id: str,
+        task_id: str | None = None,
+        query: str | None = None,
+        max_context_tokens: int = 4000,
+        context_level: str = "adaptive",
+        known_revision: str | None = None,
+        target_model: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return build_context_tool(
+                storage=storage,
+                vc=vc,
+                retrieval=retrieval,
+                project_id=project_id,
+                task_id=task_id,
+                query=query,
+                max_context_tokens=max_context_tokens,
+                context_level=context_level,
+                known_revision=known_revision,
+                target_model=target_model,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_build_context")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
     # =========================================================================
     # Register Resources & Prompts
     # =========================================================================
     register_resources(server, current_settings, storage, vc, graph)
     register_prompts(server)
 
-    logger.info("Barsa MCP server created with 12 tools, 5 resources, and 3 prompts.")
+    logger.info("Barsa MCP server created with tools, resources, and prompts.")
     return server

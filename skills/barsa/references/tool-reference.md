@@ -20,6 +20,7 @@ All Barsa operations MUST use these 12 registered MCP tools. Do not invent non-e
 | `barsa_commit` | Write | Commit validated changes directly to a branch (with `expected_head`) |
 | `barsa_list_conflicts` | Read | Inspect divergent branches and potential merge collisions |
 | `barsa_get_graph_context` | Read | Multi-hop task dependency and blocker analysis |
+| `barsa_build_context` | Read | Build token-optimized, 3-level context package with incremental delta sync |
 
 ---
 

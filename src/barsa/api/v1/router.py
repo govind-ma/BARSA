@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from barsa.api.v1.endpoints.artifacts import router as artifacts_router
 from barsa.api.v1.endpoints.bms import router as bms_router
+from barsa.api.v1.endpoints.context import router as context_router
 from barsa.api.v1.endpoints.graph import router as graph_router
 from barsa.api.v1.endpoints.info import router as info_router
 from barsa.api.v1.endpoints.packages import router as packages_router
@@ -20,3 +21,4 @@ api_v1_router.include_router(versioning_router)
 api_v1_router.include_router(graph_router)
 api_v1_router.include_router(artifacts_router)
 api_v1_router.include_router(packages_router)
+api_v1_router.include_router(context_router)

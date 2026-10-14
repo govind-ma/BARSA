@@ -63,3 +63,14 @@ def get_graph_retrieval(
     from barsa.graph.retrieval import GraphRetrievalService
 
     yield GraphRetrievalService(graph)
+
+
+def get_context_engine(
+    storage: StorageProvider = Depends(get_storage),
+    vc: Any = Depends(get_version_control),
+    graph_retrieval: Any = Depends(get_graph_retrieval),
+) -> Generator[Any, None, None]:
+    """Dependency that provides the SmartContextEngine."""
+    from barsa.context.engine import SmartContextEngine
+
+    yield SmartContextEngine(storage=storage, vc=vc, graph_retrieval=graph_retrieval)
