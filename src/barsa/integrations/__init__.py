@@ -1,23 +1,37 @@
-"""Integrations module for AI clients and MCP server."""
+"""Integrations module for AI clients, MCP server, and cross-agent collaboration (Phase 12)."""
 
-from abc import abstractmethod
-from typing import Any, Protocol, runtime_checkable
+from barsa.integrations.adapter import (
+    AIClientAdapter,
+    DirectApiClientAdapter,
+    MCPClientAdapter,
+)
+from barsa.integrations.evaluation import (
+    ContextContinuityEvaluator,
+    TokenBenchmarkEvaluator,
+)
+from barsa.integrations.models import (
+    AIProvider,
+    ClientHandoffContext,
+    ClientSessionConfig,
+    ContinuityEvaluationRubric,
+    TaskContinuationResult,
+    TokenBenchmarkResult,
+    TransportType,
+)
+from barsa.integrations.session import AgentSession
 
-
-@runtime_checkable
-class AIIntegrationAdapter(Protocol):
-    """Protocol for AI assistant integrations (ChatGPT, Claude, Gemini, coding agents).
-
-    Full implementation scheduled for Phase 8 (MCP Server & Integrations).
-    """
-
-    @property
-    @abstractmethod
-    def client_name(self) -> str:
-        """Name of the integrated AI client."""
-        ...
-
-    @abstractmethod
-    async def export_context(self, project_id: str) -> dict[str, Any]:
-        """Format and export memory context for the target AI client."""
-        ...
+__all__ = [
+    "AIClientAdapter",
+    "AIProvider",
+    "AgentSession",
+    "ClientHandoffContext",
+    "ClientSessionConfig",
+    "ContextContinuityEvaluator",
+    "ContinuityEvaluationRubric",
+    "DirectApiClientAdapter",
+    "MCPClientAdapter",
+    "TaskContinuationResult",
+    "TokenBenchmarkEvaluator",
+    "TokenBenchmarkResult",
+    "TransportType",
+]

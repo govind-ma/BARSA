@@ -85,7 +85,7 @@ SECRET_PATTERNS: dict[str, re.Pattern[str]] = {
         r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY(?: BLOCK)?-----[\s\S]*?-----END (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY(?: BLOCK)?-----"
     ),
     "aws_access_key": re.compile(r"\b(AKIA[0-9A-Z]{16})\b"),
-    "aws_secret_key": re.compile(r"\b[0-9a-zA-Z/+]{40}\b"),
+    "aws_secret_key": re.compile(r"(?<![a-zA-Z0-9/+=])[0-9a-zA-Z/+]{40}(?![a-zA-Z0-9/+=])"),
     "github_token": re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{36,255}\b"),
     "openai_api_key": re.compile(r"\bsk-[A-Za-z0-9_-]{32,}\b"),
     "slack_token": re.compile(r"\bxox[baprs]-[0-9a-zA-Z]{10,48}\b"),
