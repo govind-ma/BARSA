@@ -10,7 +10,7 @@ from barsa.bms.records import ProjectStatus
 
 class WorkspaceCreateRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=256)
-    owner_id: str = Field(..., min_length=1, max_length=128)
+    owner_id: str = Field(default="u-default", min_length=1, max_length=128)
     id: str | None = Field(default=None, max_length=128)
     description: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
