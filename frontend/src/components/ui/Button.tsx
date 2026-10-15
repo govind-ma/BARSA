@@ -10,13 +10,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading = false, disabled, children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-md';
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-lg active:scale-[0.98]';
 
     const variants = {
-      primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
+      primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow',
       secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-      outline: 'border border-border bg-transparent hover:bg-accent hover:text-accent-foreground',
-      ghost: 'hover:bg-accent hover:text-accent-foreground',
+      outline: 'border border-border/80 bg-card/60 hover:bg-accent/80 hover:text-accent-foreground text-foreground',
+      ghost: 'hover:bg-accent/70 hover:text-accent-foreground text-muted-foreground hover:text-foreground',
       destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm',
     };
 

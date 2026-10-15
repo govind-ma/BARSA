@@ -19,7 +19,6 @@ import {
   ArrowDownLeft,
   Trash2,
   FolderGit2,
-  AlertTriangle,
   Plus,
 } from 'lucide-react';
 import type { RemoteResponse, SyncStatusReport } from '@/types';
@@ -370,12 +369,8 @@ export function StoragePage() {
             title="No Remotes Configured"
             description="Add a Local Filesystem directory or S3 bucket to synchronize your project memory across devices."
             icon={<Cloud className="h-8 w-8 text-muted-foreground" />}
-            action={
-              <Button size="sm" onClick={() => setIsAddRemoteOpen(true)}>
-                <Plus className="h-4 w-4 mr-1.5" />
-                Configure Remote Storage
-              </Button>
-            }
+            actionLabel="Configure Remote Storage"
+            onAction={() => setIsAddRemoteOpen(true)}
           />
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -496,13 +491,15 @@ export function StoragePage() {
         description="Add a destination storage repository for content-addressed cloud synchronization."
       >
         <form onSubmit={handleCreateRemote} className="space-y-4">
-          <Input
-            label="Remote Name"
-            placeholder="e.g., origin, s3-backup, local-share"
-            value={remoteName}
-            onChange={(e) => setRemoteName(e.target.value)}
-            required
-          />
+          <div>
+            <label className="block text-xs font-medium mb-1">Remote Name</label>
+            <Input
+              placeholder="e.g., origin, s3-backup, local-share"
+              value={remoteName}
+              onChange={(e) => setRemoteName(e.target.value)}
+              required
+            />
+          </div>
 
           <div>
             <label className="block text-xs font-medium mb-1">Storage Provider Type</label>
@@ -517,48 +514,60 @@ export function StoragePage() {
           </div>
 
           {providerType === 'local' ? (
-            <Input
-              label="Local Directory Path"
-              placeholder="e.g., C:/Users/name/backup_repo or /mnt/shared_repo"
-              value={localPath}
-              onChange={(e) => setLocalPath(e.target.value)}
-              required
-            />
-          ) : (
-            <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-medium mb-1">Local Directory Path</label>
               <Input
-                label="S3 Bucket Name"
-                placeholder="e.g., barsa-user-memory"
-                value={s3Bucket}
-                onChange={(e) => setS3Bucket(e.target.value)}
+                placeholder="e.g., C:/Users/name/backup_repo or /mnt/shared_repo"
+                value={localPath}
+                onChange={(e) => setLocalPath(e.target.value)}
                 required
               />
-              <Input
-                label="Endpoint URL (Optional for MinIO / R2)"
-                placeholder="e.g., http://localhost:9000"
-                value={s3Endpoint}
-                onChange={(e) => setS3Endpoint(e.target.value)}
-              />
-              <Input
-                label="Region"
-                placeholder="us-east-1"
-                value={s3Region}
-                onChange={(e) => setS3Region(e.target.value)}
-              />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium mb-1">S3 Bucket Name</label>
+                <Input
+                  placeholder="e.g., barsa-user-memory"
+                  value={s3Bucket}
+                  onChange={(e) => setS3Bucket(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Endpoint URL (Optional for MinIO / R2)</label>
+                <Input
+                  placeholder="e.g., http://localhost:9000"
+                  value={s3Endpoint}
+                  onChange={(e) => setS3Endpoint(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Region</label>
+                <Input
+                  placeholder="us-east-1"
+                  value={s3Region}
+                  onChange={(e) => setS3Region(e.target.value)}
+                />
+              </div>
               <div className="grid grid-cols-2 gap-2">
-                <Input
-                  label="Access Key ID"
-                  placeholder="AKIA..."
-                  value={s3AccessKey}
-                  onChange={(e) => setS3AccessKey(e.target.value)}
-                />
-                <Input
-                  label="Secret Access Key"
-                  placeholder="••••••••••••••••"
-                  type="password"
-                  value={s3SecretKey}
-                  onChange={(e) => setS3SecretKey(e.target.value)}
-                />
+                <div>
+                  <label className="block text-xs font-medium mb-1">Access Key ID</label>
+                  <Input
+                    placeholder="AKIA..."
+                    value={s3AccessKey}
+                    onChange={(e) => setS3AccessKey(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Secret Access Key</label>
+                  <Input
+                    placeholder="••••••••••••••••"
+                    type="password"
+                    value={s3SecretKey}
+                    onChange={(e) => setS3SecretKey(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
           )}

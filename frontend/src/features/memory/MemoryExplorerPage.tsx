@@ -149,44 +149,50 @@ export function MemoryExplorerPage() {
         </Button>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-card p-3 rounded-lg border border-border">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search records by title, summary, or ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-9 text-xs"
-          />
+      {/* Filter and Search Bar with Category Pills */}
+      <div className="space-y-3 bg-card p-4 rounded-xl border border-border/80 shadow-xs">
+        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search records by title, summary, or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-9 text-xs rounded-lg"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="h-9 rounded-lg border border-input bg-card px-3 text-xs focus:outline-none"
+            >
+              <option value="all">All Statuses</option>
+              <option value="verified">Verified</option>
+              <option value="unverified">Unverified</option>
+              <option value="inconclusive">Inconclusive</option>
+              <option value="refuted">Refuted</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="h-9 rounded-md border border-input bg-card px-3 text-xs focus:outline-none"
-          >
-            <option value="all">All Types</option>
-            {recordTypes.map((t) => (
-              <option key={t} value={t} className="capitalize">
-                {t}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="h-9 rounded-md border border-input bg-card px-3 text-xs focus:outline-none"
-          >
-            <option value="all">All Statuses</option>
-            <option value="verified">Verified</option>
-            <option value="unverified">Unverified</option>
-            <option value="inconclusive">Inconclusive</option>
-            <option value="refuted">Refuted</option>
-          </select>
+        {/* Quick Category Pills */}
+        <div className="flex items-center space-x-1.5 overflow-x-auto pt-1 pb-0.5">
+          {['all', ...recordTypes].map((type) => (
+            <button
+              key={type}
+              onClick={() => setSelectedType(type)}
+              className={`px-3 py-1 rounded-full text-[11px] font-medium capitalize transition-all whitespace-nowrap ${
+                selectedType === type
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/60'
+              }`}
+            >
+              {type === 'all' ? 'All Types' : type}
+            </button>
+          ))}
         </div>
       </div>
 

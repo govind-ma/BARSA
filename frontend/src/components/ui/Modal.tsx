@@ -47,7 +47,7 @@ export function Modal({ isOpen, onClose, title, description, children, className
       <div
         ref={modalRef}
         className={cn(
-          'relative z-50 w-full max-w-lg rounded-lg border border-border bg-card p-6 shadow-xl text-card-foreground',
+          'relative z-50 w-full max-w-lg rounded-2xl border border-border/80 bg-card/95 backdrop-blur-md p-6 shadow-2xl text-card-foreground transition-all',
           className
         )}
       >
