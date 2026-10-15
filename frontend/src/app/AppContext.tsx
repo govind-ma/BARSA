@@ -54,7 +54,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setWorkspaces(list);
       setIsBackendOnline(true);
       if (list.length > 0 && !activeWorkspaceId) {
-        setActiveWorkspaceId(list[0].workspace_id);
+        const firstId = list[0].workspace_id || (list[0] as any).id;
+        if (firstId) setActiveWorkspaceId(firstId);
       }
     } catch {
       setIsBackendOnline(false);
@@ -62,15 +63,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const refreshProjects = async () => {
-    if (!activeWorkspaceId) {
+    if (!activeWorkspaceId || activeWorkspaceId === 'undefined') {
       setProjects([]);
       return;
     }
     try {
       const list = await api.listProjects(activeWorkspaceId);
       setProjects(list);
-      if (list.length > 0 && (!activeProjectId || !list.some((p) => p.project_id === activeProjectId))) {
-        setActiveProjectId(list[0].project_id);
+      if (list.length > 0 && (!activeProjectId || !list.some((p) => (p.project_id || (p as any).id) === activeProjectId))) {
+        const firstProjId = list[0].project_id || (list[0] as any).id;
+        if (firstProjId) setActiveProjectId(firstProjId);
       } else if (list.length === 0) {
         setActiveProjectId(null);
       }
@@ -107,8 +109,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     refreshProjects();
   }, [activeWorkspaceId]);
 
-  const activeWorkspace = workspaces.find((w) => w.workspace_id === activeWorkspaceId) || null;
-  const activeProject = projects.find((p) => p.project_id === activeProjectId) || null;
+  const activeWorkspace = workspaces.find((w) => (w.workspace_id || (w as any).id) === activeWorkspaceId) || null;
+  const activeProject = projects.find((p) => (p.project_id || (p as any).id) === activeProjectId) || null;
 
   return (
     <AppContext.Provider

@@ -7,22 +7,24 @@
 // ==========================================
 
 export interface Workspace {
+  id?: string;
   workspace_id: string;
   name: string;
   description?: string | null;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   metadata?: Record<string, unknown>;
 }
 
 export interface Project {
+  id?: string;
   project_id: string;
   workspace_id: string;
   name: string;
   description?: string | null;
   status: 'active' | 'archived' | 'completed' | 'paused';
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   metadata?: Record<string, unknown>;
 }
 
