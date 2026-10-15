@@ -23,12 +23,34 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(null);
-  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const [activeWorkspaceId, setActiveWorkspaceIdState] = useState<string | null>(() => {
+    return localStorage.getItem('barsa_active_workspace') || null;
+  });
+  const [activeProjectId, setActiveProjectIdState] = useState<string | null>(() => {
+    return localStorage.getItem('barsa_active_project') || null;
+  });
   const [principal, setPrincipal] = useState<AuthenticatedPrincipal | null>(null);
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [isBackendOnline, setIsBackendOnline] = useState<boolean>(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  const setActiveWorkspaceId = (id: string | null) => {
+    setActiveWorkspaceIdState(id);
+    if (id) {
+      localStorage.setItem('barsa_active_workspace', id);
+    } else {
+      localStorage.removeItem('barsa_active_workspace');
+    }
+  };
+
+  const setActiveProjectId = (id: string | null) => {
+    setActiveProjectIdState(id);
+    if (id) {
+      localStorage.setItem('barsa_active_project', id);
+    } else {
+      localStorage.removeItem('barsa_active_project');
+    }
+  };
 
   // Load theme preference
   useEffect(() => {
@@ -53,9 +75,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const list = await api.listWorkspaces();
       setWorkspaces(list);
       setIsBackendOnline(true);
-      if (list.length > 0 && !activeWorkspaceId) {
-        const firstId = list[0].workspace_id || (list[0] as any).id;
-        if (firstId) setActiveWorkspaceId(firstId);
+      if (list.length > 0) {
+        const storedId = localStorage.getItem('barsa_active_workspace');
+        if (storedId && list.some((w) => (w.workspace_id || (w as any).id) === storedId)) {
+          setActiveWorkspaceIdState(storedId);
+        } else if (!activeWorkspaceId) {
+          const firstId = list[0].workspace_id || (list[0] as any).id;
+          if (firstId) setActiveWorkspaceId(firstId);
+        }
       }
     } catch {
       setIsBackendOnline(false);
@@ -70,9 +97,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       const list = await api.listProjects(activeWorkspaceId);
       setProjects(list);
-      if (list.length > 0 && (!activeProjectId || !list.some((p) => (p.project_id || (p as any).id) === activeProjectId))) {
-        const firstProjId = list[0].project_id || (list[0] as any).id;
-        if (firstProjId) setActiveProjectId(firstProjId);
+      if (list.length > 0) {
+        const storedProjId = localStorage.getItem('barsa_active_project');
+        if (storedProjId && list.some((p) => (p.project_id || (p as any).id) === storedProjId)) {
+          setActiveProjectIdState(storedProjId);
+        } else if (!activeProjectId || !list.some((p) => (p.project_id || (p as any).id) === activeProjectId)) {
+          const firstProjId = list[0].project_id || (list[0] as any).id;
+          if (firstProjId) setActiveProjectId(firstProjId);
+        }
       } else if (list.length === 0) {
         setActiveProjectId(null);
       }

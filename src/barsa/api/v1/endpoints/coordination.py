@@ -16,6 +16,7 @@ from barsa.coordination.models import (
     CoordinationEvent,
     CoordinationIssue,
     CoordinationTask,
+    CoordinationTaskStatus,
     HelpRequest,
     MessageType,
     TaskClaimRequest,
@@ -151,6 +152,19 @@ def create_task(
     engine: CoordinatorEngine = Depends(get_coordinator_engine),
 ) -> CoordinationTask:
     return engine.create_task(task)
+
+
+@router.get(
+    "/tasks",
+    response_model=list[CoordinationTask],
+    summary="List coordination tasks for a project",
+)
+def list_tasks(
+    project_id: str | None = Query(default=None, description="Project ID"),
+    status: CoordinationTaskStatus | None = Query(default=None, description="Task status filter"),
+    engine: CoordinatorEngine = Depends(get_coordinator_engine),
+) -> list[CoordinationTask]:
+    return engine.list_tasks(project_id=project_id, status=status)
 
 
 @router.get(

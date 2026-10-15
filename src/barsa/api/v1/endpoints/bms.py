@@ -64,6 +64,11 @@ async def get_bms_schema(record_type: str) -> dict[str, Any]:
     summary="Statelessly validate a BMS record",
     description="Validates a raw JSON BMS record against BMS v0.1 rules without persistence.",
 )
+@router.post(
+    "/validate",
+    response_model=BMSValidationResponse,
+    include_in_schema=False,
+)
 async def validate_bms_record_endpoint(request: Request) -> JSONResponse:
     """Validate a single record payload."""
     try:
@@ -90,7 +95,10 @@ async def validate_bms_record_endpoint(request: Request) -> JSONResponse:
             record_id=body.get("id"),
             errors=errors,
         )
-        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=res.model_dump())
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={**res.model_dump(), "is_valid": False},
+        )
 
     res = BMSValidationResponse(
         valid=True,
@@ -99,7 +107,10 @@ async def validate_bms_record_endpoint(request: Request) -> JSONResponse:
         errors=[],
         details={"schema_version": getattr(record, "schema_version", BMS_VERSION)},
     )
-    return JSONResponse(status_code=status.HTTP_200_OK, content=res.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={**res.model_dump(), "is_valid": True},
+    )
 
 
 @router.post(

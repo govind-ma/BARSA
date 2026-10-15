@@ -263,9 +263,8 @@ export function ProjectDetailPage() {
                     <div className="font-mono text-primary font-semibold">
                       {truncate(latestCommit.commit_hash, 12)}
                     </div>
-                    <p className="text-foreground font-medium">{latestCommit.message}</p>
                     <p className="text-muted-foreground">
-                      By {latestCommit.author.name} • {formatDate(latestCommit.timestamp)}
+                      By {latestCommit.author?.name || (latestCommit as any).author_id || 'System'} • {formatDate(latestCommit.timestamp || (latestCommit as any).created_at)}
                     </p>
                   </div>
                 ) : (
@@ -488,12 +487,14 @@ export function ProjectDetailPage() {
                       <div className="font-mono text-primary font-semibold">{c.commit_hash}</div>
                       <p className="font-medium text-foreground mt-0.5">{c.message}</p>
                       <span className="text-[11px] text-muted-foreground">
-                        {c.author.name} • {formatDate(c.timestamp)}
+                        {c.author?.name || (c as any).author_id || 'System'} • {formatDate(c.timestamp || (c as any).created_at)}
                       </span>
                     </div>
-                    <Badge variant="outline" className="text-[10px] font-mono">
-                      {c.parent_hashes.length} parents
-                    </Badge>
+                    {c.parent_hashes && (
+                      <Badge variant="outline" className="text-[10px] font-mono">
+                        {c.parent_hashes.length} parents
+                      </Badge>
+                    )}
                   </div>
                 ))}
               </div>

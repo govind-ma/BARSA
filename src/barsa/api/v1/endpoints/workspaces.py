@@ -1,11 +1,12 @@
-"""Workspaces and Projects API endpoints (v1)."""
+from typing import Any
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, Request, status
 
 from barsa.api.deps import get_storage
 from barsa.bms.base import generate_uuid_str
 from barsa.bms.records import Project, Workspace
-from barsa.core.exceptions import ResourceNotFoundError
+from barsa.bms.serialization import validate_package
+from barsa.core.exceptions import ResourceNotFoundError, ValidationError
 from barsa.models.storage_api import (
     ProjectCreateRequest,
     ProjectUpdateRequest,
@@ -208,3 +209,41 @@ def delete_project(
     deleted = storage.delete_project(project_id)
     if not deleted:
         raise ResourceNotFoundError(f"Project '{project_id}' not found.", "Project", project_id)
+
+
+@router.post(
+    "/workspaces/{workspace_id}/import",
+    response_model=dict[str, Any],
+    status_code=status.HTTP_201_CREATED,
+    summary="Import a Barsa Memory Package into a workspace",
+)
+async def import_workspace_package(
+    workspace_id: str,
+    request: Request,
+    storage: StorageProvider = Depends(get_storage),
+) -> dict[str, Any]:
+    try:
+        body = await request.json()
+    except Exception as err:
+        raise ValidationError(f"Invalid JSON payload: {err}") from err
+
+    is_valid, pkg, errors = validate_package(body)
+    if not is_valid or not pkg:
+        raise ValidationError(f"Package validation failed: {'; '.join(errors)}", details={"errors": errors})
+
+    storage.save_package(pkg)
+    return {
+        "status": "imported",
+        "success": True,
+        "workspace_id": pkg.workspace.id,
+        "project_id": pkg.project.id,
+        "record_counts": {
+            "knowledge": len(pkg.records.knowledge),
+            "decisions": len(pkg.records.decisions),
+            "tasks": len(pkg.records.tasks),
+            "agents": len(pkg.records.agents),
+            "artifacts": len(pkg.records.artifacts),
+            "checkpoints": len(pkg.records.checkpoints),
+            "relationships": len(pkg.relationships),
+        },
+    }

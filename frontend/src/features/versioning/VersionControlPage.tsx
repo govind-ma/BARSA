@@ -218,7 +218,7 @@ export function VersionControlPage() {
                     <span className="text-[10px] text-muted-foreground">{formatDate(c.timestamp)}</span>
                   </div>
                   <h4 className="text-sm font-medium mt-1 text-foreground line-clamp-2">{c.message}</h4>
-                  <div className="text-[11px] text-muted-foreground mt-2">Author: {c.author.name}</div>
+                  <div className="text-[11px] text-muted-foreground mt-2">Author: {c.author?.name || (c as any).author_id || 'System'}</div>
                 </div>
               );
             })}
@@ -235,11 +235,11 @@ export function VersionControlPage() {
                       </span>
                       <CardTitle className="text-lg font-bold mt-1">{selectedCommit.message}</CardTitle>
                       <CardDescription className="text-xs mt-1">
-                        Author: {selectedCommit.author.name} ({selectedCommit.author.email || 'local'}) •{' '}
-                        {formatDate(selectedCommit.timestamp)}
+                        Author: {selectedCommit.author?.name || (selectedCommit as any).author_id || 'System'} ({selectedCommit.author?.email || 'local'}) •{' '}
+                        {formatDate(selectedCommit.timestamp || (selectedCommit as any).created_at)}
                       </CardDescription>
                     </div>
-                    {selectedCommit.parent_hashes.length > 0 && (
+                    {selectedCommit.parent_hashes && selectedCommit.parent_hashes.length > 0 && (
                       <Badge variant="outline" className="font-mono text-[10px]">
                         Parent: {truncate(selectedCommit.parent_hashes[0], 8)}
                       </Badge>

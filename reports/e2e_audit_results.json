@@ -1,0 +1,356 @@
+{
+  "routesDiscovered": 12,
+  "routesTested": 12,
+  "elementsTested": 20,
+  "elementsPassed": 20,
+  "elementsFailed": 0,
+  "consoleErrors": [
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/version-control",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `VersionControlPage`.  \n    at div\n    at VersionControlPage (http://localhost:5173/src/features/versioning/VersionControlPage.tsx?t=1792094633713:39:29)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/version-control",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `VersionControlPage`.  \n    at div\n    at VersionControlPage (http://localhost:5173/src/features/versioning/VersionControlPage.tsx?t=1792094633713:39:29)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/graph",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/security",
+      "text": "Failed to load resource: the server responded with a status of 422 (Unprocessable Content)"
+    },
+    {
+      "url": "http://localhost:5173/projects/af599f84-e544-4ca3-8432-03bd62d0fc84",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:5173/",
+      "text": "Warning: Each child in a list should have a unique \"key\" prop.%s%s See https://reactjs.org/link/warning-keys for more information.%s \n\nCheck the render method of `DashboardHome`.  \n    at div\n    at DashboardHome (http://localhost:5173/src/features/dashboard/DashboardHome.tsx?t=1792094633713:47:102)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4518:26)\n    at main\n    at div\n    at div\n    at DashboardLayout (http://localhost:5173/src/components/layout/DashboardLayout.tsx?t=1792094633713:25:47)\n    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4112:5)\n    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4582:5)\n    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:4525:15)\n    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=461582d5:5263:5)\n    at AppProvider (http://localhost:5173/src/app/AppContext.tsx?t=1792094633713:21:31)\n    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/@tanstack_react-query.js?v=461582d5:26:30)\n    at App"
+    }
+  ],
+  "networkFailures": [],
+  "pagesResults": {
+    "/": {
+      "status": "PASS",
+      "screenshot": "route_overview.png"
+    },
+    "/workspaces": {
+      "status": "PASS",
+      "screenshot": "route_workspaces.png"
+    },
+    "/projects": {
+      "status": "PASS",
+      "screenshot": "route_projects.png"
+    },
+    "/memory": {
+      "status": "PASS",
+      "screenshot": "route_memory_explorer.png"
+    },
+    "/version-control": {
+      "status": "PASS",
+      "screenshot": "route_version_control.png"
+    },
+    "/graph": {
+      "status": "PASS",
+      "screenshot": "route_knowledge_graph.png"
+    },
+    "/agents": {
+      "status": "PASS",
+      "screenshot": "route_agents.png"
+    },
+    "/tasks": {
+      "status": "PASS",
+      "screenshot": "route_tasks___issues.png"
+    },
+    "/security": {
+      "status": "PASS",
+      "screenshot": "route_security.png"
+    },
+    "/storage": {
+      "status": "PASS",
+      "screenshot": "route_storage.png"
+    },
+    "/settings": {
+      "status": "PASS",
+      "screenshot": "route_settings.png"
+    },
+    "/invalid-route-test-404": {
+      "status": "PASS",
+      "screenshot": "route_404_page.png"
+    }
+  },
+  "journeySteps": [
+    {
+      "step": 1,
+      "name": "Open Barsa home page",
+      "status": "PASS"
+    },
+    {
+      "step": 2,
+      "name": "Create Workspace",
+      "status": "PASS"
+    },
+    {
+      "step": 3,
+      "name": "Create Project",
+      "status": "PASS"
+    },
+    {
+      "step": 4,
+      "name": "Add BMS Memory Records",
+      "status": "PASS"
+    },
+    {
+      "step": 5,
+      "name": "Create Checkpoint Record",
+      "status": "PASS"
+    },
+    {
+      "step": 6,
+      "name": "Branch Creation",
+      "status": "PASS"
+    },
+    {
+      "step": 7,
+      "name": "Inspect Version History",
+      "status": "PASS"
+    },
+    {
+      "step": 8,
+      "name": "Knowledge Graph Interaction",
+      "status": "PASS"
+    },
+    {
+      "step": 9,
+      "name": "Register Agent",
+      "status": "PASS"
+    },
+    {
+      "step": 10,
+      "name": "Create Task",
+      "status": "PASS"
+    },
+    {
+      "step": 11,
+      "name": "Claim Task",
+      "status": "PASS"
+    },
+    {
+      "step": 12,
+      "name": "Verify Task Assignment",
+      "status": "PASS"
+    },
+    {
+      "step": 13,
+      "name": "Issue Agent Credential & Audit Trail",
+      "status": "PASS"
+    },
+    {
+      "step": 14,
+      "name": "Generate Resume Context Package",
+      "status": "PASS"
+    },
+    {
+      "step": 15,
+      "name": "Export BMS Memory Package",
+      "status": "PASS"
+    },
+    {
+      "step": 16,
+      "name": "Create Clone Project",
+      "status": "PASS"
+    },
+    {
+      "step": 17,
+      "name": "Import BMS Memory Package",
+      "status": "PASS"
+    },
+    {
+      "step": 18,
+      "name": "Verify Imported State",
+      "status": "PASS"
+    },
+    {
+      "step": 19,
+      "name": "Return to Overview",
+      "status": "PASS"
+    },
+    {
+      "step": 20,
+      "name": "Confirm Persistence after Reload",
+      "status": "PASS"
+    }
+  ],
+  "viewportsTested": [
+    {
+      "name": "Mobile (375px)",
+      "width": 375,
+      "height": 667,
+      "status": "PASS",
+      "overflow": false,
+      "shot": "viewport_375x667.png"
+    },
+    {
+      "name": "Tablet (768px)",
+      "width": 768,
+      "height": 1024,
+      "status": "PASS",
+      "overflow": false,
+      "shot": "viewport_768x1024.png"
+    },
+    {
+      "name": "Laptop (1024px)",
+      "width": 1024,
+      "height": 768,
+      "status": "PASS",
+      "overflow": false,
+      "shot": "viewport_1024x768.png"
+    },
+    {
+      "name": "Desktop (1440px)",
+      "width": 1440,
+      "height": 900,
+      "status": "PASS",
+      "overflow": false,
+      "shot": "viewport_1440x900.png"
+    },
+    {
+      "name": "Large Desktop (1920px)",
+      "width": 1920,
+      "height": 1080,
+      "status": "PASS",
+      "overflow": false,
+      "shot": "viewport_1920x1080.png"
+    }
+  ]
+}

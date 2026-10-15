@@ -378,10 +378,10 @@ export function DashboardHome() {
                       </div>
                       <p className="text-xs text-foreground/90 mt-0.5 font-medium">{truncate(c.message, 45)}</p>
                       <span className="text-[11px] text-muted-foreground">
-                        by {c.author.name} • {formatDate(c.timestamp)}
+                        by {c.author?.name || (c as any).author_id || 'System'} • {formatDate(c.timestamp || (c as any).created_at)}
                       </span>
                     </div>
-                    {c.parent_hashes.length > 1 && (
+                    {c.parent_hashes && c.parent_hashes.length > 1 && (
                       <Badge variant="outline" className="text-[10px]">
                         Merge
                       </Badge>

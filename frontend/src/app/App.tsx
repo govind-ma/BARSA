@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProvider } from './AppContext';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -14,6 +14,7 @@ import { TasksPage } from '@/features/coordination/TasksPage';
 import { SecurityPage } from '@/features/security/SecurityPage';
 import { StoragePage } from '@/features/storage/StoragePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
+import { NotFoundPage } from '@/features/notfound/NotFoundPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +45,7 @@ export function App() {
               <Route path="security" element={<SecurityPage />} />
               <Route path="storage" element={<StoragePage />} />
               <Route path="settings" element={<SettingsPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

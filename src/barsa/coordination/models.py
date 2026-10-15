@@ -137,7 +137,7 @@ class AgentProfile(BaseModel):
 class CoordinationTask(BaseModel):
     """Persistent task managed by the coordination engine."""
 
-    task_id: str = Field(..., description="Unique task identifier")
+    task_id: str = Field(default_factory=lambda: f"task_{uuid4().hex[:12]}", description="Unique task identifier")
     project_id: str = Field(..., description="Project this task belongs to")
     title: str = Field(..., description="Short summary title of the task")
     description: str | None = Field(default=None, description="Detailed description and specifications")

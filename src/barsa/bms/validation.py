@@ -29,9 +29,10 @@ def validate_bms_record_data(data: dict[str, Any]) -> AnyBMSRecord:
         raise BMSValidationError(msg)
 
     schema_version = data.get("schema_version", BMS_VERSION)
-    if schema_version != BMS_VERSION:
+    if schema_version not in (BMS_VERSION, "0.1.0"):
         msg = f"Unsupported schema version '{schema_version}'. Supported version is '{BMS_VERSION}'"
         raise BMSValidationError(msg)
+    data["schema_version"] = BMS_VERSION
 
     record_type = data.get("record_type")
     if not record_type or not isinstance(record_type, str):

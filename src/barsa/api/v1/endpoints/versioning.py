@@ -91,6 +91,11 @@ def get_commit(
     response_model=list[Commit],
     summary="List commit history for project or specific branch",
 )
+@router.get(
+    "/commits",
+    response_model=list[Commit],
+    include_in_schema=False,
+)
 def get_history(
     project_id: str,
     branch: str | None = Query(default=None),

@@ -83,28 +83,79 @@ export function MemoryExplorerPage() {
     setIsSubmitting(true);
     setValidationError(null);
 
-    const candidateRecord = {
-      record_id: `rec_${Date.now()}`,
-      schema_version: '0.1.0',
-      record_type: newType,
-      title: newTitle.trim(),
-      summary: newSummary.trim(),
-      content: newContent.trim(),
-      author: 'dashboard-user',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      project_id: activeProject.project_id,
-      verification_status: newStatus,
-      tags: ['dashboard'],
-      attributes: {},
-      revision: 1,
-    };
+    const recId = `rec_${Date.now()}`;
+    const nowIso = new Date().toISOString();
+    let candidateRecord: Record<string, unknown>;
+
+    if (newType === 'decision') {
+      candidateRecord = {
+        id: recId,
+        schema_version: '0.1',
+        record_type: 'decision',
+        project_id: activeProject.project_id,
+        title: newTitle.trim(),
+        decision: newSummary.trim() || newTitle.trim(),
+        rationale: newContent.trim() || 'Documented via web dashboard',
+        status: newStatus === 'verified' ? 'approved' : 'proposed',
+        created_by: 'dashboard-user',
+        created_at: nowIso,
+        alternatives: [],
+        evidence_refs: [],
+      };
+    } else if (newType === 'checkpoint') {
+      candidateRecord = {
+        id: recId,
+        schema_version: '0.1',
+        record_type: 'checkpoint',
+        project_id: activeProject.project_id,
+        task_id: `task_${Date.now()}`,
+        status: 'active',
+        completed_actions: [newTitle.trim()],
+        pending_actions: [],
+        next_action: newSummary.trim() || 'Continue next step',
+        blockers: [],
+        decision_refs: [],
+        artifact_refs: [],
+        base_revision: 'rev_initial',
+        created_by: 'dashboard-user',
+        created_at: nowIso,
+      };
+    } else if (newType === 'task') {
+      candidateRecord = {
+        id: recId,
+        schema_version: '0.1',
+        record_type: 'task',
+        project_id: activeProject.project_id,
+        title: newTitle.trim(),
+        description: newContent.trim() || newSummary.trim() || '',
+        status: 'todo',
+        priority: 'medium',
+        dependencies: [],
+        assigned_agent_id: null,
+        created_at: nowIso,
+        updated_at: nowIso,
+      };
+    } else {
+      // knowledge
+      candidateRecord = {
+        id: recId,
+        schema_version: '0.1',
+        record_type: 'knowledge',
+        project_id: activeProject.project_id,
+        content: newContent.trim() || newSummary.trim() || newTitle.trim(),
+        knowledge_type: 'fact',
+        verification_status: ['verified', 'unverified', 'disputed', 'superseded'].includes(newStatus) ? newStatus : 'unverified',
+        created_by: 'dashboard-user',
+        created_at: nowIso,
+      };
+    }
 
     try {
       // 1. Validate against BMS standard schema
       const val = await api.validateRecord(candidateRecord);
-      if (!val.is_valid) {
-        setValidationError(`BMS Validation Failed: ${val.errors.join(', ')}`);
+      const isValid = Boolean(val.is_valid ?? (val as any).valid);
+      if (!isValid) {
+        setValidationError(`BMS Validation Failed: ${(val.errors || []).join(', ')}`);
         setIsSubmitting(false);
         return;
       }

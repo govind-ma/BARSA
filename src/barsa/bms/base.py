@@ -43,10 +43,10 @@ class BMSBaseModel(BaseModel):
     @classmethod
     def validate_schema_version(cls, v: str) -> str:
         """Ensure schema version matches supported BMS versions."""
-        if v != BMS_VERSION:
+        if v not in (BMS_VERSION, "0.1.0"):
             msg = f"Unsupported BMS schema version '{v}'. Supported version is '{BMS_VERSION}'"
             raise ValueError(msg)
-        return v
+        return BMS_VERSION
 
     @classmethod
     def ensure_utc(cls, dt: datetime) -> datetime:

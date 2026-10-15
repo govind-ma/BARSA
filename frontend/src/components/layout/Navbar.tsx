@@ -37,13 +37,13 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
         </button>
 
         {/* Workspace Switcher */}
-        <div className="flex items-center space-x-1.5 bg-muted/40 hover:bg-muted/60 transition-colors rounded-lg px-2.5 py-1.5 border border-border/80">
-          <FolderKanban className="h-3.5 w-3.5 text-muted-foreground" />
+        <div className="flex items-center space-x-1.5 bg-muted/40 hover:bg-muted/60 transition-colors rounded-lg px-2 py-1.5 border border-border/80">
+          <FolderKanban className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <select
             value={activeWorkspace?.workspace_id || ''}
             onChange={(e) => setActiveWorkspaceId(e.target.value || null)}
             aria-label="Select active workspace"
-            className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[160px] truncate pr-1"
+            className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer max-w-[80px] sm:max-w-[150px] truncate pr-1"
           >
             {workspaces.length === 0 ? (
               <option value="">No Workspaces</option>
@@ -58,13 +58,13 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
 
         {/* Project Switcher */}
-        <div className="flex items-center space-x-1.5 bg-muted/40 hover:bg-muted/60 transition-colors rounded-lg px-2.5 py-1.5 border border-border/80">
-          <FileCode className="h-3.5 w-3.5 text-muted-foreground" />
+        <div className="flex items-center space-x-1.5 bg-muted/40 hover:bg-muted/60 transition-colors rounded-lg px-2 py-1.5 border border-border/80">
+          <FileCode className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <select
             value={activeProject?.project_id || ''}
             onChange={(e) => setActiveProjectId(e.target.value || null)}
             aria-label="Select active project"
-            className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[160px] truncate pr-1"
+            className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer max-w-[80px] sm:max-w-[150px] truncate pr-1"
           >
             {projects.length === 0 ? (
               <option value="">No Projects</option>
@@ -80,11 +80,11 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center space-x-2.5">
+      <div className="flex items-center space-x-2">
         {/* Backend / Graph Status Pill */}
         <div
           title={isBackendOnline ? 'API Engine Connected (127.0.0.1:8000)' : 'Backend Engine Offline'}
-          className="hidden sm:flex items-center space-x-2 text-xs text-muted-foreground bg-muted/30 px-2.5 py-1 rounded-lg border border-border/70"
+          className="hidden lg:flex items-center space-x-2 text-xs text-muted-foreground bg-muted/30 px-2.5 py-1 rounded-lg border border-border/70"
         >
           <span
             className={`h-2 w-2 rounded-full ${
@@ -109,7 +109,7 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
 
         {/* Identity Badge */}
-        <div className="flex items-center space-x-1.5 text-xs border border-border/80 rounded-lg px-2.5 py-1.5 bg-muted/20">
+        <div className="hidden lg:flex items-center space-x-1.5 text-xs border border-border/80 rounded-lg px-2.5 py-1.5 bg-muted/20">
           <UserCircle2 className="h-3.5 w-3.5 text-primary" />
           <span className="font-medium text-[11px] max-w-[110px] truncate" title={principal?.display_name || 'Local User'}>
             {principal?.display_name || 'Local User'}

@@ -225,6 +225,7 @@ export type AgentState = 'active' | 'idle' | 'busy' | 'offline' | 'disabled';
 export interface AgentProfile {
   agent_id: string;
   name: string;
+  display_name?: string;
   provider: string;
   model?: string;
   state: AgentState;

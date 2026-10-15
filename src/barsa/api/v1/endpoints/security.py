@@ -37,6 +37,7 @@ router = APIRouter(prefix="/security", tags=["Security & Identity"])
 
 
 @router.post("/users/register", response_model=UserResponse)
+@router.post("/auth/register", response_model=UserResponse, include_in_schema=False)
 def register_user(
     req: UserCreate,
     sec_service: SecurityService = Depends(get_security_service),
@@ -46,6 +47,7 @@ def register_user(
 
 
 @router.post("/users/login", response_model=TokenResponse)
+@router.post("/auth/login", response_model=TokenResponse, include_in_schema=False)
 def login_user(
     req: UserLogin,
     sec_service: SecurityService = Depends(get_security_service),
@@ -55,6 +57,7 @@ def login_user(
 
 
 @router.get("/me", response_model=AuthenticatedPrincipal)
+@router.get("/auth/me", response_model=AuthenticatedPrincipal, include_in_schema=False)
 def get_current_user_profile(
     principal: AuthenticatedPrincipal = Depends(get_current_principal),
 ) -> AuthenticatedPrincipal:
@@ -167,6 +170,16 @@ def create_agent_credential(
     return sec_service.create_agent_credential(req, creator_principal_id=principal.principal_id)
 
 
+@router.post("/agents/credentials", response_model=AgentCredentialRawResponse, include_in_schema=False)
+def create_agent_credential_direct(
+    req: AgentCredentialCreate,
+    principal: AuthenticatedPrincipal = Depends(get_current_principal),
+    sec_service: SecurityService = Depends(get_security_service),
+) -> AgentCredentialRawResponse:
+    """Generate a new secure API key credential for an agent (body agent_id)."""
+    return sec_service.create_agent_credential(req, creator_principal_id=principal.principal_id)
+
+
 @router.get("/agents/{agent_id}/credentials", response_model=list[AgentCredentialResponse])
 def list_agent_credentials(
     agent_id: str,
@@ -246,6 +259,7 @@ def get_project_permissions(
 
 
 @router.get("/audit-events", response_model=list[AuditEventRecord])
+@router.get("/audit", response_model=list[AuditEventRecord], include_in_schema=False)
 def get_audit_events(
     principal_id: str | None = Query(default=None),
     action: str | None = Query(default=None),

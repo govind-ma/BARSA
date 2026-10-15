@@ -99,7 +99,7 @@ export function AgentsPage() {
                     <div>
                       <CardTitle className="text-base font-semibold flex items-center">
                         <Bot className="h-4 w-4 mr-2 text-primary" />
-                        {agent.name}
+                        {agent.display_name || (agent as any).name || agent.agent_id}
                       </CardTitle>
                       <CardDescription className="text-xs mt-1">
                         Provider: <strong className="text-foreground capitalize">{agent.provider}</strong> •{' '}
