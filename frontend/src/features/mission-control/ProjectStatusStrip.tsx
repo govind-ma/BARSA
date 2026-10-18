@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GitBranch, Network, Bot, HardDrive, Check, Copy } from 'lucide-react';
+import { GitBranch, Network, Bot, Check, Copy, Info, X } from 'lucide-react';
 import { truncate } from '@/lib/utils';
 import { BarsaLogo } from '@/components/ui/BarsaLogo';
 import type { Branch, Commit, GraphOverview, SystemInfo } from '@/types';
@@ -28,6 +28,7 @@ export function ProjectStatusStrip({
   isLoading = false,
 }: ProjectStatusStripProps) {
   const [copiedHash, setCopiedHash] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [displayAgents, setDisplayAgents] = useState(0);
   const [displayCommits, setDisplayCommits] = useState(0);
   const [displayNodes, setDisplayNodes] = useState(0);
@@ -53,6 +54,19 @@ export function ProjectStatusStrip({
 
   const commitHash = latestCommit?.commit_hash || 'head';
   const branchName = activeBranch?.name || 'main';
+
+  // Close details on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDetailsOpen) {
+        setIsDetailsOpen(false);
+      }
+    };
+    if (isDetailsOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDetailsOpen]);
 
   const copyHash = () => {
     navigator.clipboard.writeText(commitHash);
@@ -143,12 +157,55 @@ export function ProjectStatusStrip({
           )}
         </div>
 
-        {/* Storage Engine */}
-        <div className="hidden lg:flex items-center space-x-1.5 pl-2 border-l border-border-subtle">
-          <HardDrive className="h-3 w-3 text-steel-500" />
-          <span className="font-mono text-[10px] uppercase text-text-muted">
-            {systemInfo?.storage_provider || 'SQLite'} (Local)
-          </span>
+        {/* Details Popover for extra engine metadata */}
+        <div className="relative">
+          <button
+            onClick={() => setIsDetailsOpen((prev) => !prev)}
+            title="View system & storage details"
+            className="flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono text-text-muted hover:text-text-primary hover:bg-ice-100 dark:hover:bg-bg-elevated transition-colors border border-border-subtle"
+          >
+            <Info className="h-3 w-3 text-steel-500" />
+            <span>Details</span>
+          </button>
+
+          {isDetailsOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-[55] bg-transparent"
+                onClick={() => setIsDetailsOpen(false)}
+              />
+              <div className="absolute right-0 top-full mt-1.5 w-60 p-3 rounded-xl solid-floating-surface shadow-xl z-popover space-y-2 text-xs animate-page-enter">
+              <div className="flex items-center justify-between border-b border-border-subtle pb-1.5">
+                <span className="text-[10px] font-mono uppercase font-semibold text-text-muted">
+                  System Architecture
+                </span>
+                <button
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="p-0.5 text-text-muted hover:text-text-primary"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+
+              <div className="space-y-1.5 font-mono text-[11px]">
+                <div className="flex justify-between items-center text-text-secondary">
+                  <span>Storage Engine:</span>
+                  <span className="font-semibold text-text-primary">
+                    {systemInfo?.storage_provider || 'SQLite'} (WAL)
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-text-secondary">
+                  <span>Graph Engine:</span>
+                  <span className="font-semibold text-text-primary">FalkorDB 1.8.0</span>
+                </div>
+                <div className="flex justify-between items-center text-text-secondary">
+                  <span>Security Sandbox:</span>
+                  <span className="font-semibold text-text-primary">Local Zero-Cloud</span>
+                </div>
+              </div>
+            </div>
+            </>
+          )}
         </div>
       </div>
     </div>

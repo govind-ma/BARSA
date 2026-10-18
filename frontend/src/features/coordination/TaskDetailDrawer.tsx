@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Bot,
@@ -27,6 +28,18 @@ export function TaskDetailDrawer({
   const [selectedAgentId, setSelectedAgentId] = useState<string>('');
   const [isClaiming, setIsClaiming] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && task) {
+        onClose();
+      }
+    };
+    if (task) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [task, onClose]);
+
   if (!task) return null;
 
   const handleClaim = async () => {
@@ -39,9 +52,15 @@ export function TaskDetailDrawer({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm animate-page-enter select-none">
-      <div className="w-full max-w-md h-full bg-surface border-l border-border-subtle p-6 flex flex-col justify-between shadow-2xl overflow-y-auto">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-drawer flex justify-end floating-scrim animate-page-enter select-none"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md h-full solid-floating-surface p-6 flex flex-col justify-between shadow-2xl overflow-y-auto relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="space-y-5">
           {/* Header */}
           <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
@@ -194,6 +213,7 @@ export function TaskDetailDrawer({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

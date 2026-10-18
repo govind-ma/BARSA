@@ -184,8 +184,10 @@ export function MemoryExplorerPage() {
     <div className="flex flex-col space-y-4 animate-page-enter select-none pb-8 h-[calc(100vh-80px)]">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-8 z-50 px-4 py-2.5 rounded-xl bg-card/90 backdrop-blur-md border border-ice/40 shadow-[0_0_25px_rgba(56,189,248,0.3)] text-xs text-foreground font-semibold flex items-center space-x-2 animate-bounce">
-          <Check className="h-4 w-4 text-emerald-400" />
+        <div className="fixed bottom-6 right-6 z-toast flex items-center space-x-3 px-4 py-3 rounded-lg solid-floating-surface border-l-4 !border-l-lava-orange text-text-primary text-xs font-medium animate-page-enter">
+          <div className="h-5 w-5 rounded-full bg-lava-orange/15 border border-lava-orange/30 flex items-center justify-center text-lava-orange shrink-0">
+            <Check className="h-3 w-3" />
+          </div>
           <span>{toastMessage}</span>
         </div>
       )}

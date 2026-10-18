@@ -40,6 +40,15 @@
     --card-bg: rgba(255, 255, 255, 0.72);
     --card-shadow: 0 8px 30px rgba(60, 100, 130, 0.08);
     --card-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+
+    /* Unified Z-Index Scale */
+    --z-base: 0;
+    --z-sticky: 20;
+    --z-graph-overlay: 30;
+    --z-drawer: 50;
+    --z-popover: 60;
+    --z-modal: 70;
+    --z-toast: 80;
   }
 
   .dark {
@@ -317,3 +326,54 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* Unified Z-Index Classes */
+.z-base { z-index: 0; }
+.z-sticky { z-index: 20; }
+.z-graph-overlay { z-index: 30; }
+.z-drawer { z-index: 50; }
+.z-popover { z-index: 60; }
+.z-modal { z-index: 70; }
+.z-toast { z-index: 80; }
+
+/* Solid floating layers: popovers, dropdowns, modals, drawers, command palette, toasts, tooltips */
+.solid-floating-surface {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-strong) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18) !important;
+}
+
+.dark .solid-floating-surface {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.65) !important;
+}
+
+/* Scrim backdrop for popovers, dropdowns, command palette, and modals */
+.floating-scrim {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 16, 22, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 59;
+}
+
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 16, 22, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 69;
+}
+
+/* Utility to hide scrollbars while allowing scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

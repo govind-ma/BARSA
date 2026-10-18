@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/app/AppContext';
 import { NewProjectModal } from '@/components/projects/NewProjectModal';
@@ -137,15 +138,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   return (
     <>
-      <div
-        className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 select-none"
-        onClick={onClose}
-      >
+      {createPortal(
         <div
-          className="relative w-full max-w-xl rounded-xl bg-surface border border-border-strong shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={handleKeyDown}
+          className="fixed inset-0 z-modal flex items-start justify-center pt-20 p-4 modal-scrim animate-in fade-in duration-150 select-none"
+          onClick={onClose}
         >
+          <div
+            className="relative w-full max-w-xl rounded-xl solid-floating-surface overflow-hidden animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleKeyDown}
+          >
           {/* Search Header */}
           <div className="flex items-center px-4 py-3.5 border-b border-border-subtle bg-surface">
             <Search className="h-4 w-4 text-steel-500 shrink-0 mr-3" />
@@ -209,8 +211,10 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             <span>↵ Select</span>
             <span>ESC Close</span>
           </div>
-        </div>
-      </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       <NewProjectModal
         isOpen={isNewProjectOpen}

@@ -385,9 +385,9 @@ export function VersionControlPage() {
         onProposeMerge={handleProposeMerge}
       />
 
-      {/* Floating Toast Notification (White glass with left lava accent bar) */}
+      {/* Floating Toast Notification (Solid surface with left lava accent bar) */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-lg bg-surface/95 border border-border-subtle border-l-4 border-l-lava-orange text-text-primary text-xs font-medium shadow-xl backdrop-blur-xl animate-page-enter">
+        <div className="fixed bottom-6 right-6 z-toast flex items-center space-x-3 px-4 py-3 rounded-lg solid-floating-surface border-l-4 !border-l-lava-orange text-text-primary text-xs font-medium animate-page-enter">
           <div className="h-5 w-5 rounded-full bg-lava-orange/15 border border-lava-orange/30 flex items-center justify-center text-lava-orange shrink-0">
             <Check className="h-3 w-3" />
           </div>

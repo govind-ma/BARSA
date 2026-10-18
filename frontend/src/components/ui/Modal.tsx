@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
@@ -32,12 +33,12 @@ export function Modal({ isOpen, onClose, title, description, children, className
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
+      className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-scrim animate-in fade-in"
     >
       <div
         className="fixed inset-0"
@@ -47,7 +48,7 @@ export function Modal({ isOpen, onClose, title, description, children, className
       <div
         ref={modalRef}
         className={cn(
-          'relative z-50 w-full max-w-lg rounded-2xl border border-border/80 bg-card/95 backdrop-blur-md p-6 shadow-2xl text-card-foreground transition-all',
+          'relative z-modal w-full max-w-lg rounded-2xl solid-floating-surface p-6 text-text-primary transition-all',
           className
         )}
       >
@@ -70,6 +71,7 @@ export function Modal({ isOpen, onClose, title, description, children, className
         </div>
         <div className="mt-4">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

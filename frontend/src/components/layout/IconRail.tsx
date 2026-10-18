@@ -52,7 +52,7 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
           'hidden md:flex flex-col fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-out',
-          'bg-surface/90 backdrop-blur-2xl border-r border-border-subtle shadow-lg select-none group',
+          'bg-surface border-r border-border-subtle shadow-lg select-none group',
           isHovered ? 'w-[220px]' : 'w-16',
           className
         )}

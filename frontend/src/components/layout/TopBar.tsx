@@ -35,7 +35,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-14 w-full flex items-center justify-between px-4 sm:px-6 bg-surface/85 backdrop-blur-xl border-b border-border-subtle shadow-sm transition-colors duration-200">
+      <header className="sticky top-0 z-sticky h-14 w-full flex items-center justify-between px-4 sm:px-6 bg-surface border-b border-border-subtle shadow-sm transition-colors duration-200">
         {/* Left: Mobile Menu Toggle + Custom Logo & Wordmark */}
         <div className="flex items-center space-x-3">
           <button

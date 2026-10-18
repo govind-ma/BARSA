@@ -158,17 +158,16 @@ export function AgentHandoffStream({
 
         {isLoading ? (
           // Skeleton shimmer loader
-          <div className="space-y-3 pt-2">
+          <div className="space-y-2 pt-1">
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
-                className="h-16 rounded-lg bg-surface/60 border border-border-subtle animate-pulse flex items-center p-3 space-x-3"
+                className="h-11 rounded-lg bg-surface/60 border border-border-subtle animate-pulse flex items-center px-2.5 space-x-2.5"
               >
-                <div className="h-7 w-7 rounded-full bg-ice-200 dark:bg-white/[0.1] shrink-0" />
-                <div className="flex-1 space-y-1.5">
-                  <div className="h-3 bg-ice-200 dark:bg-white/[0.1] rounded w-3/4" />
-                  <div className="h-2.5 bg-ice-100 dark:bg-white/[0.06] rounded w-1/2" />
-                </div>
+                <div className="h-6 w-6 rounded-full bg-ice-200 dark:bg-white/[0.1] shrink-0" />
+                <div className="h-4 bg-ice-100 dark:bg-white/[0.08] rounded w-16 shrink-0" />
+                <div className="h-3.5 bg-ice-200 dark:bg-white/[0.1] rounded flex-1" />
+                <div className="h-3 bg-ice-100 dark:bg-white/[0.06] rounded w-10 shrink-0" />
               </div>
             ))}
           </div>
@@ -178,12 +177,12 @@ export function AgentHandoffStream({
             <EmberSparks count={4} />
             {/* Faint ghost timeline cards */}
             <div className="opacity-40 space-y-2 mb-3 max-w-[200px] mx-auto pointer-events-none">
-              <div className="h-8 rounded bg-ice-200 dark:bg-white/[0.08] border border-border-subtle flex items-center px-2 space-x-2">
-                <div className="h-3 w-3 rounded-full bg-steel-500" />
+              <div className="h-11 rounded bg-ice-200 dark:bg-white/[0.08] border border-border-subtle flex items-center px-2 space-x-2">
+                <div className="h-4 w-4 rounded-full bg-steel-500" />
                 <div className="h-2 bg-steel-500/50 rounded flex-1" />
               </div>
-              <div className="h-8 rounded bg-ice-100 dark:bg-white/[0.05] border border-border-subtle flex items-center px-2 space-x-2">
-                <div className="h-3 w-3 rounded-full bg-steel-500/60" />
+              <div className="h-11 rounded bg-ice-100 dark:bg-white/[0.05] border border-border-subtle flex items-center px-2 space-x-2">
+                <div className="h-4 w-4 rounded-full bg-steel-500/60" />
                 <div className="h-2 bg-steel-500/30 rounded flex-1" />
               </div>
             </div>
@@ -215,7 +214,7 @@ export function AgentHandoffStream({
 
             return (
               <div key={item.id} className="relative z-10 group">
-                {/* Main Card */}
+                {/* Main 44px Row Card (Expanded grows vertically) */}
                 <div
                   onClick={() => {
                     if (onSelectItem) {
@@ -224,61 +223,60 @@ export function AgentHandoffStream({
                   }}
                   onMouseEnter={() => onHoverItem?.(item.codeId)}
                   onMouseLeave={() => onHoverItem?.(null)}
-                  className={`relative p-2.5 rounded-lg border transition-all cursor-pointer ${
+                  className={`relative rounded-lg border transition-all cursor-pointer ${
                     isExpanded
-                      ? 'bg-surface border-border-strong shadow-md'
-                      : 'bg-surface/80 hover:bg-surface border-border-subtle hover:border-border-strong hover:-translate-y-0.5 shadow-sm'
+                      ? 'bg-surface border-border-strong shadow-md p-2.5'
+                      : 'h-11 px-2.5 flex items-center bg-surface/80 hover:bg-surface border-border-subtle hover:border-border-strong hover:-translate-y-0.5 shadow-sm'
                   }`}
                 >
-                  <div className="flex items-start space-x-2.5">
+                  {/* Row Header (Always 1 line when collapsed) */}
+                  <div className="flex items-center space-x-2 w-full min-w-0">
                     {/* Agent Avatar */}
                     <div
-                      className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 text-xs font-mono font-bold shadow-sm ${colors.avatarBg}`}
+                      className={`h-6 w-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-mono font-bold shadow-xs ${colors.avatarBg}`}
                       title={`Agent: ${item.author}`}
                     >
                       {item.isHuman ? (
-                        <User className="h-3.5 w-3.5" />
+                        <User className="h-3 w-3" />
                       ) : (
-                        <Bot className="h-3.5 w-3.5" />
+                        <Bot className="h-3 w-3" />
                       )}
                     </div>
 
-                    {/* Content preview */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-semibold text-text-primary truncate">
-                          {item.author}
-                        </span>
-                        <span className="text-[10px] text-text-muted font-mono shrink-0">
-                          {formatRelativeTime(item.timestamp)}
-                        </span>
-                      </div>
+                    {/* Badge 1: Hash / ID */}
+                    <span
+                      className="font-mono text-[10px] text-text-muted shrink-0 px-1.5 py-0.5 rounded bg-ice-100/70 dark:bg-white/[0.05] border border-border-subtle"
+                      title={item.type}
+                    >
+                      {item.codeId}
+                    </span>
 
-                      {/* Pill & ID */}
-                      <div className="flex items-center space-x-1.5 mt-0.5">
-                        <span
-                          className={`text-[9px] uppercase font-mono px-1.5 py-0.2 rounded border font-medium ${
-                            item.type === 'checkpoint'
-                              ? 'bg-lava-yellow/15 text-lava-orange dark:text-lava-yellow border-lava-yellow/30'
-                              : 'bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-secondary border-border-subtle'
-                          }`}
-                        >
-                          {item.type}
-                        </span>
-                        <span className="font-mono text-[10px] text-text-muted">
-                          {item.codeId}
-                        </span>
-                        <p className="text-[11px] text-text-secondary truncate leading-snug">
-                          {item.title}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Badge 2: Agent Author (Max 2 badges total per row) */}
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-medium truncate max-w-[76px] shrink-0 border ${colors.badge}`}
+                      title={item.author}
+                    >
+                      {item.author}
+                    </span>
+
+                    {/* One-Line Message Truncated with Ellipsis */}
+                    <span
+                      className="text-xs text-text-primary truncate flex-1 min-w-0 leading-none"
+                      title={item.title}
+                    >
+                      {item.title}
+                    </span>
+
+                    {/* Timestamp */}
+                    <span className="text-[10px] text-text-muted font-mono shrink-0 pl-1">
+                      {formatRelativeTime(item.timestamp)}
+                    </span>
 
                     {/* Expand/Collapse Chevron */}
                     <button
                       onClick={(e) => toggleExpand(item.id, e)}
                       aria-label="Toggle details"
-                      className="p-0.5 rounded text-text-muted hover:text-text-primary transition-colors"
+                      className="p-1 rounded text-text-muted hover:text-text-primary transition-colors shrink-0"
                     >
                       {isExpanded ? (
                         <ChevronDown className="h-3.5 w-3.5 text-lava-orange" />

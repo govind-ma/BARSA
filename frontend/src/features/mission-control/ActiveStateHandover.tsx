@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Copy,
   Check,
@@ -12,6 +13,8 @@ import {
   ArrowLeft,
   FileCode,
   X,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { formatDate, truncate } from '@/lib/utils';
 import { BarsaLogo } from '@/components/ui/BarsaLogo';
@@ -43,6 +46,24 @@ export function ActiveStateHandover({
   const [isCopiedPrompt, setIsCopiedPrompt] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isCopiedContext, setIsCopiedContext] = useState(false);
+
+  // Close drawer on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDrawerOpen) {
+        setIsDrawerOpen(false);
+      }
+    };
+    if (isDrawerOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDrawerOpen]);
+
+  // Accordion state for Node Detail
+  const [isPropertiesOpen, setIsPropertiesOpen] = useState(true);
+  const [isRelationshipsOpen, setIsRelationshipsOpen] = useState(false);
+  const [isCypherOpen, setIsCypherOpen] = useState(false);
 
   // Compute Inbound & Outbound relationships if a node is selected
   const nodeRelationships = selectedNode
@@ -107,70 +128,137 @@ Instruction: Resume work seamlessly without losing context. All prior ADRs and c
               {selectedNode.id}
             </span>
           </div>
-          <h3 className="font-heading text-base font-semibold text-text-primary tracking-tight">
+          <h3
+            className="font-heading text-sm font-semibold text-text-primary tracking-tight line-clamp-2 leading-snug"
+            title={selectedNode.label || selectedNode.id}
+          >
             {selectedNode.label || selectedNode.id}
           </h3>
         </div>
 
-        {/* Scrollable details */}
-        <div className="flex-1 overflow-y-auto pr-1 space-y-4 text-xs">
-          {/* Properties */}
-          <div>
-            <h4 className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-bold mb-1.5">
-              Properties
-            </h4>
-            <div className="bg-surface/80 rounded-lg p-2.5 border border-border-subtle space-y-1 font-mono text-[11px]">
-              {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 ? (
-                Object.entries(selectedNode.properties).map(([k, v]) => (
-                  <div key={k} className="flex justify-between gap-2">
-                    <span className="text-text-muted">{k}:</span>
-                    <span className="text-text-primary truncate">{String(v)}</span>
-                  </div>
-                ))
+        {/* Scrollable details with collapsible groups */}
+        <div className="flex-1 overflow-y-auto pr-1 space-y-2.5 text-xs">
+          {/* Properties (Open by default) */}
+          <div className="border border-border-subtle rounded-lg overflow-hidden bg-surface/80">
+            <button
+              onClick={() => setIsPropertiesOpen((prev) => !prev)}
+              className="w-full flex items-center justify-between p-2.5 text-left bg-surface hover:bg-ice-100/40 dark:hover:bg-white/[0.04] transition-colors"
+            >
+              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-bold">
+                Properties
+              </span>
+              {isPropertiesOpen ? (
+                <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
               ) : (
-                <div className="text-text-muted italic">No extra properties</div>
+                <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
               )}
-            </div>
-          </div>
-
-          {/* Relationships */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="p-2.5 rounded-lg bg-surface/70 border border-border-subtle">
-              <span className="text-[10px] uppercase font-mono text-text-muted block mb-1">
-                Inbound ({nodeRelationships?.inbound.length || 0})
-              </span>
-              <div className="space-y-1">
-                {nodeRelationships?.inbound.slice(0, 3).map((edge, i) => (
-                  <div key={i} className="text-[10px] font-mono text-text-secondary truncate">
-                    &larr; {edge.type} ({edge.source})
-                  </div>
-                ))}
+            </button>
+            {isPropertiesOpen && (
+              <div className="p-2.5 pt-0 border-t border-border-subtle/50 space-y-1 font-mono text-[11px]">
+                {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 ? (
+                  Object.entries(selectedNode.properties).map(([k, v]) => (
+                    <div key={k} className="flex justify-between gap-2">
+                      <span className="text-text-muted">{k}:</span>
+                      <span className="text-text-primary truncate">{String(v)}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-text-muted italic">No extra properties</div>
+                )}
               </div>
-            </div>
+            )}
+          </div>
 
-            <div className="p-2.5 rounded-lg bg-surface/70 border border-border-subtle">
-              <span className="text-[10px] uppercase font-mono text-text-muted block mb-1">
-                Outbound ({nodeRelationships?.outbound.length || 0})
+          {/* Relationships (Collapsed by default) */}
+          <div className="border border-border-subtle rounded-lg overflow-hidden bg-surface/80">
+            <button
+              onClick={() => setIsRelationshipsOpen((prev) => !prev)}
+              className="w-full flex items-center justify-between p-2.5 text-left bg-surface hover:bg-ice-100/40 dark:hover:bg-white/[0.04] transition-colors"
+            >
+              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-bold">
+                Relationships ({ (nodeRelationships?.inbound.length || 0) + (nodeRelationships?.outbound.length || 0) })
               </span>
-              <div className="space-y-1">
-                {nodeRelationships?.outbound.slice(0, 3).map((edge, i) => (
-                  <div key={i} className="text-[10px] font-mono text-text-secondary truncate">
-                    &rarr; {edge.type} ({edge.target})
+              {isRelationshipsOpen ? (
+                <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
+              ) : (
+                <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
+              )}
+            </button>
+            {isRelationshipsOpen && (
+              <div className="p-2.5 pt-2 border-t border-border-subtle/50 grid grid-cols-1 gap-2">
+                <div className="p-2 rounded bg-surface border border-border-subtle">
+                  <span className="text-[10px] uppercase font-mono text-text-muted block mb-1">
+                    Inbound ({nodeRelationships?.inbound.length || 0})
+                  </span>
+                  <div className="space-y-1">
+                    {(nodeRelationships?.inbound || []).length > 0 ? (
+                      nodeRelationships!.inbound.map((edge, i) => (
+                        <div key={i} className="text-[10px] font-mono text-text-secondary truncate">
+                          &larr; {edge.type} ({edge.source})
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-[10px] text-text-muted italic">None</div>
+                    )}
                   </div>
-                ))}
+                </div>
+                <div className="p-2 rounded bg-surface border border-border-subtle">
+                  <span className="text-[10px] uppercase font-mono text-text-muted block mb-1">
+                    Outbound ({nodeRelationships?.outbound.length || 0})
+                  </span>
+                  <div className="space-y-1">
+                    {(nodeRelationships?.outbound || []).length > 0 ? (
+                      nodeRelationships!.outbound.map((edge, i) => (
+                        <div key={i} className="text-[10px] font-mono text-text-secondary truncate">
+                          &rarr; {edge.type} ({edge.target})
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-[10px] text-text-muted italic">None</div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Cypher Query Snippet */}
-          <div>
-            <h4 className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-bold mb-1.5">
-              FalkorDB Cypher Path
-            </h4>
-            <pre className="p-2.5 rounded-lg bg-bg-base border border-border-subtle font-mono text-[10px] text-text-primary overflow-x-auto select-text">
-              {cypherSnippet}
-            </pre>
+          {/* FalkorDB Cypher Path (Collapsed by default) */}
+          <div className="border border-border-subtle rounded-lg overflow-hidden bg-surface/80">
+            <button
+              onClick={() => setIsCypherOpen((prev) => !prev)}
+              className="w-full flex items-center justify-between p-2.5 text-left bg-surface hover:bg-ice-100/40 dark:hover:bg-white/[0.04] transition-colors"
+            >
+              <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted font-bold">
+                FalkorDB Cypher Path
+              </span>
+              {isCypherOpen ? (
+                <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
+              ) : (
+                <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
+              )}
+            </button>
+            {isCypherOpen && (
+              <div className="p-2.5 pt-0 border-t border-border-subtle/50">
+                <pre className="p-2 rounded bg-bg-base border border-border-subtle font-mono text-[10px] text-text-primary overflow-x-auto select-text mt-2">
+                  {cypherSnippet}
+                </pre>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Primary Action Button (Max 1 primary action) */}
+        <div className="pt-3 border-t border-border-subtle mt-3">
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(selectedNode.id);
+              onTriggerToast(`Node ID "${selectedNode.id}" copied`);
+            }}
+            className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97]"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            <span>Copy Node ID</span>
+          </button>
         </div>
       </div>
     );
@@ -304,61 +392,70 @@ Instruction: Resume work seamlessly without losing context. All prior ADRs and c
         </div>
       </div>
 
-      {/* Right Drawer: Compressed Token-Optimized Prompt */}
-      {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm animate-page-enter">
-          <div className="w-full max-w-lg h-full bg-surface border-l border-border-subtle p-6 flex flex-col justify-between shadow-2xl">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-                <div className="flex items-center space-x-2">
-                  <BarsaLogo size={20} />
-                  <h3 className="font-heading text-sm font-semibold text-text-primary">
-                    Compressed Smart Context Package
-                  </h3>
+      {/* Right Drawer: Compressed Token-Optimized Prompt in Portal */}
+      {isDrawerOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-drawer flex justify-end floating-scrim animate-page-enter"
+            onClick={() => setIsDrawerOpen(false)}
+          >
+            <div
+              className="w-full max-w-lg h-full solid-floating-surface p-6 flex flex-col justify-between shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+                  <div className="flex items-center space-x-2">
+                    <BarsaLogo size={20} />
+                    <h3 className="font-heading text-sm font-semibold text-text-primary">
+                      Compressed Smart Context Package
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setIsDrawerOpen(false)}
+                    aria-label="Close drawer"
+                    className="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-ice-100 dark:hover:bg-white/[0.08]"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
+
+                <div className="flex items-center space-x-3 text-xs text-text-muted font-mono">
+                  <span>Tokens: ~420</span>
+                  <span>•</span>
+                  <span>Standard: BMS v0.2</span>
+                  <span>•</span>
+                  <span>Storage: SQLite Local</span>
+                </div>
+
+                {/* Mono Code Block */}
+                <div className="relative">
+                  <pre className="p-4 rounded-lg bg-bg-base border border-border-subtle font-mono text-xs text-text-primary overflow-y-auto max-h-[60vh] whitespace-pre-wrap leading-relaxed select-text">
+                    {generatedPrompt}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Drawer Actions */}
+              <div className="pt-4 border-t border-border-subtle flex justify-end space-x-3">
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-ice-100"
+                  className="px-4 py-2 text-xs rounded-lg btn-secondary-ice font-medium"
                 >
-                  <X className="h-4 w-4" />
+                  Close
+                </button>
+                <button
+                  onClick={handleCopyFullContext}
+                  className="px-4 py-2 text-xs rounded-lg btn-magma font-semibold flex items-center space-x-1.5 shadow-md"
+                >
+                  {isCopiedContext ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{isCopiedContext ? 'Copied' : 'Copy Full Context'}</span>
                 </button>
               </div>
-
-              <div className="flex items-center space-x-3 text-xs text-text-muted font-mono">
-                <span>Tokens: ~420</span>
-                <span>•</span>
-                <span>Standard: BMS v0.2</span>
-                <span>•</span>
-                <span>Storage: SQLite Local</span>
-              </div>
-
-              {/* Mono Code Block */}
-              <div className="relative">
-                <pre className="p-4 rounded-lg bg-bg-base border border-border-subtle font-mono text-xs text-text-primary overflow-y-auto max-h-[60vh] whitespace-pre-wrap leading-relaxed select-text">
-                  {generatedPrompt}
-                </pre>
-              </div>
             </div>
-
-            {/* Drawer Actions */}
-            <div className="pt-4 border-t border-border-subtle flex justify-end space-x-3">
-              <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="px-4 py-2 text-xs rounded-lg btn-secondary-ice font-medium"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleCopyFullContext}
-                className="px-4 py-2 text-xs rounded-lg btn-magma font-semibold flex items-center space-x-1.5 shadow-md"
-              >
-                {isCopiedContext ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                <span>{isCopiedContext ? 'Copied' : 'Copy Full Context'}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }
