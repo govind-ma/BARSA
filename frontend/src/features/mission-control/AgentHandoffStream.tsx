@@ -51,42 +51,49 @@ export function AgentHandoffStream({
   const items: TimelineItem[] = React.useMemo(() => {
     const list: TimelineItem[] = [];
 
-    commits.forEach((c) => {
-      const authorName = c.author?.name || 'agent-ai';
+    (commits || []).forEach((c) => {
+      if (!c) return;
+      const hash = String(c.commit_hash || (c as any).commit_id || (c as any).hash || (c as any).id || 'commit');
+      const authorName = c.author?.name || (c as any).author_id || 'agent-ai';
       const isHuman = /human|user|alice|owner|developer/i.test(authorName);
       list.push({
-        id: `commit-${c.commit_hash}`,
+        id: `commit-${hash}`,
         type: 'commit',
         author: authorName,
         isHuman,
-        codeId: c.commit_hash.slice(0, 7),
-        title: c.message,
-        timestamp: c.timestamp,
+        codeId: hash.slice(0, 7),
+        title: c.message || 'Updated project memory state',
+        timestamp: c.timestamp || (c as any).created_at || new Date().toISOString(),
         rawCommit: c,
-        baseRevision: c.parent_hashes?.[0],
+        baseRevision: c.parent_hashes?.[0] || (c as any).parent_commit_ids?.[0],
       });
     });
 
-    checkpoints.forEach((cp) => {
-      const authorName = cp.author || (cp.attributes as any)?.created_by || 'claude-architect';
+    (checkpoints || []).forEach((cp) => {
+      if (!cp) return;
+      const authorName = cp.author || (cp.attributes as any)?.created_by || (cp as any).created_by || 'claude-architect';
       const isHuman = /human|user|owner/i.test(authorName);
-      const cpId = cp.record_id || (cp as any).id || 'cp';
+      const cpId = String(cp.record_id || (cp as any).id || 'cp');
       list.push({
         id: `checkpoint-${cpId}`,
         type: 'checkpoint',
         author: authorName,
         isHuman,
         codeId: cpId.length > 12 ? truncate(cpId, 10) : cpId,
-        title: cp.title || cp.summary || 'Milestone Checkpoint',
-        timestamp: cp.created_at,
+        title: cp.title || cp.summary || (typeof cp.content === 'string' ? cp.content : 'Milestone Checkpoint'),
+        timestamp: cp.created_at || new Date().toISOString(),
         rawCheckpoint: cp,
-        completedActions: (cp.attributes as any)?.completed_actions || [],
-        pendingActions: (cp.attributes as any)?.pending_actions || [(cp.attributes as any)?.next_action].filter(Boolean),
-        baseRevision: (cp.attributes as any)?.base_revision || (cp.attributes as any)?.commit_hash,
+        completedActions: (cp.attributes as any)?.completed_actions || (cp as any).completed_actions || [],
+        pendingActions: (cp.attributes as any)?.pending_actions || (cp as any).pending_actions || [(cp.attributes as any)?.next_action || (cp as any).next_action].filter(Boolean),
+        baseRevision: (cp.attributes as any)?.base_revision || (cp as any).base_revision || (cp.attributes as any)?.commit_hash,
       });
     });
 
-    list.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    list.sort((a, b) => {
+      const timeA = new Date(a.timestamp).getTime() || 0;
+      const timeB = new Date(b.timestamp).getTime() || 0;
+      return timeB - timeA;
+    });
     return list;
   }, [commits, checkpoints]);
 

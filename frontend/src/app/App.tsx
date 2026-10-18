@@ -16,6 +16,7 @@ import { StoragePage } from '@/features/storage/StoragePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { CheckpointsPage } from '@/features/checkpoints/CheckpointsPage';
 import { StyleGuidePage } from '@/features/styleguide/StyleGuidePage';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { NotFoundPage } from '@/features/notfound/NotFoundPage';
 
 const queryClient = new QueryClient({
@@ -29,32 +30,34 @@ const queryClient = new QueryClient({
 
 export function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<DashboardLayout />}>
-              <Route index element={<DashboardHome />} />
-              <Route path="workspaces" element={<WorkspacesPage />} />
-              <Route path="projects" element={<ProjectsPage />} />
-              <Route path="projects/:projectId" element={<ProjectDetailPage />} />
-              <Route path="projects/:projectId/resume" element={<ProjectDetailPage />} />
-              <Route path="memory" element={<MemoryExplorerPage />} />
-              <Route path="version-control" element={<VersionControlPage />} />
-              <Route path="checkpoints" element={<CheckpointsPage />} />
-              <Route path="graph" element={<GraphExplorerPage />} />
-              <Route path="agents" element={<AgentsPage />} />
-              <Route path="tasks" element={<TasksPage />} />
-              <Route path="security" element={<SecurityPage />} />
-              <Route path="storage" element={<StoragePage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="styleguide" element={<StyleGuidePage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </AppProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AppProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<DashboardLayout />}>
+                <Route index element={<DashboardHome />} />
+                <Route path="workspaces" element={<WorkspacesPage />} />
+                <Route path="projects" element={<ProjectsPage />} />
+                <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+                <Route path="projects/:projectId/resume" element={<ProjectDetailPage />} />
+                <Route path="memory" element={<MemoryExplorerPage />} />
+                <Route path="version-control" element={<VersionControlPage />} />
+                <Route path="checkpoints" element={<CheckpointsPage />} />
+                <Route path="graph" element={<GraphExplorerPage />} />
+                <Route path="agents" element={<AgentsPage />} />
+                <Route path="tasks" element={<TasksPage />} />
+                <Route path="security" element={<SecurityPage />} />
+                <Route path="storage" element={<StoragePage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="styleguide" element={<StyleGuidePage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </AppProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
