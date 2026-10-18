@@ -1,47 +1,124 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useApp } from '@/app/AppContext';
 import { api } from '@/lib/api';
-import { Button } from '@/components/ui/Button';
-import { Input, Textarea } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/Badge';
-import { Modal } from '@/components/ui/Modal';
 import { EmptyState, LoadingSpinner } from '@/components/ui/EmptyState';
-import type { AgentProfile, CoordinationTask, TaskStatus } from '@/types';
-import { CheckSquare, Plus } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
+import { Input, Textarea } from '@/components/ui/Input';
+import { TaskCard } from './TaskCard';
+import { TaskDetailDrawer } from './TaskDetailDrawer';
+import type { CoordinationTask, AgentProfile, TaskStatus, GraphResumeResponse } from '@/types';
+import {
+  CheckSquare,
+  Plus,
+  Sparkles,
+  Bot,
+  ShieldAlert,
+  Play,
+  CheckCircle2,
+  RotateCcw,
+  RefreshCw,
+  X,
+  Check,
+} from 'lucide-react';
 
-const COLUMNS: { status: TaskStatus; label: string; color: string }[] = [
-  { status: 'pending', label: 'Pending', color: 'border-muted-foreground/30' },
-  { status: 'ready', label: 'Ready', color: 'border-primary/40' },
-  { status: 'running', label: 'Running', color: 'border-sky-500/50' },
-  { status: 'blocked', label: 'Blocked', color: 'border-destructive/50' },
-  { status: 'under_review', label: 'Under Review', color: 'border-amber-500/50' },
-  { status: 'completed', label: 'Completed', color: 'border-emerald-500/50' },
+// 4 Canonical Kanban Columns per specification
+interface KanbanColumnConfig {
+  id: 'todo' | 'in_progress' | 'blocked' | 'completed';
+  label: string;
+  statuses: TaskStatus[];
+  dropStatus: TaskStatus;
+  topBorderClass: string;
+  emptyIcon: React.ReactNode;
+  emptyText: string;
+}
+
+const KANBAN_COLUMNS: KanbanColumnConfig[] = [
+  {
+    id: 'todo',
+    label: 'Todo',
+    statuses: ['pending', 'ready'],
+    dropStatus: 'ready',
+    topBorderClass: 'border-t-2 border-t-ice/40',
+    emptyIcon: <CheckSquare className="h-6 w-6 text-muted-foreground/30 mb-1" />,
+    emptyText: 'No pending tasks in queue',
+  },
+  {
+    id: 'in_progress',
+    label: 'In Progress',
+    statuses: ['running', 'under_review'],
+    dropStatus: 'running',
+    topBorderClass: 'border-t-2 border-t-sky-400 shadow-[0_-2px_10px_rgba(56,189,248,0.2)]',
+    emptyIcon: <Play className="h-6 w-6 text-ice/30 mb-1" />,
+    emptyText: 'No tasks currently running',
+  },
+  {
+    id: 'blocked',
+    label: 'Blocked',
+    statuses: ['blocked'],
+    dropStatus: 'blocked',
+    topBorderClass: 'border-t-2 border-t-chilli shadow-[0_-2px_10px_rgba(239,68,68,0.3)]',
+    emptyIcon: <ShieldAlert className="h-6 w-6 text-chilli/40 mb-1" />,
+    emptyText: 'No active blockers. Work flowing smoothly.',
+  },
+  {
+    id: 'completed',
+    label: 'Completed',
+    statuses: ['completed'],
+    dropStatus: 'completed',
+    topBorderClass: 'border-t-2 border-t-ice shadow-[0_-2px_10px_rgba(56,189,248,0.25)]',
+    emptyIcon: <CheckCircle2 className="h-6 w-6 text-emerald-400/40 mb-1" />,
+    emptyText: 'Completed tasks will archive here',
+  },
 ];
 
 export function TasksPage() {
   const { activeProject } = useApp();
   const [tasks, setTasks] = useState<CoordinationTask[]>([]);
   const [agents, setAgents] = useState<AgentProfile[]>([]);
-  const [selectedTask, setSelectedTask] = useState<CoordinationTask | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<CoordinationTask | null>(null);
+
+  // Filter by agent state
+  const [selectedAgentFilter, setSelectedAgentFilter] = useState<string>('ALL');
+
+  // "FalkorDB Recommend Next" states
+  const [isRecommending, setIsRecommending] = useState(false);
+  const [recommendedTaskId, setRecommendedTaskId] = useState<string | null>(null);
+  const [resumeData, setResumeData] = useState<GraphResumeResponse | null>(null);
+  const taskCardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Drag and Drop State
+  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+
+  // Undo Toast state
+  const [undoAction, setUndoAction] = useState<{
+    taskId: string;
+    previousStatus: TaskStatus;
+    taskTitle: string;
+    columnLabel: string;
+  } | null>(null);
+  const undoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // New task modal
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
+  const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newPriority, setNewPriority] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loadTasksAndAgents = async () => {
     if (!activeProject) return;
     setIsLoading(true);
     try {
-      const [tsks, agts] = await Promise.allSettled([
+      const [tsksRes, agtsRes, resmRes] = await Promise.allSettled([
         api.listTasks(activeProject.project_id),
         api.listAgents(),
+        api.getGraphResume(activeProject.project_id),
       ]);
-      if (tsks.status === 'fulfilled') setTasks(tsks.value);
-      if (agts.status === 'fulfilled') setAgents(agts.value);
+      if (tsksRes.status === 'fulfilled') setTasks(tsksRes.value);
+      if (agtsRes.status === 'fulfilled') setAgents(agtsRes.value);
+      if (resmRes.status === 'fulfilled') setResumeData(resmRes.value);
     } finally {
       setIsLoading(false);
     }
@@ -51,25 +128,125 @@ export function TasksPage() {
     loadTasksAndAgents();
   }, [activeProject]);
 
+  // Drag handlers
+  const handleDragStart = (e: React.DragEvent, task: CoordinationTask) => {
+    setDraggedTaskId(task.task_id);
+    e.dataTransfer.setData('text/plain', task.task_id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, columnId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverColumn !== columnId) {
+      setDragOverColumn(columnId);
+    }
+  };
+
+  const handleDragLeave = (_e: React.DragEvent) => {
+    setDragOverColumn(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetColumn: KanbanColumnConfig) => {
+    e.preventDefault();
+    setDragOverColumn(null);
+    const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
+    if (!taskId) return;
+
+    const currentTask = tasks.find((t) => t.task_id === taskId);
+    if (!currentTask || currentTask.status === targetColumn.dropStatus) return;
+
+    const previousStatus = currentTask.status;
+
+    // 1. Optimistic local update
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.task_id === taskId ? { ...t, status: targetColumn.dropStatus } : t
+      )
+    );
+
+    // 2. Set up Undo Toast with auto-dismiss after 5s
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+    setUndoAction({
+      taskId,
+      previousStatus,
+      taskTitle: currentTask.title,
+      columnLabel: targetColumn.label,
+    });
+    undoTimeoutRef.current = setTimeout(() => {
+      setUndoAction(null);
+    }, 5000);
+  };
+
+  const handleUndo = () => {
+    if (!undoAction) return;
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.task_id === undoAction.taskId
+          ? { ...t, status: undoAction.previousStatus }
+          : t
+      )
+    );
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+    setUndoAction(null);
+  };
+
+  // "FalkorDB Recommend Next" handler
+  const handleRecommendNext = async () => {
+    if (!activeProject) return;
+    setIsRecommending(true);
+    try {
+      const res = await api.getGraphResume(activeProject.project_id);
+      setResumeData(res);
+      const topId =
+        res.recommended_task?.task_id ||
+        tasks.find((t) => t.status !== 'blocked' && t.status !== 'completed')
+          ?.task_id ||
+        tasks[0]?.task_id;
+
+      if (topId) {
+        setRecommendedTaskId(topId);
+        // Smoothly scroll the card into view
+        setTimeout(() => {
+          const cardEl = taskCardRefs.current.get(topId);
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 150);
+      }
+    } catch {
+      // Fallback to top unblocked task
+      const fallbackTask =
+        tasks.find((t) => t.status !== 'blocked' && t.status !== 'completed') ||
+        tasks[0];
+      if (fallbackTask) {
+        setRecommendedTaskId(fallbackTask.task_id);
+      }
+    } finally {
+      setIsRecommending(false);
+    }
+  };
+
+  // Handle task creation
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeProject || !title.trim()) return;
+    if (!activeProject || !newTitle.trim()) return;
     setIsSubmitting(true);
     try {
-      await api.createTask({
+      const created = await api.createTask({
         project_id: activeProject.project_id,
-        title: title.trim(),
-        description: description.trim(),
-        priority,
-        status: 'pending',
+        title: newTitle.trim(),
+        description: newDescription.trim(),
+        priority: newPriority,
+        status: 'ready',
         required_capabilities: ['memory:read'],
         dependencies: [],
         blockers: [],
       });
-      await loadTasksAndAgents();
+      setTasks((prev) => [created, ...prev]);
       setIsCreateOpen(false);
-      setTitle('');
-      setDescription('');
+      setNewTitle('');
+      setNewDescription('');
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Failed to create task');
     } finally {
@@ -77,17 +254,33 @@ export function TasksPage() {
     }
   };
 
+  // Handle claim task
   const handleClaimTask = async (taskId: string, agentId: string) => {
     try {
       await api.claimTask(taskId, agentId);
-      await loadTasksAndAgents();
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.task_id === taskId
+            ? { ...t, assigned_agent_id: agentId, status: 'running' }
+            : t
+        )
+      );
       if (selectedTask?.task_id === taskId) {
-        setSelectedTask(null);
+        setSelectedTask((prev) =>
+          prev ? { ...prev, assigned_agent_id: agentId, status: 'running' } : null
+        );
       }
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Claim failed');
     }
   };
+
+  // Filter tasks by agent
+  const filteredTasks = tasks.filter((t) => {
+    if (selectedAgentFilter === 'ALL') return true;
+    if (selectedAgentFilter === 'UNASSIGNED') return !t.assigned_agent_id;
+    return t.assigned_agent_id === selectedAgentFilter;
+  });
 
   if (!activeProject) {
     return (
@@ -100,216 +293,246 @@ export function TasksPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+    <div className="flex flex-col h-full space-y-4 animate-page-enter select-none pb-6">
+      {/* Header Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Multi-Agent Coordination Board</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Phase 9 capability-based task distribution and state lifecycle for "{activeProject.name}".
+          <div className="flex items-center space-x-2.5">
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
+              Coordination Tasks
+            </h1>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-ice/10 text-ice border border-ice/20 font-mono">
+              {tasks.length} Total
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Multi-agent task queue with FalkorDB Cypher dependency re-ranking.
           </p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)} size="sm">
-          <Plus className="h-4 w-4 mr-1.5" />
-          Create Task
-        </Button>
+
+        {/* Header Controls */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Filter by agent dropdown (Avatar + Name) */}
+          <div className="flex items-center space-x-1.5 bg-secondary/40 border border-ice/20 rounded-xl px-2.5 py-1">
+            <Bot className="h-4 w-4 text-ice shrink-0" />
+            <select
+              value={selectedAgentFilter}
+              onChange={(e) => setSelectedAgentFilter(e.target.value)}
+              className="bg-transparent text-xs text-foreground focus:outline-none cursor-pointer pr-2"
+              aria-label="Filter by agent"
+            >
+              <option value="ALL">All agents</option>
+              <option value="UNASSIGNED">Unassigned only</option>
+              {agents.map((a) => (
+                <option key={a.agent_id} value={a.agent_id}>
+                  {a.display_name || a.name || a.agent_id}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* New Task Button */}
+          <button
+            onClick={() => setIsCreateOpen(true)}
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-border/80 hover:border-ice/30 bg-secondary/50 hover:bg-secondary text-foreground text-xs font-medium transition-all"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>New Task</span>
+          </button>
+
+          {/* Primary Chilli "FalkorDB Recommend Next" Button */}
+          <button
+            onClick={handleRecommendNext}
+            disabled={isRecommending}
+            className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all active:scale-[0.98] disabled:opacity-50"
+          >
+            {isRecommending ? (
+              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Sparkles className="h-3.5 w-3.5 fill-current" />
+            )}
+            <span>FalkorDB Recommend Next</span>
+          </button>
+        </div>
       </div>
 
-      {isLoading ? (
-        <LoadingSpinner text="Fetching task distribution..." />
-      ) : (
-        /* Kanban Board Columns */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3.5">
-          {COLUMNS.map((col) => {
-            const colTasks = tasks.filter((t) => t.status === col.status);
-            return (
-              <div key={col.status} className="flex flex-col bg-muted/20 rounded-lg p-2.5 border border-border">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-border">
-                  <div className="flex items-center space-x-1.5">
-                    <span className="text-xs font-semibold">{col.label}</span>
-                    <Badge variant="outline" className="text-[10px] h-4 px-1.5">
-                      {colTasks.length}
-                    </Badge>
-                  </div>
-                </div>
+      {/* 4 Kanban Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 flex-1 min-h-[550px]">
+        {KANBAN_COLUMNS.map((col) => {
+          const columnTasks = filteredTasks.filter((t) =>
+            col.statuses.includes(t.status)
+          );
+          const isDropTarget = dragOverColumn === col.id;
 
-                <div className="space-y-2.5 flex-1 min-h-[400px]">
-                  {colTasks.length === 0 ? (
-                    <div className="h-24 flex items-center justify-center text-[11px] text-muted-foreground/60 border border-dashed border-border/60 rounded">
-                      Empty
-                    </div>
-                  ) : (
-                    colTasks.map((task) => (
-                      <div
-                        key={task.task_id}
-                        onClick={() => setSelectedTask(task)}
-                        className={`p-3 rounded-md border bg-card cursor-pointer transition-all hover:border-primary/60 shadow-sm ${col.color}`}
-                      >
-                        <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
-                          <span className="font-mono">{task.task_id}</span>
-                          <span
-                            className={`font-semibold uppercase ${
-                              task.priority === 'critical'
-                                ? 'text-destructive'
-                                : task.priority === 'high'
-                                ? 'text-amber-400'
-                                : 'text-muted-foreground'
-                            }`}
-                          >
-                            {task.priority}
-                          </span>
-                        </div>
-                        <h4 className="text-xs font-semibold text-foreground line-clamp-2">{task.title}</h4>
-                        <div className="mt-2 text-[10px] text-muted-foreground flex items-center justify-between">
-                          <span>{task.assigned_agent_id ? task.assigned_agent_id : 'Unassigned'}</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
+          return (
+            <div
+              key={col.id}
+              onDragOver={(e) => handleDragOver(e, col.id)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, col)}
+              className={`flex flex-col h-full bg-card/50 backdrop-blur-md rounded-2xl border border-ice/15 p-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all ${
+                col.topBorderClass
+              } ${isDropTarget ? 'ring-2 ring-ice/60 bg-ice/5' : ''}`}
+            >
+              {/* Column Header */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-border/50">
+                <span className="text-xs font-bold tracking-tight text-foreground uppercase">
+                  {col.label}
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-secondary text-muted-foreground font-bold">
+                  {columnTasks.length}
+                </span>
               </div>
-            );
-          })}
+
+              {/* Tasks List */}
+              <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+                {isLoading && tasks.length === 0 ? (
+                  <div className="py-8 flex justify-center">
+                    <LoadingSpinner text="" />
+                  </div>
+                ) : columnTasks.length === 0 ? (
+                  <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-border/60 rounded-xl">
+                    {col.emptyIcon}
+                    <p className="text-xs text-muted-foreground/80 mt-1">
+                      {col.emptyText}
+                    </p>
+                  </div>
+                ) : (
+                  columnTasks.map((t) => {
+                    const assignedAgent = agents.find(
+                      (a) => a.agent_id === t.assigned_agent_id
+                    );
+                    const isRec = recommendedTaskId === t.task_id;
+
+                    return (
+                      <TaskCard
+                        key={t.task_id}
+                        task={t}
+                        isRecommended={isRec}
+                        readinessScore={resumeData?.recommended_task?.readiness_score ?? 270.0}
+                        whyReadyText={resumeData?.why_ready}
+                        isDragging={draggedTaskId === t.task_id}
+                        onDragStart={handleDragStart}
+                        onDragEnd={() => setDraggedTaskId(null)}
+                        onClick={() => setSelectedTask(t)}
+                        agentName={assignedAgent?.display_name || assignedAgent?.name}
+                        cardRef={(el) => {
+                          if (el) taskCardRefs.current.set(t.task_id, el);
+                          else taskCardRefs.current.delete(t.task_id);
+                        }}
+                      />
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Right Drawer: Task Details & Chips */}
+      <TaskDetailDrawer
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
+        agents={agents}
+        onClaimTask={handleClaimTask}
+        onSelectRelatedTask={(id) => {
+          const match = tasks.find((t) => t.task_id === id);
+          if (match) setSelectedTask(match);
+        }}
+      />
+
+      {/* Optimistic Update "Undo" Toast */}
+      {undoAction && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl bg-card/95 border border-ice/40 text-foreground text-xs font-medium shadow-[0_8px_32px_rgba(56,189,248,0.3)] backdrop-blur-md animate-page-enter">
+          <div className="h-5 w-5 rounded-full bg-ice/20 border border-ice/40 flex items-center justify-center text-ice shrink-0">
+            <Check className="h-3 w-3 text-ice" />
+          </div>
+          <span>
+            Moved <strong className="font-mono text-ice">{undoAction.taskId}</strong> to{' '}
+            {undoAction.columnLabel}
+          </span>
+          <button
+            onClick={handleUndo}
+            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-ice/15 hover:bg-ice/25 text-ice font-bold border border-ice/30 transition-colors ml-2"
+          >
+            <RotateCcw className="h-3 w-3" />
+            <span>Undo</span>
+          </button>
+          <button
+            onClick={() => setUndoAction(null)}
+            className="text-muted-foreground hover:text-foreground ml-1"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
 
-      {/* Task Detail Inspector Modal */}
-      <Modal
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
-        title={selectedTask?.title || 'Task Details'}
-        description={`Task ID: ${selectedTask?.task_id} • Status: ${selectedTask?.status}`}
-      >
-        {selectedTask && (
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-semibold text-muted-foreground uppercase block mb-1">
-                Description
-              </label>
-              <p className="text-xs bg-muted/30 p-2.5 rounded border border-border text-foreground">
-                {selectedTask.description || 'No description provided.'}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="bg-muted/40 p-2.5 rounded border border-border">
-                <span className="text-muted-foreground block mb-0.5">Assigned Agent</span>
-                <span className="font-medium text-foreground">
-                  {selectedTask.assigned_agent_id || 'None'}
-                </span>
-              </div>
-              <div className="bg-muted/40 p-2.5 rounded border border-border">
-                <span className="text-muted-foreground block mb-0.5">Priority</span>
-                <span className="font-medium text-foreground uppercase">{selectedTask.priority}</span>
-              </div>
-            </div>
-
-            {selectedTask.required_capabilities.length > 0 && (
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase block mb-1">
-                  Required Capabilities
-                </label>
-                <div className="flex flex-wrap gap-1">
-                  {selectedTask.required_capabilities.map((cap) => (
-                    <span
-                      key={cap}
-                      className="bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded text-[10px] font-mono"
-                    >
-                      {cap}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Claim Action */}
-            {selectedTask.status === 'pending' && agents.length > 0 && (
-              <div className="border-t border-border pt-3">
-                <label className="text-xs font-semibold text-muted-foreground block mb-1.5">
-                  Assign / Claim Task for Agent
-                </label>
-                <div className="flex items-center space-x-2">
-                  <select
-                    id="claim-agent-select"
-                    className="flex-1 h-9 rounded-md border border-input bg-card px-3 text-xs"
-                  >
-                    {agents.map((a) => (
-                      <option key={a.agent_id} value={a.agent_id}>
-                        {a.name} ({a.agent_id})
-                      </option>
-                    ))}
-                  </select>
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      const sel = document.getElementById('claim-agent-select') as HTMLSelectElement;
-                      if (sel) handleClaimTask(selectedTask.task_id, sel.value);
-                    }}
-                  >
-                    Claim Task
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-end pt-2">
-              <Button variant="outline" size="sm" onClick={() => setSelectedTask(null)}>
-                Close
-              </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
-
-      {/* Create Task Modal */}
+      {/* New Task Creation Modal */}
       <Modal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         title="Create Coordination Task"
-        description="Add a task to the multi-agent queue with capability requirements."
+        className="max-w-lg"
       >
-        <form onSubmit={handleCreateTask} className="space-y-4">
+        <form onSubmit={handleCreateTask} className="space-y-4 pt-2 text-xs">
           <div>
-            <label className="block text-xs font-medium mb-1">Title *</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              Task Title
+            </label>
             <Input
-              placeholder="e.g. Implement schema validation for BMS records"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="e.g. Implement HMAC signature verification"
               required
+              className="text-xs bg-secondary/40 border-ice/20 focus-visible:ring-ice/50"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium mb-1">Description</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              Description
+            </label>
             <Textarea
-              placeholder="Full requirements, input criteria, and expected output"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              placeholder="Details on requirements, acceptance criteria, or security bounds..."
               rows={3}
+              className="text-xs bg-secondary/40 border-ice/20 focus-visible:ring-ice/50"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium mb-1">Priority</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              Priority
+            </label>
             <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high' | 'critical')}
-              className="w-full h-9 rounded-md border border-input bg-card px-3 text-xs"
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value as any)}
+              className="w-full h-9 rounded-lg border border-border bg-card px-3 text-xs text-foreground focus:outline-none"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="critical">Critical</option>
+              <option value="low">Low (Ice)</option>
+              <option value="medium">Medium (Ice)</option>
+              <option value="high">High (Ember)</option>
+              <option value="critical">Critical (Chilli)</option>
             </select>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-3">
-            <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
+          <div className="pt-2 flex justify-end space-x-2 border-t border-border">
+            <button
+              type="button"
+              onClick={() => setIsCreateOpen(false)}
+              className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs"
+            >
               Cancel
-            </Button>
-            <Button type="submit" isLoading={isSubmitting}>
-              Create Task
-            </Button>
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || !newTitle.trim()}
+              className="px-4 py-1.5 rounded-lg bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_15px_rgba(239,68,68,0.4)] disabled:opacity-50"
+            >
+              {isSubmitting ? 'Creating...' : 'Create Task'}
+            </button>
           </div>
         </form>
       </Modal>
