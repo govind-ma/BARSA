@@ -184,8 +184,8 @@ RETURN m.name AS module_name, count(t) AS impacted_task_count;
 
 ### 1. Clone & Set Up Backend
 ```bash
-git clone https://github.com/your-org/barsa.git
-cd barsa
+git clone https://github.com/govind-ma/BARSA.git
+cd BARSA
 
 # Create virtual environment
 python -m venv .venv

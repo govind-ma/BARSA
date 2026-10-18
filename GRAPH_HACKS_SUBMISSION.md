@@ -9,7 +9,7 @@
 - **Tagline**: Switch AI, Not Your Progress.
 - **Primary Hackathon Track**: **Agent Memory and Coordination**
 - **Secondary Hackathon Track**: **Agents That Act on Connected Data**
-- **Repository**: [https://github.com/govind-s-b/BARSA](https://github.com/govind-s-b/BARSA) *(or configured origin)*
+- **Repository**: [https://github.com/govind-ma/BARSA](https://github.com/govind-ma/BARSA)
 - **Demo Video**: [Graph Hacks 2026 Submission Walkthrough](https://youtu.be/example_barsa_demo) *(or your recorded demo video link)*
 - **Date**: October 18, 2026
 
