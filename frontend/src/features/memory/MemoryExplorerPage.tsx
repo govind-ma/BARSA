@@ -1,177 +1,173 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useApp } from '@/app/AppContext';
 import { api } from '@/lib/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input, Textarea } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/Badge';
-import { Modal } from '@/components/ui/Modal';
 import { EmptyState, LoadingSpinner } from '@/components/ui/EmptyState';
-import { formatDate } from '@/lib/utils';
-import type { BMSRecord, RecordType, VerificationStatus } from '@/types';
+import { MemoryFilterPills, type MemoryFilterType } from './MemoryFilterPills';
+import { MemoryRecordCard } from './MemoryRecordCard';
+import { MemoryInspector } from './MemoryInspector';
+import { NewDecisionModal } from './NewDecisionModal';
+import type { BMSRecord, Artifact } from '@/types';
 import {
   BrainCircuit,
   Search,
   Plus,
-  Filter,
-  CheckCircle2,
-  HelpCircle,
-  XCircle,
-  FileText,
+  X,
+  Layers,
+  Check,
 } from 'lucide-react';
-
-const recordTypes: RecordType[] = [
-  'task',
-  'requirement',
-  'decision',
-  'context',
-  'constraint',
-  'knowledge',
-  'checkpoint',
-  'agent',
-];
 
 export function MemoryExplorerPage() {
   const { activeProject } = useApp();
   const [records, setRecords] = useState<BMSRecord[]>([]);
+  const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedType, setSelectedType] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [activeFilter, setActiveFilter] = useState<MemoryFilterType>('all');
   const [activeRecord, setActiveRecord] = useState<BMSRecord | null>(null);
 
-  // New Record state
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newSummary, setNewSummary] = useState('');
-  const [newContent, setNewContent] = useState('');
-  const [newType, setNewType] = useState<RecordType>('knowledge');
-  const [newStatus, setNewStatus] = useState<VerificationStatus>('verified');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  // New Decision Modal
+  const [isDecisionModalOpen, setIsDecisionModalOpen] = useState(false);
 
-  const loadRecords = async () => {
+  // Toast feedback state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = (msg: string) => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToastMessage(msg);
+    toastTimeoutRef.current = setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  // Keyboard shortcut '/' to focus search input
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === '/' &&
+        document.activeElement !== searchInputRef.current &&
+        !['INPUT', 'TEXTAREA', 'SELECT'].includes((document.activeElement?.tagName || ''))
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Fetch records and artifacts
+  const loadData = async () => {
     if (!activeProject) return;
     setIsLoading(true);
     try {
-      const typeFilter = selectedType === 'all' ? undefined : selectedType;
-      const list = await api.listRecords(activeProject.project_id, typeFilter);
-      setRecords(list);
+      const [recsRes, artsRes] = await Promise.allSettled([
+        api.listRecords(activeProject.project_id),
+        api.listArtifacts(activeProject.project_id),
+      ]);
+
+      const loadedRecords = recsRes.status === 'fulfilled' ? recsRes.value : [];
+      const loadedArtifacts = artsRes.status === 'fulfilled' ? artsRes.value : [];
+
+      setRecords(loadedRecords);
+      setArtifacts(loadedArtifacts);
     } catch {
       setRecords([]);
+      setArtifacts([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadRecords();
-  }, [activeProject, selectedType]);
+    loadData();
+  }, [activeProject?.project_id]);
 
-  const filteredRecords = records.filter((r) => {
-    const matchesSearch =
-      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.record_id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || r.verification_status === selectedStatus;
-    return matchesSearch && matchesStatus;
-  });
+  // Normalize artifacts into BMSRecords for unified search & filtering
+  const unifiedItems: BMSRecord[] = useMemo(() => {
+    const normalizedArtifacts: BMSRecord[] = artifacts.map((art) => ({
+      record_id: art.artifact_id,
+      schema_version: '0.1',
+      record_type: 'artifact' as any,
+      title: art.filename,
+      summary: `${art.content_type || 'application/octet-stream'} • ${(art.byte_size / 1024).toFixed(1)} KB`,
+      author: 'system',
+      created_at: art.created_at,
+      updated_at: art.created_at,
+      project_id: art.project_id,
+      verification_status: 'verified',
+      tags: ['artifact', art.content_type?.split('/')[1] || 'binary'],
+      attributes: art.metadata || {},
+      content: `Artifact ID: ${art.artifact_id}\nFilename: ${art.filename}\nSHA256: ${art.sha256_hash}\nSize: ${art.byte_size} bytes`,
+      revision: 1,
+      _rawArtifact: art,
+    } as BMSRecord & { _rawArtifact: Artifact }));
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeProject) return;
-    setIsSubmitting(true);
-    setValidationError(null);
+    return [...records, ...normalizedArtifacts];
+  }, [records, artifacts]);
 
-    const recId = `rec_${Date.now()}`;
-    const nowIso = new Date().toISOString();
-    let candidateRecord: Record<string, unknown>;
+  // Calculate counts per filter pill
+  const filterCounts = useMemo(() => {
+    const counts: Record<MemoryFilterType, number> = {
+      all: unifiedItems.length,
+      task: 0,
+      decision: 0,
+      checkpoint: 0,
+      knowledge: 0,
+      agent: 0,
+      artifact: 0,
+    };
 
-    if (newType === 'decision') {
-      candidateRecord = {
-        id: recId,
-        schema_version: '0.1',
-        record_type: 'decision',
-        project_id: activeProject.project_id,
-        title: newTitle.trim(),
-        decision: newSummary.trim() || newTitle.trim(),
-        rationale: newContent.trim() || 'Documented via web dashboard',
-        status: newStatus === 'verified' ? 'approved' : 'proposed',
-        created_by: 'dashboard-user',
-        created_at: nowIso,
-        alternatives: [],
-        evidence_refs: [],
-      };
-    } else if (newType === 'checkpoint') {
-      candidateRecord = {
-        id: recId,
-        schema_version: '0.1',
-        record_type: 'checkpoint',
-        project_id: activeProject.project_id,
-        task_id: `task_${Date.now()}`,
-        status: 'active',
-        completed_actions: [newTitle.trim()],
-        pending_actions: [],
-        next_action: newSummary.trim() || 'Continue next step',
-        blockers: [],
-        decision_refs: [],
-        artifact_refs: [],
-        base_revision: 'rev_initial',
-        created_by: 'dashboard-user',
-        created_at: nowIso,
-      };
-    } else if (newType === 'task') {
-      candidateRecord = {
-        id: recId,
-        schema_version: '0.1',
-        record_type: 'task',
-        project_id: activeProject.project_id,
-        title: newTitle.trim(),
-        description: newContent.trim() || newSummary.trim() || '',
-        status: 'todo',
-        priority: 'medium',
-        dependencies: [],
-        assigned_agent_id: null,
-        created_at: nowIso,
-        updated_at: nowIso,
-      };
-    } else {
-      // knowledge
-      candidateRecord = {
-        id: recId,
-        schema_version: '0.1',
-        record_type: 'knowledge',
-        project_id: activeProject.project_id,
-        content: newContent.trim() || newSummary.trim() || newTitle.trim(),
-        knowledge_type: 'fact',
-        verification_status: ['verified', 'unverified', 'disputed', 'superseded'].includes(newStatus) ? newStatus : 'unverified',
-        created_by: 'dashboard-user',
-        created_at: nowIso,
-      };
-    }
+    unifiedItems.forEach((item) => {
+      const type = (item.record_type as string).toLowerCase() as MemoryFilterType;
+      if (counts[type] !== undefined) {
+        counts[type]++;
+      }
+    });
 
-    try {
-      // 1. Validate against BMS standard schema
-      const val = await api.validateRecord(candidateRecord);
-      const isValid = Boolean(val.is_valid ?? (val as any).valid);
-      if (!isValid) {
-        setValidationError(`BMS Validation Failed: ${(val.errors || []).join(', ')}`);
-        setIsSubmitting(false);
-        return;
+    return counts;
+  }, [unifiedItems]);
+
+  // Filter records based on search query and active filter pill
+  const filteredRecords = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return unifiedItems.filter((item) => {
+      // Type filter
+      if (activeFilter !== 'all' && (item.record_type as string).toLowerCase() !== activeFilter) {
+        return false;
       }
 
-      // 2. Persist
-      await api.createRecord(activeProject.project_id, candidateRecord);
-      await loadRecords();
-      setIsCreateOpen(false);
-      setNewTitle('');
-      setNewSummary('');
-      setNewContent('');
-    } catch (err: unknown) {
-      setValidationError(err instanceof Error ? err.message : 'Failed to save record');
-    } finally {
-      setIsSubmitting(false);
+      // Search filter
+      if (!q) return true;
+      const titleMatch = item.title?.toLowerCase().includes(q);
+      const summaryMatch = item.summary?.toLowerCase().includes(q);
+      const idMatch = item.record_id?.toLowerCase().includes(q);
+      const contentMatch = item.content?.toLowerCase().includes(q);
+      const tagMatch = item.tags?.some((t) => t.toLowerCase().includes(q));
+
+      return Boolean(titleMatch || summaryMatch || idMatch || contentMatch || tagMatch);
+    });
+  }, [unifiedItems, searchQuery, activeFilter]);
+
+  // Clear activeRecord if it gets filtered out by search or filter
+  useEffect(() => {
+    if (activeRecord && !filteredRecords.some((r) => r.record_id === activeRecord.record_id)) {
+      setActiveRecord(null);
     }
+  }, [filteredRecords, activeRecord]);
+
+  const handleSelectRelated = (relatedId: string) => {
+    const found = unifiedItems.find((r) => r.record_id === relatedId);
+    if (found) {
+      setActiveRecord(found);
+      setActiveFilter('all');
+    }
+  };
+
+  const handleNewDecisionSuccess = (created: BMSRecord) => {
+    setRecords((prev) => [created, ...prev]);
+    setActiveRecord(created);
+    showToast(`Decision recorded: ${created.title}`);
   };
 
   if (!activeProject) {
@@ -179,298 +175,162 @@ export function MemoryExplorerPage() {
       <EmptyState
         icon={<BrainCircuit className="h-10 w-10 text-muted-foreground" />}
         title="No Project Selected"
-        description="Select an active project from the top navigation to explore BMS memory records."
+        description="Select an active project from the top navigation to inspect the BMS memory graph."
       />
     );
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Memory Explorer</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Explore structured BMS memory in project "{activeProject.name}".
-          </p>
-        </div>
-        <Button onClick={() => setIsCreateOpen(true)} size="sm">
-          <Plus className="h-4 w-4 mr-1.5" />
-          Create Record
-        </Button>
-      </div>
-
-      {/* Filter and Search Bar with Category Pills */}
-      <div className="space-y-3 bg-card p-4 rounded-xl border border-border/80 shadow-xs">
-        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search records by title, summary, or ID..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-lg"
-            />
-          </div>
-
-          <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="h-9 rounded-lg border border-input bg-card px-3 text-xs focus:outline-none"
-            >
-              <option value="all">All Statuses</option>
-              <option value="verified">Verified</option>
-              <option value="unverified">Unverified</option>
-              <option value="inconclusive">Inconclusive</option>
-              <option value="refuted">Refuted</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Quick Category Pills */}
-        <div className="flex items-center space-x-1.5 overflow-x-auto pt-1 pb-0.5">
-          {['all', ...recordTypes].map((type) => (
-            <button
-              key={type}
-              onClick={() => setSelectedType(type)}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium capitalize transition-all whitespace-nowrap ${
-                selectedType === type
-                  ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/60'
-              }`}
-            >
-              {type === 'all' ? 'All Types' : type}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Content: List + Detail Split View */}
-      {isLoading ? (
-        <LoadingSpinner text="Querying memory records..." />
-      ) : filteredRecords.length === 0 ? (
-        <EmptyState
-          icon={<BrainCircuit className="h-10 w-10 text-muted-foreground" />}
-          title="No Memory Records Found"
-          description={
-            records.length === 0
-              ? 'This project does not have any BMS memory records yet.'
-              : 'No records match your search or filter query.'
-          }
-          actionLabel="Add Memory Record"
-          onAction={() => setIsCreateOpen(true)}
-        />
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Records List Column */}
-          <div className="lg:col-span-1 space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
-            {filteredRecords.map((r) => {
-              const isSelected = activeRecord?.record_id === r.record_id;
-              return (
-                <div
-                  key={r.record_id}
-                  onClick={() => setActiveRecord(r)}
-                  className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                    isSelected
-                      ? 'border-primary bg-primary/10 shadow-sm'
-                      : 'border-border bg-card hover:border-border/80'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-mono text-muted-foreground">{r.record_id}</span>
-                    <Badge variant="outline" className="text-[10px] capitalize">
-                      {r.record_type}
-                    </Badge>
-                  </div>
-                  <h4 className="text-sm font-semibold text-foreground line-clamp-1">{r.title}</h4>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{r.summary}</p>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50 text-[10px] text-muted-foreground">
-                    <span className="flex items-center">
-                      {r.verification_status === 'verified' ? (
-                        <CheckCircle2 className="h-3 w-3 text-emerald-400 mr-1" />
-                      ) : r.verification_status === 'refuted' ? (
-                        <XCircle className="h-3 w-3 text-destructive mr-1" />
-                      ) : (
-                        <HelpCircle className="h-3 w-3 text-amber-400 mr-1" />
-                      )}
-                      {r.verification_status}
-                    </span>
-                    <span>Rev {r.revision}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Record Detail Column */}
-          <div className="lg:col-span-2">
-            {activeRecord ? (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="default" className="capitalize text-xs">
-                          {activeRecord.record_type}
-                        </Badge>
-                        <Badge
-                          variant={
-                            activeRecord.verification_status === 'verified'
-                              ? 'success'
-                              : activeRecord.verification_status === 'refuted'
-                              ? 'destructive'
-                              : 'warning'
-                          }
-                          className="capitalize text-xs"
-                        >
-                          {activeRecord.verification_status}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl font-bold mt-2">{activeRecord.title}</CardTitle>
-                      <CardDescription className="font-mono text-xs mt-1">
-                        ID: {activeRecord.record_id} • Author: {activeRecord.author} • Updated:{' '}
-                        {formatDate(activeRecord.updated_at)}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                      Summary
-                    </h5>
-                    <p className="text-sm text-foreground bg-muted/30 p-3 rounded border border-border">
-                      {activeRecord.summary}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                      Content Payload
-                    </h5>
-                    <pre className="p-3 bg-muted/50 rounded border border-border text-xs font-mono whitespace-pre-wrap max-h-72 overflow-y-auto">
-                      {activeRecord.content || '(No content payload)'}
-                    </pre>
-                  </div>
-
-                  {activeRecord.tags && activeRecord.tags.length > 0 && (
-                    <div>
-                      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                        Tags
-                      </h5>
-                      <div className="flex flex-wrap gap-1.5">
-                        {activeRecord.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="bg-accent text-accent-foreground px-2 py-0.5 rounded text-[11px] font-mono"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="h-full flex items-center justify-center p-12 text-center text-muted-foreground">
-                <div>
-                  <FileText className="h-10 w-10 mx-auto text-muted-foreground/60 mb-2" />
-                  <p className="text-sm">Select a memory record on the left to inspect its complete BMS specification.</p>
-                </div>
-              </Card>
-            )}
-          </div>
+    <div className="flex flex-col space-y-4 animate-page-enter select-none pb-8 h-[calc(100vh-80px)]">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-20 right-8 z-50 px-4 py-2.5 rounded-xl bg-card/90 backdrop-blur-md border border-ice/40 shadow-[0_0_25px_rgba(56,189,248,0.3)] text-xs text-foreground font-semibold flex items-center space-x-2 animate-bounce">
+          <Check className="h-4 w-4 text-emerald-400" />
+          <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Create BMS Record Modal */}
-      <Modal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        title="Create BMS Memory Record"
-        description="Standardized AI memory record with schema validation."
-      >
-        <form onSubmit={handleCreate} className="space-y-4">
-          {validationError && (
-            <div className="p-3 text-xs bg-destructive/10 text-destructive border border-destructive/20 rounded">
-              {validationError}
-            </div>
-          )}
+      {/* 1. Header & Controls: Title, Search Input, + New Decision */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_4px_24px_rgba(0,0,0,0.25)] shrink-0">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 rounded-xl bg-ice/10 border border-ice/25 text-ice">
+            <BrainCircuit className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-foreground tracking-tight flex items-center space-x-2">
+              <span>Memory Explorer</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ice/15 text-ice border border-ice/30 font-bold">
+                BMS v0.1
+              </span>
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Search and inspect immutable memory records, ADR decisions, and artifacts.
+            </p>
+          </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-medium mb-1">Record Type *</label>
-              <select
-                value={newType}
-                onChange={(e) => setNewType(e.target.value as RecordType)}
-                className="w-full h-9 rounded-md border border-input bg-card px-3 text-xs"
+        {/* Right Action: + New Decision Button */}
+        <div className="flex items-center space-x-2.5 self-end md:self-auto">
+          <button
+            onClick={() => setIsDecisionModalOpen(true)}
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-all active:scale-[0.98]"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>+ New decision</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Large Search Input & Filter Pills */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 shrink-0">
+        {/* Large Search Input with "/" shortcut hint */}
+        <div className="relative flex-1">
+          <Search className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Search records by title, summary, content, or ID... (press '/' to focus)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-10 pl-10 pr-20 rounded-xl border border-ice/20 focus:border-ice/60 bg-card/60 backdrop-blur-md text-foreground placeholder:text-muted-foreground text-xs shadow-inner focus:outline-none focus:ring-1 focus:ring-ice/50 transition-all"
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1.5">
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                title="Clear search"
               >
-                {recordTypes.map((t) => (
-                  <option key={t} value={t} className="capitalize">
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border/80 bg-secondary/60 text-muted-foreground shadow-xs">
+              /
+            </kbd>
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-xs font-medium mb-1">Verification Status *</label>
-              <select
-                value={newStatus}
-                onChange={(e) => setNewStatus(e.target.value as VerificationStatus)}
-                className="w-full h-9 rounded-md border border-input bg-card px-3 text-xs"
-              >
-                <option value="verified">Verified</option>
-                <option value="unverified">Unverified</option>
-                <option value="inconclusive">Inconclusive</option>
-                <option value="refuted">Refuted</option>
-              </select>
-            </div>
+        {/* Filter Pills with Sliding Indicator */}
+        <div className="shrink-0">
+          <MemoryFilterPills
+            activeFilter={activeFilter}
+            onChangeFilter={(f) => setActiveFilter(f)}
+            counts={filterCounts}
+          />
+        </div>
+      </div>
+
+      {/* 3. Main Two-Column Layout (List + Inspector) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0 overflow-hidden">
+        {/* Left Column: Result List (5 of 12 cols on desktop) */}
+        <div className="lg:col-span-5 flex flex-col h-full rounded-2xl bg-card/40 backdrop-blur-md border border-ice/15 shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-hidden">
+          {/* List Header */}
+          <div className="p-3 border-b border-ice/15 bg-card/60 flex items-center justify-between text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground flex items-center space-x-1.5">
+              <Layers className="h-3.5 w-3.5 text-ice" />
+              <span>Matching Records</span>
+            </span>
+            <span className="font-mono text-[11px] px-2 py-0.5 rounded-full bg-secondary/80 text-foreground font-semibold">
+              {filteredRecords.length}
+            </span>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1">Title *</label>
-            <Input
-              placeholder="e.g. SQLite Storage Architecture Decision"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              required
-            />
+          {/* List Content */}
+          <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+            {isLoading && unifiedItems.length === 0 ? (
+              <div className="py-20 flex justify-center">
+                <LoadingSpinner text="Retrieving memory records and artifacts..." />
+              </div>
+            ) : filteredRecords.length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground px-4">
+                <BrainCircuit className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
+                <h4 className="text-sm font-semibold text-foreground">
+                  No records match your search
+                </h4>
+                <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
+                  Try adjusting your query, clearing filters, or record a new architectural decision.
+                </p>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="mt-3 px-3 py-1 rounded-xl bg-ice/10 hover:bg-ice/20 border border-ice/30 text-ice text-xs font-semibold transition-colors"
+                  >
+                    Clear Search
+                  </button>
+                )}
+              </div>
+            ) : (
+              filteredRecords.map((item) => (
+                <MemoryRecordCard
+                  key={item.record_id}
+                  record={item}
+                  isSelected={activeRecord?.record_id === item.record_id}
+                  onClick={() => setActiveRecord(item)}
+                />
+              ))
+            )}
           </div>
+        </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1">Summary *</label>
-            <Input
-              placeholder="Concise 1-sentence summary"
-              value={newSummary}
-              onChange={(e) => setNewSummary(e.target.value)}
-              required
-            />
-          </div>
+        {/* Right Column: Inspector for Selected Record (7 of 12 cols on desktop) */}
+        <div className="lg:col-span-7 flex flex-col h-full min-h-0">
+          <MemoryInspector
+            record={activeRecord}
+            activeProject={activeProject}
+            onSelectRelatedRecord={handleSelectRelated}
+          />
+        </div>
+      </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1">Content (Markdown / Details)</label>
-            <Textarea
-              rows={4}
-              placeholder="Structured details, reasoning, or constraints"
-              value={newContent}
-              onChange={(e) => setNewContent(e.target.value)}
-            />
-          </div>
-
-          <div className="flex justify-end space-x-2 pt-3">
-            <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" isLoading={isSubmitting}>
-              Validate & Save
-            </Button>
-          </div>
-        </form>
-      </Modal>
+      {/* New Decision Modal */}
+      {isDecisionModalOpen && (
+        <NewDecisionModal
+          isOpen={isDecisionModalOpen}
+          onClose={() => setIsDecisionModalOpen(false)}
+          projectId={activeProject.project_id}
+          onSuccess={handleNewDecisionSuccess}
+        />
+      )}
     </div>
   );
 }
