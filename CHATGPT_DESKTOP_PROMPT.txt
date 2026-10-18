@@ -1,0 +1,33 @@
+Connect to my BARSA memory and locate Project NEXUS.
+I was developing this project with Claude, but that session is now unavailable.
+You do not have access to Claude's conversation.
+Use BARSA's memory standard to authenticate, retrieve the latest approved checkpoint, inspect relevant decisions and task dependencies, and identify the exact next unfinished development task.
+
+================================================================================
+BARSA VERIFIED MEMORY PACKAGE (v0.1)
+================================================================================
+Project: Project NEXUS (proj-nexus)
+Authoritative Revision: c9b5449094dabbc86593f2dbd237071226cd3cf034c52529fc8df4b455b500ea
+
+[LATEST APPROVED CHECKPOINT: CP-NX-003]
+- Task: TASK-NX-004 (FastAPI Incident Ingestion & Service Dependency Endpoints)
+- Status: Completed by claude-backend
+- Completed Actions: ['Implemented Dynamic Severity Engine factoring in Tier-0 Database/Kafka dependencies', 'Executed 8 unit tests validating cascade severity calculation', 'Marked TASK-NX-004 COMPLETED in BARSA memory and FalkorDB graph']
+- Next Action: Implement TASK-NX-005: Automated Remediation Task Generator & Agent Routing
+
+[FALKORDB GRAPH REASONING & TASK DISCOVERY]
+- Next Eligible Task: TASK-NX-005 — Automated Remediation Task Generator & Agent Capability Routing
+- Priority: high
+- Reason: All upstream dependencies completed • No active blockers
+- Upstream Satisfied Dependencies: ['TASK-NX-004']
+
+[ACTIVE ARCHITECTURAL DECISIONS (ADRs)]
+- ADR-NX-001: FalkorDB Graph Traversal for Downstream Cascade Analysis (Multi-hop DEPENDS_ON Cypher)
+- ADR-NX-002: Dynamic Severity Derivation from Dependency Criticality (Tier-0 / Tier-1 blast radius)
+
+================================================================================
+YOUR INSTRUCTION:
+Continue implementing TASK-NX-005 (Automated Remediation Task Generator & Agent Capability Routing).
+Design the Dynamic Severity & Recovery Priority Calculation Engine.
+Ensure downstream blast radius rules from ADR-NX-002 are strictly honored.
+Save the verified progress back to BARSA as Checkpoint CP-NX-003.
