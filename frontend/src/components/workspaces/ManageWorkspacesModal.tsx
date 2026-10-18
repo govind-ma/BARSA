@@ -87,6 +87,7 @@ export function ManageWorkspacesModal({ isOpen, onClose }: ManageWorkspacesModal
                     className="flex-1 cursor-pointer"
                     onClick={() => {
                       setActiveWorkspaceId(wsId);
+                      onClose();
                     }}
                   >
                     <div className="flex items-center space-x-2">

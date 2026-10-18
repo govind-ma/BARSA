@@ -27,6 +27,7 @@ export function TaskDetailDrawer({
 }: TaskDetailDrawerProps) {
   const [selectedAgentId, setSelectedAgentId] = useState<string>('');
   const [isClaiming, setIsClaiming] = useState(false);
+  const [claimSuccess, setClaimSuccess] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,6 +48,8 @@ export function TaskDetailDrawer({
     setIsClaiming(true);
     try {
       await onClaimTask(task.task_id, selectedAgentId);
+      setClaimSuccess(true);
+      setTimeout(() => setClaimSuccess(false), 2000);
     } finally {
       setIsClaiming(false);
     }
@@ -184,9 +187,9 @@ export function TaskDetailDrawer({
                 onChange={(e) => setSelectedAgentId(e.target.value)}
                 className="flex-1 h-9 rounded-lg border border-border-strong bg-surface px-3 text-xs text-text-primary focus:outline-none"
               >
-                <option value="">-- Assign Agent --</option>
+                <option value="" className="bg-surface text-text-primary">-- Assign Agent --</option>
                 {agents.map((a) => (
-                  <option key={a.agent_id} value={a.agent_id}>
+                  <option key={a.agent_id} value={a.agent_id} className="bg-surface text-text-primary">
                     {a.display_name || a.name || a.agent_id}
                   </option>
                 ))}
@@ -195,9 +198,11 @@ export function TaskDetailDrawer({
               <button
                 onClick={handleClaim}
                 disabled={!selectedAgentId || isClaiming}
-                className="px-3.5 py-2 rounded-lg btn-magma text-xs font-semibold shadow-sm disabled:opacity-50"
+                className={`px-3.5 py-2 rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50 ${
+                  claimSuccess ? 'bg-emerald-600 text-white' : 'btn-magma'
+                }`}
               >
-                {isClaiming ? 'Assigning...' : 'Claim'}
+                {claimSuccess ? 'Assigned!' : isClaiming ? 'Assigning...' : 'Claim'}
               </button>
             </div>
           </div>

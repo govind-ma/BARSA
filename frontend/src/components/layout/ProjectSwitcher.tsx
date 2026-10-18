@@ -128,47 +128,69 @@ export function ProjectSwitcher() {
                   workspaces.map((ws) => {
                     const wsId = ws.workspace_id || (ws as any).id;
                     const wsProjects = projectsByWorkspace[wsId] || [];
-                    if (wsProjects.length === 0) return null;
+                    const isWsActive = wsId === activeWorkspace?.workspace_id;
 
                     return (
                       <div key={wsId}>
-                        {/* Workspace Group Heading with 12px top spacing */}
-                        <div className="flex items-center space-x-1.5 px-2 mt-3 mb-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted">
-                          <FolderKanban className="h-3 w-3 text-steel-500" />
-                          <span>{ws.name}</span>
+                        {/* Workspace Group Heading with 12px top spacing - Clickable to switch workspace */}
+                        <div
+                          onClick={() => {
+                            setActiveWorkspaceId(wsId);
+                            if (wsProjects.length > 0) {
+                              const pId = wsProjects[0].project_id || (wsProjects[0] as any).id;
+                              setActiveProjectId(pId);
+                            }
+                            setIsOpen(false);
+                          }}
+                          className="flex items-center justify-between px-2 mt-3 mb-1 cursor-pointer hover:text-text-primary group text-[10px] font-mono font-semibold uppercase tracking-wider text-text-muted transition-colors"
+                          title="Click to switch active workspace"
+                        >
+                          <div className="flex items-center space-x-1.5 truncate">
+                            <FolderKanban className={`h-3 w-3 ${isWsActive ? 'text-lava-orange' : 'text-steel-500'} group-hover:text-lava-orange transition-colors`} />
+                            <span className={`truncate ${isWsActive ? 'text-text-primary font-bold' : ''}`}>{ws.name}</span>
+                          </div>
+                          <span className="text-[9px] text-text-muted font-normal shrink-0 ml-1">
+                            {wsProjects.length} {wsProjects.length === 1 ? 'project' : 'projects'}
+                          </span>
                         </div>
 
                         {/* Project Rows (44px height each, one-line with ellipsis) */}
-                        <div className="space-y-1">
-                          {wsProjects.map((proj) => {
-                            const isCurrent = proj.project_id === activeProject?.project_id;
-                            return (
-                              <button
-                                key={proj.project_id}
-                                onClick={() => {
-                                  setActiveProjectId(proj.project_id);
-                                  if (proj.workspace_id) setActiveWorkspaceId(proj.workspace_id);
-                                  setIsOpen(false);
-                                }}
-                                className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs transition-colors ${
-                                  isCurrent
-                                    ? 'bg-ice-100 dark:bg-white/[0.08] text-text-primary font-semibold border border-border-strong'
-                                    : 'text-text-secondary hover:bg-ice-100/70 dark:hover:bg-white/[0.04] hover:text-text-primary'
-                                }`}
-                              >
-                                <div className="flex items-center space-x-2.5 truncate min-w-0">
-                                  <FileCode
-                                    className={`h-4 w-4 shrink-0 ${isCurrent ? 'text-lava-orange' : 'text-steel-500'}`}
-                                  />
-                                  <span className="truncate text-left">{proj.name}</span>
-                                </div>
-                                {isCurrent && (
-                                  <Check className="h-4 w-4 text-lava-orange shrink-0 ml-2" />
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
+                        {wsProjects.length === 0 ? (
+                          <div className="px-3 py-2 text-[11px] text-text-muted italic bg-surface/40 rounded-lg border border-dashed border-border-subtle">
+                            No projects yet.
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {wsProjects.map((proj) => {
+                              const isCurrent = proj.project_id === activeProject?.project_id;
+                              return (
+                                <button
+                                  key={proj.project_id}
+                                  onClick={() => {
+                                    setActiveProjectId(proj.project_id);
+                                    if (proj.workspace_id) setActiveWorkspaceId(proj.workspace_id);
+                                    setIsOpen(false);
+                                  }}
+                                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs transition-colors ${
+                                    isCurrent
+                                      ? 'bg-ice-100 dark:bg-white/[0.08] text-text-primary font-semibold border border-border-strong'
+                                      : 'text-text-secondary hover:bg-ice-100/70 dark:hover:bg-white/[0.04] hover:text-text-primary'
+                                  }`}
+                                >
+                                  <div className="flex items-center space-x-2.5 truncate min-w-0">
+                                    <FileCode
+                                      className={`h-4 w-4 shrink-0 ${isCurrent ? 'text-lava-orange' : 'text-steel-500'}`}
+                                    />
+                                    <span className="truncate text-left">{proj.name}</span>
+                                  </div>
+                                  {isCurrent && (
+                                    <Check className="h-4 w-4 text-lava-orange shrink-0 ml-2" />
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     );
                   })

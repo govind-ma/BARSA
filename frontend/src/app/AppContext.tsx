@@ -88,23 +88,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const refreshProjects = async (targetWsId?: string | null) => {
+  const refreshProjects = async (_targetWsId?: string | null) => {
     try {
-      // If an active workspace is set, query that workspace, otherwise query all projects
-      const wsId = targetWsId !== undefined ? targetWsId : activeWorkspaceId;
-      let list = await api.listProjects(wsId);
-      // Fallback: If no projects found in specific workspace, query all projects
-      if (list.length === 0) {
-        list = await api.listProjects(null);
-      }
+      // Always load all projects across all workspaces so user can switch to any project in any workspace
+      const list = await api.listProjects(null);
       setProjects(list);
       if (list.length > 0) {
         const storedProjId = localStorage.getItem('barsa_active_project');
         if (storedProjId && list.some((p) => (p.project_id || (p as any).id) === storedProjId)) {
           setActiveProjectIdState(storedProjId);
         } else if (!activeProjectId || !list.some((p) => (p.project_id || (p as any).id) === activeProjectId)) {
-          const firstProjId = list[0].project_id || (list[0] as any).id;
-          if (firstProjId) setActiveProjectId(firstProjId);
+          const currentWsId = _targetWsId || activeWorkspaceId;
+          const wsProj = currentWsId ? list.find((p) => p.workspace_id === currentWsId) : null;
+          const targetProj = wsProj || list[0];
+          const targetId = targetProj.project_id || (targetProj as any).id;
+          if (targetId) setActiveProjectId(targetId);
         }
       } else if (list.length === 0) {
         setActiveProjectId(null);
