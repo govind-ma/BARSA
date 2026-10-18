@@ -140,7 +140,7 @@ All 12 validation scenarios and live cloud tests have passed:
 
 ### Option A: Connect to Live FalkorDB Cloud (Zero Docker required)
 ```bash
-git clone https://github.com/govind-s-b/BARSA.git
+git clone https://github.com/govind-ma/BARSA.git
 cd BARSA
 
 # 1. Create and activate Python virtual environment
