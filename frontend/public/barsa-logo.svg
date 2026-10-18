@@ -1,9 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <rect width="100" height="100" rx="20" fill="#0f172a"/>
-  <path d="M25 75V25H45C55 25 60 30 60 38C60 44 56 48 50 50C58 52 63 57 63 65C63 73 57 75 46 75H25Z" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M25 50H48" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="75" cy="25" r="5" fill="#818cf8"/>
-  <circle cx="85" cy="50" r="5" fill="#38bdf8"/>
-  <circle cx="75" cy="75" r="5" fill="#34d399"/>
-  <path d="M60 38L75 25M50 50L85 50M63 65L75 75" stroke="#475569" stroke-width="2" stroke-dasharray="3 3"/>
+  <defs>
+    <!-- Magma Flame Core Gradient -->
+    <linearGradient id="flameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC93C" />
+      <stop offset="50%" stop-color="#FF7A1A" />
+      <stop offset="100%" stop-color="#E5301F" />
+    </linearGradient>
+    <!-- Ice Crystal Facet Shading -->
+    <linearGradient id="iceFacet1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#CFE0EC" stop-opacity="0.6" />
+    </linearGradient>
+    <linearGradient id="iceFacet2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E3EDF5" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#B3CDE0" stop-opacity="0.5" />
+    </linearGradient>
+    <!-- Core Glow Filter -->
+    <filter id="coreGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Faceted Hexagonal Crystal -->
+  <!-- Hexagon Points: (50, 6), (88, 28), (88, 72), (50, 94), (12, 72), (12, 28) -->
+  <polygon points="50,6 88,28 50,50" fill="url(#iceFacet1)" stroke="#6F8FA8" stroke-width="1.5" stroke-linejoin="round" />
+  <polygon points="88,28 88,72 50,50" fill="url(#iceFacet2)" stroke="#6F8FA8" stroke-width="1.5" stroke-linejoin="round" />
+  <polygon points="88,72 50,94 50,50" fill="url(#iceFacet1)" stroke="#6F8FA8" stroke-width="1.5" stroke-linejoin="round" />
+  <polygon points="50,94 12,72 50,50" fill="url(#iceFacet2)" stroke="#6F8FA8" stroke-width="1.5" stroke-linejoin="round" />
+  <polygon points="12,72 12,28 50,50" fill="url(#iceFacet1)" stroke="#6F8FA8" stroke-width="1.5" stroke-linejoin="round" />
+  <polygon points="12,28 50,6 50,50" fill="url(#iceFacet2)" stroke="#6F8FA8" stroke-width="1.5" stroke-linejoin="round" />
+
+  <!-- Outer Hexagon Perimeter Outline -->
+  <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="none" stroke="#6F8FA8" stroke-width="2.5" stroke-linejoin="round" />
+
+  <!-- Molten Flame Core (Inner Diamond / Ember) -->
+  <polygon points="50,26 68,50 50,74 32,50" fill="url(#flameGrad)" filter="url(#coreGlow)" />
+  <polygon points="50,34 60,50 50,66 40,50" fill="#FFC93C" />
+  <circle cx="50" cy="50" r="4" fill="#FFFFFF" opacity="0.9" />
 </svg>

@@ -32,7 +32,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [principal, setPrincipal] = useState<AuthenticatedPrincipal | null>(null);
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [isBackendOnline, setIsBackendOnline] = useState<boolean>(true);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = localStorage.getItem('barsa_theme');
+    return saved === 'dark' ? 'dark' : 'light';
+  });
 
   const setActiveWorkspaceId = (id: string | null) => {
     setActiveWorkspaceIdState(id);
@@ -52,22 +55,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Load theme preference
+  // Sync theme with DOM and localStorage (Default: light / Ice)
   useEffect(() => {
-    const saved = localStorage.getItem('barsa_theme') as 'dark' | 'light' | null;
-    if (saved) {
-      setTheme(saved);
-      document.documentElement.className = saved;
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.className = 'dark';
+      document.documentElement.classList.remove('dark');
     }
-  }, []);
+    localStorage.setItem('barsa_theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    localStorage.setItem('barsa_theme', next);
-    document.documentElement.className = next;
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const refreshWorkspaces = async () => {
@@ -93,7 +92,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       // If an active workspace is set, query that workspace, otherwise query all projects
       const wsId = targetWsId !== undefined ? targetWsId : activeWorkspaceId;
-      const list = await api.listProjects(wsId);
+      let list = await api.listProjects(wsId);
+      // Fallback: If no projects found in specific workspace, query all projects
+      if (list.length === 0) {
+        list = await api.listProjects(null);
+      }
       setProjects(list);
       if (list.length > 0) {
         const storedProjId = localStorage.getItem('barsa_active_project');

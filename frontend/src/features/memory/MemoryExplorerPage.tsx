@@ -191,29 +191,29 @@ export function MemoryExplorerPage() {
       )}
 
       {/* 1. Header & Controls: Title, Search Input, + New Decision */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_4px_24px_rgba(0,0,0,0.25)] shrink-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 glass-card shadow-sm shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-xl bg-ice/10 border border-ice/25 text-ice">
+          <div className="p-2 rounded-lg bg-ice-100 dark:bg-white/[0.08] border border-border-subtle text-steel-700 dark:text-text-primary">
             <BrainCircuit className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-foreground tracking-tight flex items-center space-x-2">
+            <h1 className="font-heading text-base font-semibold text-text-primary tracking-tight flex items-center space-x-2">
               <span>Memory Explorer</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ice/15 text-ice border border-ice/30 font-bold">
-                BMS v0.1
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border border-border-subtle font-medium">
+                BMS v0.2
               </span>
             </h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-text-secondary">
               Search and inspect immutable memory records, ADR decisions, and artifacts.
             </p>
           </div>
         </div>
 
-        {/* Right Action: + New Decision Button */}
+        {/* Right Action: + New Decision Button (Primary Magma Button) */}
         <div className="flex items-center space-x-2.5 self-end md:self-auto">
           <button
             onClick={() => setIsDecisionModalOpen(true)}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-all active:scale-[0.98]"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97]"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>+ New decision</span>

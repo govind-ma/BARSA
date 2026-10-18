@@ -7,6 +7,7 @@ import type { BMSRecord } from '@/types';
 import {
   BookmarkCheck,
   Check,
+  X,
 } from 'lucide-react';
 
 export function CheckpointsPage() {
@@ -64,7 +65,8 @@ export function CheckpointsPage() {
           setActiveResumeCpId(firstId);
         }
       } catch {
-        if (isMounted) setCheckpoints([]);
+        if (!isMounted) return;
+        setCheckpoints([]);
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -107,9 +109,7 @@ export function CheckpointsPage() {
     const cpId = cp.record_id || (cp as any).id;
 
     try {
-      // Call resume context endpoint
       await api.resumeContext(activeProject.project_id, 8000).catch(() => null);
-
       setActiveResumeCpId(cpId);
       localStorage.setItem(`barsa_active_resume_checkpoint_${activeProject.project_id}`, cpId);
       showToast(`Milestone activated. Context ready for incoming AI agents.`);
@@ -140,38 +140,46 @@ export function CheckpointsPage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-page-enter select-none pb-12">
-      {/* Toast Notification */}
+      {/* Toast Notification (White glass with left lava accent bar) */}
       {toastMessage && (
-        <div className="fixed top-20 right-8 z-50 px-4 py-2.5 rounded-xl bg-card/90 backdrop-blur-md border border-ice/40 shadow-[0_0_25px_rgba(56,189,248,0.3)] text-xs text-foreground font-semibold flex items-center space-x-2 animate-bounce">
-          <Check className="h-4 w-4 text-emerald-400" />
+        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-lg bg-surface/95 border border-border-subtle border-l-4 border-l-lava-orange text-text-primary text-xs font-medium shadow-xl backdrop-blur-xl animate-page-enter">
+          <div className="h-5 w-5 rounded-full bg-lava-orange/15 border border-lava-orange/30 flex items-center justify-center text-lava-orange shrink-0">
+            <Check className="h-3 w-3" />
+          </div>
           <span>{toastMessage}</span>
+          <button
+            onClick={() => setToastMessage(null)}
+            className="text-text-muted hover:text-text-primary ml-2 p-0.5"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
 
       {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 glass-card shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="h-9 w-9 rounded-xl bg-ice/15 border border-ice/30 flex items-center justify-center text-ice shadow-[0_0_15px_rgba(56,189,248,0.25)]">
+          <div className="h-9 w-9 rounded-lg bg-ice-100 dark:bg-white/[0.08] border border-border-subtle flex items-center justify-center text-steel-700 dark:text-text-primary shadow-xs">
             <BookmarkCheck className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base font-bold tracking-tight text-foreground">
+              <h1 className="font-heading text-base font-semibold tracking-tight text-text-primary">
                 Audit Checkpoints
               </h1>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-ice/15 text-ice border border-ice/30 font-mono font-bold">
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border border-border-subtle font-mono font-bold">
                 {checkpoints.length} Snapshots
               </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-text-secondary mt-0.5">
               Verified milestone checkpoints for zero-loss agent-to-agent handover.
             </p>
           </div>
         </div>
 
         {activeResumeCpId && (
-          <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-chilli/10 border border-chilli/30 text-chilli text-xs font-mono font-bold self-start sm:self-auto">
-            <span className="h-2 w-2 rounded-full bg-chilli animate-ping" />
+          <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-lava-orange/10 border border-lava-orange/30 text-lava-orange text-xs font-mono font-bold self-start sm:self-auto">
+            <span className="h-2 w-2 rounded-full bg-lava-orange animate-ping" />
             <span>Active Resume: {activeResumeCpId}</span>
           </div>
         )}
@@ -184,8 +192,8 @@ export function CheckpointsPage() {
           description="This project does not have any saved checkpoints yet. Instruct an agent to run barsa_save_checkpoint."
         />
       ) : (
-        /* Vertical connected timeline with ice gradient line */
-        <div className="relative pl-8 space-y-6 before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-0.5 before:bg-gradient-to-b before:from-ice before:via-ice/40 before:to-transparent">
+        /* Vertical connected timeline with ice/steel gradient line */
+        <div className="relative pl-8 space-y-6 before:absolute before:left-3.5 before:top-4 before:bottom-4 before:w-0.5 before:bg-gradient-to-b before:from-steel-500 before:via-ice-300 before:to-transparent dark:before:from-white/30 dark:before:via-white/10">
           {checkpoints.map((cp, idx) => {
             const cpId = cp.record_id || (cp as any).id;
             const isLatest = idx === 0;

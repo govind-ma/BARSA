@@ -12,9 +12,9 @@ import {
   Plus,
   Copy,
   Check,
-  Sparkles,
   GitPullRequest,
   FileCode,
+  Palette,
 } from 'lucide-react';
 
 export interface CommandPaletteProps {
@@ -48,6 +48,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     { id: 'nav-history', label: 'Go to History / Version Control', icon: GitBranch, category: 'Navigation', action: () => navigate('/version-control') },
     { id: 'nav-memory', label: 'Go to Memory Explorer', icon: BrainCircuit, category: 'Navigation', action: () => navigate('/memory') },
     { id: 'nav-checkpoints', label: 'Go to Checkpoints', icon: BookmarkCheck, category: 'Navigation', action: () => navigate('/checkpoints') },
+    { id: 'nav-styleguide', label: 'Open Design System Style Guide', icon: Palette, category: 'Navigation', action: () => navigate('/styleguide') },
   ];
 
   const quickActions = [
@@ -64,7 +65,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     {
       id: 'act-new-decision',
       label: 'Record Architectural Decision (ADR)',
-      icon: Sparkles,
+      icon: Plus,
       category: 'Actions',
       action: () => {
         onClose();
@@ -137,17 +138,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   return (
     <>
       <div
-        className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-150"
+        className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 select-none"
         onClick={onClose}
       >
         <div
-          className="relative w-full max-w-xl rounded-2xl bg-card/95 border border-ice/30 shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-in zoom-in-95 duration-150"
+          className="relative w-full max-w-xl rounded-xl bg-surface border border-border-strong shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
           onClick={(e) => e.stopPropagation()}
           onKeyDown={handleKeyDown}
         >
           {/* Search Header */}
-          <div className="flex items-center px-4 py-3.5 border-b border-ice/15 bg-secondary/30">
-            <Search className="h-4 w-4 text-ice shrink-0 mr-3" />
+          <div className="flex items-center px-4 py-3.5 border-b border-border-subtle bg-surface">
+            <Search className="h-4 w-4 text-steel-500 shrink-0 mr-3" />
             <input
               ref={inputRef}
               type="text"
@@ -157,9 +158,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 setSelectedIndex(0);
               }}
               placeholder="Search projects, navigation, or run actions..."
-              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+              className="w-full bg-transparent text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
             />
-            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted/60 border border-ice/10 rounded">
+            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-text-muted bg-ice-100 dark:bg-white/[0.08] border border-border-subtle rounded">
               ESC
             </kbd>
           </div>
@@ -167,7 +168,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
           {/* Results List */}
           <div className="max-h-80 overflow-y-auto p-2 space-y-1">
             {filtered.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground">
+              <div className="py-8 text-center text-xs text-text-muted">
                 No commands or projects match "{query}"
               </div>
             ) : (
@@ -183,17 +184,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       if (item.id !== 'act-copy-prompt') onClose();
                     }}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors text-left ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left ${
                       isSelected
-                        ? 'bg-ice/15 text-ice font-semibold border border-ice/30 shadow-[0_0_12px_rgba(56,189,248,0.2)]'
-                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground border border-transparent'
+                        ? 'bg-ice-100 dark:bg-white/[0.08] text-text-primary font-semibold border border-border-subtle'
+                        : 'text-text-secondary hover:bg-ice-100/60 hover:text-text-primary border border-transparent'
                     }`}
                   >
                     <div className="flex items-center space-x-2.5 truncate">
-                      <Icon className={`h-4 w-4 shrink-0 ${isSelected ? 'text-ice' : 'text-muted-foreground'}`} />
+                      <Icon className={`h-4 w-4 shrink-0 ${isSelected ? 'text-lava-orange' : 'text-steel-500'}`} />
                       <span className="truncate">{item.label}</span>
                     </div>
-                    <span className="text-[10px] font-mono text-muted-foreground/70 shrink-0 ml-2">
+                    <span className="text-[10px] font-mono text-text-muted shrink-0 ml-2">
                       {item.category}
                     </span>
                   </button>
@@ -203,7 +204,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
           </div>
 
           {/* Footer Guide */}
-          <div className="px-4 py-2 border-t border-ice/10 bg-secondary/20 flex items-center justify-between text-[11px] text-muted-foreground font-mono">
+          <div className="px-4 py-2 border-t border-border-subtle bg-surface/50 flex items-center justify-between text-[11px] text-text-muted font-mono">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
             <span>ESC Close</span>

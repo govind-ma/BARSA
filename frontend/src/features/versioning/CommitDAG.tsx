@@ -35,14 +35,14 @@ export function CommitDAG({
       >
         <defs>
           <linearGradient id="dagLineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#6F8FA8" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#B3CDE0" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#CFE0EC" stopOpacity="0.2" />
           </linearGradient>
 
           <linearGradient id="mergeLineGradient" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ef4444" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.6" />
+            <stop offset="0%" stopColor="#FF7A1A" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#6F8FA8" stopOpacity="0.6" />
           </linearGradient>
         </defs>
 
@@ -98,17 +98,17 @@ export function CommitDAG({
             >
               {/* Node Dot positioned exactly on the SVG line at x=28 */}
               <div
-                className={`absolute -left-[50px] h-5 w-5 rounded-full border-2 transition-all flex items-center justify-center ${
+                className={`absolute -left-[50px] h-5 w-5 rounded-full border-2 transition-all flex items-center justify-center bg-surface ${
                   isMerge
-                    ? 'border-chilli bg-background shadow-[0_0_10px_rgba(239,68,68,0.7)]'
+                    ? 'border-lava-orange shadow-[0_0_8px_rgba(255,122,26,0.7)]'
                     : isDiffSelected
-                    ? 'border-emerald-400 bg-background ring-4 ring-emerald-400/20'
-                    : 'border-ice bg-background shadow-[0_0_8px_rgba(56,189,248,0.7)]'
+                    ? 'border-lava-yellow ring-4 ring-lava-yellow/20'
+                    : 'border-steel-500 shadow-sm'
                 }`}
               >
                 <div
                   className={`h-2 w-2 rounded-full ${
-                    isMerge ? 'bg-chilli' : isDiffSelected ? 'bg-emerald-400' : 'bg-ice'
+                    isMerge ? 'bg-lava-orange' : isDiffSelected ? 'bg-lava-yellow' : 'bg-steel-500'
                   }`}
                 />
               </div>
@@ -116,16 +116,16 @@ export function CommitDAG({
               {/* Commit Card */}
               <div
                 onClick={() => onSelectCommit(c)}
-                className={`w-full p-3.5 rounded-2xl border transition-all cursor-pointer ${
+                className={`w-full p-3.5 rounded-lg border transition-all cursor-pointer ${
                   isCardSelected
-                    ? 'bg-card/95 border-ice/50 shadow-[0_0_20px_rgba(56,189,248,0.2)]'
-                    : 'bg-card/65 hover:bg-card/90 border-border/70 hover:border-ice/30 shadow-sm'
+                    ? 'bg-surface border-border-strong shadow-md ring-1 ring-steel-500/30'
+                    : 'bg-surface/80 hover:bg-surface border-border-subtle hover:border-border-strong hover:-translate-y-0.5 shadow-sm'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
                   <div className="flex flex-wrap items-center gap-2">
                     {/* Short SHA-256 Hash in mono */}
-                    <span className="font-mono text-xs font-bold text-ice px-2 py-0.5 rounded bg-ice/10 border border-ice/25">
+                    <span className="font-mono text-xs font-bold text-text-primary px-2 py-0.5 rounded bg-ice-100 dark:bg-white/[0.08] border border-border-subtle">
                       {truncate(c.commit_hash, 8)}
                     </span>
 
@@ -133,59 +133,76 @@ export function CommitDAG({
                     <div
                       className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-mono font-medium ${
                         isAgent
-                          ? 'bg-amber-500/15 text-amber-300 border-amber-500/35'
-                          : 'bg-ice/15 text-ice border-ice/35'
+                          ? 'bg-lava-yellow/15 text-lava-orange dark:text-lava-yellow border-lava-yellow/30'
+                          : 'bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border-border-subtle'
                       }`}
                     >
                       {isAgent ? (
-                        <Bot className="h-3 w-3 text-amber-400" />
+                        <Bot className="h-3 w-3 text-lava-orange" />
                       ) : (
-                        <User className="h-3 w-3 text-ice" />
+                        <User className="h-3 w-3 text-steel-500" />
                       )}
                       <span>Author: {c.author.name}</span>
                     </div>
 
                     {isMerge && (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-chilli/15 border border-chilli/30 text-chilli font-bold">
-                        Merge Commit
+                      <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-lava-orange/15 text-lava-orange border border-lava-orange/30 font-bold">
+                        Merge
                       </span>
                     )}
                   </div>
 
-                  {/* Right: Timestamp & Diff Selection Checkbox */}
-                  <div className="flex items-center space-x-3 text-xs text-muted-foreground">
-                    <span className="flex items-center space-x-1 font-mono text-[11px]">
-                      <Clock className="h-3 w-3" />
-                      <span>{formatDate(c.timestamp)}</span>
-                    </span>
-
-                    {/* Diff selection checkbox */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleDiffSelect(c);
-                      }}
-                      title={
-                        isDiffSelected
-                          ? 'Deselect for diff comparison'
-                          : 'Select for 2-commit split diff'
-                      }
-                      className={`px-2 py-0.5 rounded-md font-mono text-[10px] border transition-all flex items-center space-x-1 ${
-                        isDiffSelected
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold'
-                          : 'bg-secondary/60 text-muted-foreground border-border hover:text-ice hover:border-ice/30'
-                      }`}
-                    >
-                      {isDiffSelected && <Check className="h-2.5 w-2.5 text-emerald-400" />}
-                      <span>{isDiffSelected ? 'Diff Selected' : 'Select for Diff'}</span>
-                    </button>
-                  </div>
+                  {/* Diff select checkbox button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleDiffSelect(c);
+                    }}
+                    title={
+                      isDiffSelected
+                        ? 'Deselect from diff'
+                        : 'Select commit for side-by-side diff'
+                    }
+                    className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                      isDiffSelected
+                        ? 'bg-lava-orange text-white font-semibold'
+                        : 'bg-ice-100 dark:bg-white/[0.06] text-text-muted hover:text-text-primary hover:bg-ice-200'
+                    }`}
+                  >
+                    {isDiffSelected ? (
+                      <>
+                        <Check className="h-3 w-3" />
+                        <span>Diff Selected</span>
+                      </>
+                    ) : (
+                      <span>+ Select for diff</span>
+                    )}
+                  </button>
                 </div>
 
                 {/* Commit Message */}
-                <p className="text-xs text-foreground font-medium leading-relaxed">
+                <p className="font-heading text-xs font-medium text-text-primary leading-relaxed line-clamp-2">
                   {c.message}
                 </p>
+
+                {/* Footer: Timestamp and parent hashes */}
+                <div className="mt-2 pt-2 border-t border-border-subtle flex flex-wrap items-center justify-between text-[10px] text-text-muted font-mono">
+                  <div className="flex items-center space-x-1">
+                    <Clock className="h-3 w-3 text-steel-500" />
+                    <span>{formatDate(c.timestamp)}</span>
+                  </div>
+
+                  {c.parent_hashes && c.parent_hashes.length > 0 && (
+                    <div className="flex items-center space-x-1">
+                      <span>parents:</span>
+                      {c.parent_hashes.map((ph, pIdx) => (
+                        <span key={pIdx} className="underline text-text-secondary">
+                          {truncate(ph, 6)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           );

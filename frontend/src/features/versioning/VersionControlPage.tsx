@@ -184,7 +184,7 @@ export function VersionControlPage() {
   return (
     <div className="flex flex-col space-y-4 animate-page-enter select-none pb-8">
       {/* 1. Top Row: Branch Switcher, Create Branch, Diff Commits & Propose Merge */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 glass-card shadow-sm">
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Branch Switcher (Searchable Dropdown) */}
           <BranchSwitcher
@@ -197,10 +197,10 @@ export function VersionControlPage() {
           {/* "+ Create Branch" (Secondary Ice Button) */}
           <button
             onClick={() => setIsCreateBranchOpen(true)}
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-ice/30 hover:border-ice/50 bg-ice/10 hover:bg-ice/20 text-ice text-xs font-medium shadow-sm transition-all"
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium"
             title="Create a new branch from current HEAD"
           >
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-3.5 w-3.5 text-steel-500" />
             <span>Create branch</span>
           </button>
         </div>
@@ -211,10 +211,10 @@ export function VersionControlPage() {
           <button
             onClick={handleOpenSplitDiff}
             disabled={diffSelection.length !== 2}
-            className={`inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+            className={`inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
               diffSelection.length === 2
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:bg-emerald-500/30'
-                : 'bg-secondary/40 text-muted-foreground border-border/70 opacity-60 cursor-not-allowed'
+                ? 'bg-ice-100 hover:bg-ice-200 text-text-primary border-border-strong shadow-sm'
+                : 'bg-surface/40 text-text-muted border-border-subtle opacity-60 cursor-not-allowed'
             }`}
             title={
               diffSelection.length === 2
@@ -231,7 +231,7 @@ export function VersionControlPage() {
           {/* "Propose Merge" Button */}
           <button
             onClick={() => setIsProposeMergeOpen(true)}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-ice hover:bg-ice/90 text-background font-bold text-xs shadow-[0_0_15px_rgba(56,189,248,0.35)] transition-all active:scale-[0.98]"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97]"
           >
             <GitMerge className="h-3.5 w-3.5" />
             <span>Propose merge</span>
@@ -385,16 +385,16 @@ export function VersionControlPage() {
         onProposeMerge={handleProposeMerge}
       />
 
-      {/* Floating Toast Notification */}
+      {/* Floating Toast Notification (White glass with left lava accent bar) */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-2.5 px-4 py-2.5 rounded-xl bg-card/95 border border-ice/40 text-foreground text-xs font-medium shadow-[0_8px_30px_rgba(56,189,248,0.3)] backdrop-blur-md animate-page-enter">
-          <div className="h-5 w-5 rounded-full bg-ice/20 border border-ice/40 flex items-center justify-center text-ice shrink-0">
-            <Check className="h-3 w-3 text-ice" />
+        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-lg bg-surface/95 border border-border-subtle border-l-4 border-l-lava-orange text-text-primary text-xs font-medium shadow-xl backdrop-blur-xl animate-page-enter">
+          <div className="h-5 w-5 rounded-full bg-lava-orange/15 border border-lava-orange/30 flex items-center justify-center text-lava-orange shrink-0">
+            <Check className="h-3 w-3" />
           </div>
           <span>{toastMessage}</span>
           <button
             onClick={() => setToastMessage(null)}
-            className="text-muted-foreground hover:text-foreground ml-2"
+            className="text-text-muted hover:text-text-primary ml-2 p-0.5"
           >
             <X className="h-3.5 w-3.5" />
           </button>

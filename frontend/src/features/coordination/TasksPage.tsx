@@ -6,11 +6,11 @@ import { Modal } from '@/components/ui/Modal';
 import { Input, Textarea } from '@/components/ui/Input';
 import { TaskCard } from './TaskCard';
 import { TaskDetailDrawer } from './TaskDetailDrawer';
+import { BarsaLogo } from '@/components/ui/BarsaLogo';
 import type { CoordinationTask, AgentProfile, TaskStatus, GraphResumeResponse } from '@/types';
 import {
   CheckSquare,
   Plus,
-  Sparkles,
   Bot,
   ShieldAlert,
   Play,
@@ -38,8 +38,8 @@ const KANBAN_COLUMNS: KanbanColumnConfig[] = [
     label: 'Todo',
     statuses: ['pending', 'ready'],
     dropStatus: 'ready',
-    topBorderClass: 'border-t-2 border-t-ice/40',
-    emptyIcon: <CheckSquare className="h-6 w-6 text-muted-foreground/30 mb-1" />,
+    topBorderClass: 'border-t-2 border-t-ice-300 dark:border-t-white/20',
+    emptyIcon: <CheckSquare className="h-6 w-6 text-steel-500/40 mb-1" />,
     emptyText: 'No pending tasks in queue',
   },
   {
@@ -47,8 +47,8 @@ const KANBAN_COLUMNS: KanbanColumnConfig[] = [
     label: 'In Progress',
     statuses: ['running', 'under_review'],
     dropStatus: 'running',
-    topBorderClass: 'border-t-2 border-t-sky-400 shadow-[0_-2px_10px_rgba(56,189,248,0.2)]',
-    emptyIcon: <Play className="h-6 w-6 text-ice/30 mb-1" />,
+    topBorderClass: 'border-t-2 border-t-lava-orange/70 shadow-[0_-2px_10px_rgba(255,122,26,0.15)]',
+    emptyIcon: <Play className="h-6 w-6 text-lava-orange/40 mb-1" />,
     emptyText: 'No tasks currently running',
   },
   {
@@ -56,8 +56,8 @@ const KANBAN_COLUMNS: KanbanColumnConfig[] = [
     label: 'Blocked',
     statuses: ['blocked'],
     dropStatus: 'blocked',
-    topBorderClass: 'border-t-2 border-t-chilli shadow-[0_-2px_10px_rgba(239,68,68,0.3)]',
-    emptyIcon: <ShieldAlert className="h-6 w-6 text-chilli/40 mb-1" />,
+    topBorderClass: 'border-t-2 border-t-lava-red shadow-[0_-2px_10px_rgba(229,48,31,0.25)]',
+    emptyIcon: <ShieldAlert className="h-6 w-6 text-lava-red/40 mb-1" />,
     emptyText: 'No active blockers. Work flowing smoothly.',
   },
   {
@@ -65,8 +65,8 @@ const KANBAN_COLUMNS: KanbanColumnConfig[] = [
     label: 'Completed',
     statuses: ['completed'],
     dropStatus: 'completed',
-    topBorderClass: 'border-t-2 border-t-ice shadow-[0_-2px_10px_rgba(56,189,248,0.25)]',
-    emptyIcon: <CheckCircle2 className="h-6 w-6 text-emerald-400/40 mb-1" />,
+    topBorderClass: 'border-t-2 border-t-steel-500 shadow-[0_-2px_10px_rgba(111,143,168,0.2)]',
+    emptyIcon: <CheckCircle2 className="h-6 w-6 text-emerald-600/40 dark:text-emerald-400/40 mb-1" />,
     emptyText: 'Completed tasks will archive here',
   },
 ];
@@ -206,7 +206,6 @@ export function TasksPage() {
 
       if (topId) {
         setRecommendedTaskId(topId);
-        // Smoothly scroll the card into view
         setTimeout(() => {
           const cardEl = taskCardRefs.current.get(topId);
           if (cardEl) {
@@ -215,7 +214,6 @@ export function TasksPage() {
         }, 150);
       }
     } catch {
-      // Fallback to top unblocked task
       const fallbackTask =
         tasks.find((t) => t.status !== 'blocked' && t.status !== 'completed') ||
         tasks[0];
@@ -285,7 +283,7 @@ export function TasksPage() {
   if (!activeProject) {
     return (
       <EmptyState
-        icon={<CheckSquare className="h-10 w-10 text-muted-foreground" />}
+        icon={<CheckSquare className="h-10 w-10 text-steel-500" />}
         title="No Project Selected"
         description="Select an active project from the top navigation to view the coordination task board."
       />
@@ -295,17 +293,17 @@ export function TasksPage() {
   return (
     <div className="flex flex-col h-full space-y-4 animate-page-enter select-none pb-6">
       {/* Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 glass-card shadow-sm">
         <div>
           <div className="flex items-center space-x-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
+            <h1 className="font-heading text-xl font-bold tracking-tight text-text-primary">
               Coordination Tasks
             </h1>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-ice/10 text-ice border border-ice/20 font-mono">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border border-border-subtle font-mono font-medium">
               {tasks.length} Total
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-xs text-text-secondary mt-0.5">
             Multi-agent task queue with FalkorDB Cypher dependency re-ranking.
           </p>
         </div>
@@ -313,12 +311,12 @@ export function TasksPage() {
         {/* Header Controls */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Filter by agent dropdown (Avatar + Name) */}
-          <div className="flex items-center space-x-1.5 bg-secondary/40 border border-ice/20 rounded-xl px-2.5 py-1">
-            <Bot className="h-4 w-4 text-ice shrink-0" />
+          <div className="flex items-center space-x-1.5 bg-surface border border-border-subtle rounded-lg px-2.5 py-1 shadow-sm">
+            <Bot className="h-4 w-4 text-steel-500 shrink-0" />
             <select
               value={selectedAgentFilter}
               onChange={(e) => setSelectedAgentFilter(e.target.value)}
-              className="bg-transparent text-xs text-foreground focus:outline-none cursor-pointer pr-2"
+              className="bg-transparent text-xs text-text-primary focus:outline-none cursor-pointer pr-2"
               aria-label="Filter by agent"
             >
               <option value="ALL">All agents</option>
@@ -334,22 +332,22 @@ export function TasksPage() {
           {/* New Task Button */}
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-border/80 hover:border-ice/30 bg-secondary/50 hover:bg-secondary text-foreground text-xs font-medium transition-all"
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium"
           >
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-3.5 w-3.5 text-steel-500" />
             <span>New Task</span>
           </button>
 
-          {/* Primary Chilli "FalkorDB Recommend Next" Button */}
+          {/* Primary Magma "FalkorDB Recommend Next" Button */}
           <button
             onClick={handleRecommendNext}
             disabled={isRecommending}
-            className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97] disabled:opacity-50"
           >
             {isRecommending ? (
               <RefreshCw className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Sparkles className="h-3.5 w-3.5 fill-current" />
+              <BarsaLogo size={14} />
             )}
             <span>FalkorDB Recommend Next</span>
           </button>
@@ -370,16 +368,16 @@ export function TasksPage() {
               onDragOver={(e) => handleDragOver(e, col.id)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, col)}
-              className={`flex flex-col h-full bg-card/50 backdrop-blur-md rounded-2xl border border-ice/15 p-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all ${
+              className={`flex flex-col h-full glass-card p-3.5 shadow-sm transition-all ${
                 col.topBorderClass
-              } ${isDropTarget ? 'ring-2 ring-ice/60 bg-ice/5' : ''}`}
+              } ${isDropTarget ? 'ring-2 ring-steel-500 bg-ice-100/50' : ''}`}
             >
               {/* Column Header */}
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-border/50">
-                <span className="text-xs font-bold tracking-tight text-foreground uppercase">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-border-subtle">
+                <span className="font-heading text-xs font-semibold tracking-tight text-text-primary uppercase">
                   {col.label}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-secondary text-muted-foreground font-bold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-secondary font-bold">
                   {columnTasks.length}
                 </span>
               </div>
@@ -391,9 +389,9 @@ export function TasksPage() {
                     <LoadingSpinner text="" />
                   </div>
                 ) : columnTasks.length === 0 ? (
-                  <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-border/60 rounded-xl">
+                  <div className="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-border-subtle rounded-lg bg-surface/30">
                     {col.emptyIcon}
-                    <p className="text-xs text-muted-foreground/80 mt-1">
+                    <p className="text-xs text-text-muted mt-1">
                       {col.emptyText}
                     </p>
                   </div>
@@ -444,24 +442,24 @@ export function TasksPage() {
 
       {/* Optimistic Update "Undo" Toast */}
       {undoAction && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl bg-card/95 border border-ice/40 text-foreground text-xs font-medium shadow-[0_8px_32px_rgba(56,189,248,0.3)] backdrop-blur-md animate-page-enter">
-          <div className="h-5 w-5 rounded-full bg-ice/20 border border-ice/40 flex items-center justify-center text-ice shrink-0">
-            <Check className="h-3 w-3 text-ice" />
+        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-lg bg-surface/95 border border-border-subtle border-l-4 border-l-lava-orange text-text-primary text-xs font-medium shadow-xl backdrop-blur-xl animate-page-enter">
+          <div className="h-5 w-5 rounded-full bg-lava-orange/15 border border-lava-orange/30 flex items-center justify-center text-lava-orange shrink-0">
+            <Check className="h-3 w-3" />
           </div>
           <span>
-            Moved <strong className="font-mono text-ice">{undoAction.taskId}</strong> to{' '}
+            Moved <strong className="font-mono text-lava-orange">{undoAction.taskId}</strong> to{' '}
             {undoAction.columnLabel}
           </span>
           <button
             onClick={handleUndo}
-            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-ice/15 hover:bg-ice/25 text-ice font-bold border border-ice/30 transition-colors ml-2"
+            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md bg-ice-100 hover:bg-ice-200 text-steel-700 dark:text-text-primary font-bold border border-border-subtle transition-colors ml-2"
           >
             <RotateCcw className="h-3 w-3" />
             <span>Undo</span>
           </button>
           <button
             onClick={() => setUndoAction(null)}
-            className="text-muted-foreground hover:text-foreground ml-1"
+            className="text-text-muted hover:text-text-primary ml-1"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -477,7 +475,7 @@ export function TasksPage() {
       >
         <form onSubmit={handleCreateTask} className="space-y-4 pt-2 text-xs">
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+            <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider block mb-1">
               Task Title
             </label>
             <Input
@@ -485,12 +483,12 @@ export function TasksPage() {
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder="e.g. Implement HMAC signature verification"
               required
-              className="text-xs bg-secondary/40 border-ice/20 focus-visible:ring-ice/50"
+              className="text-xs bg-surface border-border-subtle focus-visible:ring-steel-500"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+            <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider block mb-1">
               Description
             </label>
             <Textarea
@@ -498,38 +496,38 @@ export function TasksPage() {
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder="Details on requirements, acceptance criteria, or security bounds..."
               rows={3}
-              className="text-xs bg-secondary/40 border-ice/20 focus-visible:ring-ice/50"
+              className="text-xs bg-surface border-border-subtle focus-visible:ring-steel-500"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+            <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider block mb-1">
               Priority
             </label>
             <select
               value={newPriority}
               onChange={(e) => setNewPriority(e.target.value as any)}
-              className="w-full h-9 rounded-lg border border-border bg-card px-3 text-xs text-foreground focus:outline-none"
+              className="w-full h-9 rounded-lg border border-border-strong bg-surface px-3 text-xs text-text-primary focus:outline-none"
             >
               <option value="low">Low (Ice)</option>
               <option value="medium">Medium (Ice)</option>
-              <option value="high">High (Ember)</option>
-              <option value="critical">Critical (Chilli)</option>
+              <option value="high">High (Lava Yellow)</option>
+              <option value="critical">Critical (Lava Red)</option>
             </select>
           </div>
 
-          <div className="pt-2 flex justify-end space-x-2 border-t border-border">
+          <div className="pt-2 flex justify-end space-x-2 border-t border-border-subtle">
             <button
               type="button"
               onClick={() => setIsCreateOpen(false)}
-              className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs"
+              className="px-3 py-1.5 rounded-lg btn-secondary-ice text-xs"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !newTitle.trim()}
-              className="px-4 py-1.5 rounded-lg bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_15px_rgba(239,68,68,0.4)] disabled:opacity-50"
+              className="px-4 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-sm disabled:opacity-50"
             >
               {isSubmitting ? 'Creating...' : 'Create Task'}
             </button>

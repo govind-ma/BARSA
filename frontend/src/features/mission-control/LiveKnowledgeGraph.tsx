@@ -7,7 +7,9 @@ import {
   AlertTriangle,
   Play,
   ShieldAlert,
+  FolderGit2,
 } from 'lucide-react';
+import { EmberSparks } from '@/components/ui/EmberSparks';
 import type { GraphNode, GraphEdge } from '@/types';
 
 interface LiveKnowledgeGraphProps {
@@ -21,8 +23,18 @@ interface LiveKnowledgeGraphProps {
   onSelectNode: (node: GraphNode | null) => void;
   onRunRerank: () => Promise<void>;
   onInjectBlocker: () => void;
+  onLoadSampleProject?: () => void;
   isLoading?: boolean;
 }
+
+const FILTER_PILLS = [
+  { id: 'ALL', label: 'All' },
+  { id: 'TASK', label: 'Tasks' },
+  { id: 'DECISION', label: 'Decisions' },
+  { id: 'AGENT', label: 'Agents' },
+  { id: 'CAPABILITY', label: 'Capabilities' },
+  { id: 'ISSUE', label: 'Issues' },
+];
 
 export function LiveKnowledgeGraph({
   nodes,
@@ -35,6 +47,7 @@ export function LiveKnowledgeGraph({
   onSelectNode,
   onRunRerank,
   onInjectBlocker,
+  onLoadSampleProject,
 }: LiveKnowledgeGraphProps) {
   // Pan and Zoom
   const [zoom, setZoom] = useState(1);
@@ -42,7 +55,7 @@ export function LiveKnowledgeGraph({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Floating filters
+  // Floating filter chips - default is "ALL" with "All" label
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
 
   // Hovered node for neighbor brightening
@@ -51,14 +64,15 @@ export function LiveKnowledgeGraph({
   // Blocker popover state
   const [isBlockerPopoverOpen, setIsBlockerPopoverOpen] = useState(false);
   const [isReranking, setIsReranking] = useState(false);
+  const [justReranked, setJustReranked] = useState(false);
 
   // Typewriter reasoning text
   const [displayedReasoning, setDisplayedReasoning] = useState('');
-  const fullReasoning = whyReadyText || (
-    recommendedTaskId
+  const fullReasoning =
+    whyReadyText ||
+    (recommendedTaskId
       ? `All dependencies satisfied for ${recommendedTaskId}. 0 active blockers. Readiness ${readinessScore ?? '270.0'}.`
-      : 'FalkorDB graph engine: Cypher multi-hop query analysis ready.'
-  );
+      : 'FalkorDB graph engine: Cypher multi-hop query analysis ready.');
 
   useEffect(() => {
     let index = 0;
@@ -79,12 +93,9 @@ export function LiveKnowledgeGraph({
     const centerX = 360;
     const centerY = 240;
     const count = nodes.length;
-
-    // Place recommended task at center-left if present
-    const radius = Math.min(220, 70 + count * 15);
+    const radius = Math.min(220, 80 + count * 14);
 
     nodes.forEach((node, i) => {
-      // If node is the recommended next task, place near focal center
       if (recommendedTaskId && node.id === recommendedTaskId) {
         map.set(node.id, { x: centerX - 30, y: centerY });
         return;
@@ -99,7 +110,7 @@ export function LiveKnowledgeGraph({
     return map;
   }, [nodes, recommendedTaskId]);
 
-  // Neighbor map for hover brightening
+  // Neighbor map for hover brightening (neighbors stay bright, others dim to 25%)
   const neighborSet = useMemo(() => {
     const targetId = hoveredNodeId || highlightedNodeId;
     if (!targetId) return null;
@@ -134,6 +145,8 @@ export function LiveKnowledgeGraph({
     setIsReranking(true);
     try {
       await onRunRerank();
+      setJustReranked(true);
+      setTimeout(() => setJustReranked(false), 2000);
     } finally {
       setIsReranking(false);
     }
@@ -144,19 +157,37 @@ export function LiveKnowledgeGraph({
     onInjectBlocker();
   };
 
-  // Node shape renderer based on specification:
-  // Task: ice-400 (#38bdf8)
-  // Decision: ice-200 hexagon (#bae6fd)
-  // Capability: teal-ice (#2dd4bf)
-  // Agent: ember (#f59e0b)
-  // Issue: chilli (#ef4444)
+  // Node Shape Renderer matching DESIGN_SYSTEM.md:
+  // - Task = steel-500 circle with white inner ring
+  // - Decision = lava-yellow hexagon
+  // - Capability = ice-300 rounded square with steel border
+  // - Agent = lava-orange diamond
+  // - Issue = lava-red circle with soft red pulse
+  // - Recommended node = magma gradient with pulsing glow ring and readiness badge
   const renderNodeShape = (node: GraphNode, pos: { x: number; y: number }, isRecommended: boolean) => {
     const type = (node.type || 'Task').toUpperCase();
     const isHovered = hoveredNodeId === node.id || highlightedNodeId === node.id;
     const isSelected = selectedNodeId === node.id;
 
+    if (isRecommended) {
+      return (
+        <g>
+          <circle
+            cx={pos.x}
+            cy={pos.y}
+            r={24}
+            fill="url(#magmaNodeGrad)"
+            stroke="#FFFFFF"
+            strokeWidth={2.5}
+            className={`transition-all duration-300 ${justReranked ? 'filter drop-shadow-[0_0_24px_rgba(255,122,26,0.9)] scale-110' : 'filter drop-shadow-[0_0_15px_rgba(255,122,26,0.5)]'}`}
+          />
+          <circle cx={pos.x} cy={pos.y} r={16} fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth={1.5} />
+        </g>
+      );
+    }
+
     if (type.includes('DECISION')) {
-      // Hexagon for Decision
+      // Hexagon in lava-yellow (#FFC93C)
       const r = 20;
       const points = [
         `${pos.x},${pos.y - r}`,
@@ -170,133 +201,193 @@ export function LiveKnowledgeGraph({
       return (
         <polygon
           points={points}
-          fill="#bae6fd"
-          stroke={isSelected ? '#38bdf8' : isHovered ? '#38bdf8' : '#7dd3fc'}
+          fill="#FFC93C"
+          stroke={isSelected ? '#0C0A0B' : isHovered ? '#FFFFFF' : '#FF7A1A'}
           strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.5}
-          className="transition-all duration-200 filter drop-shadow-[0_0_8px_rgba(186,230,253,0.3)]"
+          className="transition-all duration-200 filter drop-shadow-[0_0_8px_rgba(255,201,60,0.35)]"
         />
       );
     }
 
     if (type.includes('CAPABILITY')) {
-      // Diamond for Capability
-      const d = 18;
-      const points = `${pos.x},${pos.y - d} ${pos.x + d},${pos.y} ${pos.x},${pos.y + d} ${pos.x - d},${pos.y}`;
+      // Rounded square in ice-300 (#B3CDE0) with steel border
+      const size = 32;
       return (
-        <polygon
-          points={points}
-          fill="#2dd4bf"
-          stroke="#14b8a6"
-          strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.5}
-          className="transition-all duration-200 filter drop-shadow-[0_0_8px_rgba(45,212,191,0.3)]"
+        <rect
+          x={pos.x - size / 2}
+          y={pos.y - size / 2}
+          width={size}
+          height={size}
+          rx={6}
+          fill="#B3CDE0"
+          stroke={isSelected ? '#0D1A24' : '#6F8FA8'}
+          strokeWidth={isSelected ? 2.5 : 1.5}
+          className="transition-all duration-200 filter drop-shadow-[0_0_6px_rgba(179,205,224,0.4)]"
         />
       );
     }
 
     if (type.includes('AGENT')) {
+      // Diamond in lava-orange (#FF7A1A)
+      const d = 19;
+      const points = `${pos.x},${pos.y - d} ${pos.x + d},${pos.y} ${pos.x},${pos.y + d} ${pos.x - d},${pos.y}`;
       return (
-        <circle
-          cx={pos.x}
-          cy={pos.y}
-          r={18}
-          fill="#f59e0b"
-          stroke="#d97706"
+        <polygon
+          points={points}
+          fill="#FF7A1A"
+          stroke={isSelected ? '#FFFFFF' : '#E5301F'}
           strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.5}
-          className="transition-all duration-200 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.35)]"
+          className="transition-all duration-200 filter drop-shadow-[0_0_10px_rgba(255,122,26,0.4)]"
         />
       );
     }
 
     if (type.includes('ISSUE') || type.includes('BLOCKER')) {
+      // Circle in lava-red (#E5301F) with soft pulse
       return (
-        <rect
-          x={pos.x - 18}
-          y={pos.y - 14}
-          width={36}
-          height={28}
-          rx={6}
-          fill="#ef4444"
-          stroke="#dc2626"
-          strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.5}
-          className="transition-all duration-200 filter drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]"
-        />
+        <g>
+          <circle
+            cx={pos.x}
+            cy={pos.y}
+            r={18}
+            fill="#E5301F"
+            stroke={isSelected ? '#FFFFFF' : '#A81414'}
+            strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.5}
+            className="transition-all duration-200 filter drop-shadow-[0_0_12px_rgba(229,48,31,0.5)]"
+          />
+          <circle cx={pos.x} cy={pos.y} r={24} fill="none" stroke="#E5301F" strokeWidth={1} className="animate-ping opacity-30" />
+        </g>
       );
     }
 
-    // Default: Task (ice-400 circle)
+    // Default: Task (steel-500 circle with white inner ring)
     return (
-      <circle
-        cx={pos.x}
-        cy={pos.y}
-        r={isRecommended ? 22 : 18}
-        fill="#38bdf8"
-        stroke={isRecommended ? '#ef4444' : isSelected ? '#ffffff' : '#0284c7'}
-        strokeWidth={isRecommended ? 2.5 : isSelected ? 3 : isHovered ? 2.5 : 1.5}
-        className="transition-all duration-200 filter drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
-      />
+      <g>
+        <circle
+          cx={pos.x}
+          cy={pos.y}
+          r={18}
+          fill="#6F8FA8"
+          stroke={isSelected ? '#FF7A1A' : isHovered ? '#3E5A72' : '#3E5A72'}
+          strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.5}
+          className="transition-all duration-200 filter drop-shadow-[0_0_8px_rgba(111,143,168,0.3)]"
+        />
+        <circle cx={pos.x} cy={pos.y} r={10} fill="none" stroke="#FFFFFF" strokeWidth={1.5} opacity={0.9} />
+      </g>
     );
   };
 
+  const hasNodes = nodes && nodes.length > 0;
+
   return (
-    <div className="relative flex flex-col h-full bg-card/60 backdrop-blur-md border border-ice/15 rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)] select-none">
+    <div className="relative flex flex-col h-full glass-card overflow-hidden shadow-md select-none">
+      {/* Lava line sweep during FalkorDB Re-rank */}
+      {isReranking && (
+        <div className="absolute top-0 left-0 right-0 h-1 z-30 overflow-hidden bg-ice-100">
+          <div className="h-full w-1/3 bg-gradient-to-r from-lava-yellow via-lava-orange to-lava-red animate-lavaSweep shadow-[0_0_12px_rgba(255,122,26,0.8)]" />
+        </div>
+      )}
+
       {/* Top Floating Entity Filter Chips */}
       <div className="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-background/80 backdrop-blur-md border border-ice/20 shadow-lg pointer-events-auto">
-          {['ALL', 'TASK', 'DECISION', 'AGENT', 'CAPABILITY', 'ISSUE'].map((chip) => {
-            const isActive = activeFilter === chip;
+        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-lg bg-surface/90 backdrop-blur-md border border-border-subtle shadow-sm pointer-events-auto">
+          {FILTER_PILLS.map((chip) => {
+            const isActive = activeFilter === chip.id;
             return (
               <button
-                key={chip}
-                onClick={() => setActiveFilter(chip)}
-                className={`text-[10px] font-mono px-2 py-0.5 rounded-lg transition-all ${
+                key={chip.id}
+                onClick={() => setActiveFilter(chip.id)}
+                className={`relative text-[11px] font-mono px-2.5 py-1 rounded-md transition-all duration-150 ${
                   isActive
-                    ? 'bg-ice text-background font-bold shadow-[0_0_8px_rgba(56,189,248,0.6)]'
-                    : 'text-muted-foreground hover:text-ice hover:bg-secondary/60'
+                    ? 'bg-surface text-text-primary font-semibold shadow-sm border border-border-subtle'
+                    : 'bg-ice-100 dark:bg-white/[0.04] text-steel-700 dark:text-text-secondary hover:text-text-primary hover:bg-ice-200'
                 }`}
               >
-                {chip}
+                {chip.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-1 right-1 h-0.5 rounded-full bg-gradient-to-r from-lava-yellow via-lava-orange to-lava-red" />
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Dash Legend Pill */}
-        <div className="hidden sm:flex items-center space-x-3 px-2.5 py-1 rounded-xl bg-background/80 backdrop-blur-md border border-ice/20 text-[10px] text-muted-foreground font-mono pointer-events-auto">
-          <span className="flex items-center space-x-1">
-            <span className="w-3 border-b-2 border-dashed border-ice inline-block" />
-            <span>DEPENDS_ON</span>
+        {/* Dash Legend Pill per DESIGN_SYSTEM.md */}
+        <div className="hidden sm:flex items-center space-x-3 px-3 py-1 rounded-lg bg-surface/90 backdrop-blur-md border border-border-subtle text-[10px] text-text-muted font-mono pointer-events-auto shadow-sm">
+          <span className="flex items-center space-x-1" title="Solid steel edge">
+            <span className="w-3 border-b-2 border-steel-500 inline-block opacity-70" />
+            <span className="text-text-secondary">DEPENDS_ON</span>
           </span>
-          <span className="flex items-center space-x-1">
-            <span className="w-3 border-b-2 border-dashed border-chilli inline-block" />
-            <span>BLOCKED_BY</span>
+          <span className="flex items-center space-x-1" title="Dashed lava-red edge">
+            <span className="w-3 border-b-2 border-dashed border-lava-red inline-block" />
+            <span className="text-lava-red">BLOCKED_BY</span>
           </span>
-          <span className="flex items-center space-x-1">
-            <span className="w-3 border-b-2 border-dotted border-teal-400 inline-block" />
-            <span>REQUIRES</span>
+          <span className="flex items-center space-x-1" title="Dotted steel edge">
+            <span className="w-3 border-b-2 border-dotted border-steel-500 inline-block" />
+            <span className="text-text-secondary">REQUIRES</span>
           </span>
         </div>
       </div>
 
+      {/* Hero Ember Particles Drift */}
+      <EmberSparks count={4} className="z-10" />
+
       {/* SVG Canvas Area */}
       <div
-        className="flex-1 w-full h-full relative cursor-grab active:cursor-grabbing bg-[#090d14]"
+        className="flex-1 w-full h-full relative cursor-grab active:cursor-grabbing bg-bg-base transition-colors duration-200 overflow-hidden"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        {/* Soft Ice Vignette Overlay */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(9,13,20,0.85)_100%)] z-10" />
+        {/* Soft Vignette Overlay */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(110,150,180,0.12)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(12,10,11,0.8)_100%)] z-10" />
+
+        {/* Empty Graph State */}
+        {!hasNodes && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center">
+            {/* Ghost graph placeholder nodes */}
+            <svg width="240" height="130" viewBox="0 0 240 130" className="opacity-40 mb-3" fill="none">
+              <circle cx="50" cy="65" r="14" fill="#B3CDE0" stroke="#6F8FA8" strokeWidth="1.5" />
+              <polygon points="120,35 136,65 120,95 104,65" fill="#CFE0EC" stroke="#6F8FA8" strokeWidth="1.5" />
+              <circle cx="190" cy="65" r="14" fill="#E3EDF5" stroke="#6F8FA8" strokeWidth="1.5" />
+              <line x1="64" y1="65" x2="104" y2="65" stroke="#6F8FA8" strokeWidth="1.5" strokeDasharray="3 3" />
+              <line x1="136" y1="65" x2="176" y2="65" stroke="#6F8FA8" strokeWidth="1.5" />
+            </svg>
+            <p className="font-heading font-medium text-xs text-text-primary">
+              Your graph appears as agents work
+            </p>
+            <p className="text-[11px] text-text-muted mt-0.5 max-w-xs">
+              Autonomous agents build FalkorDB nodes and relationships in real-time as tasks execute.
+            </p>
+            {onLoadSampleProject && (
+              <button
+                onClick={onLoadSampleProject}
+                className="mt-3.5 inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium shadow-sm"
+              >
+                <FolderGit2 className="h-3.5 w-3.5 text-steel-500" />
+                <span>Load sample project</span>
+              </button>
+            )}
+          </div>
+        )}
 
         <svg className="w-full h-full">
           <defs>
-            {/* Dotted Grid Pattern */}
+            {/* Dotted Grid Pattern for Ice (soft white-blue) and Obsidian (dark ash) */}
             <pattern id="faintGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="1" fill="rgba(56, 189, 248, 0.12)" />
+              <circle cx="2" cy="2" r="1" fill="currentColor" className="text-steel-500/25 dark:text-steel-500/15" />
             </pattern>
 
-            {/* Chilli Glow Filter for Recommended Task */}
-            <filter id="chilliGlow" x="-50%" y="-50%" width="200%" height="200%">
+            {/* Magma Gradient for Node */}
+            <linearGradient id="magmaNodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FFC93C" />
+              <stop offset="45%" stopColor="#FF7A1A" />
+              <stop offset="100%" stopColor="#E5301F" />
+            </linearGradient>
+
+            {/* Magma Glow Filter for Recommended Node */}
+            <filter id="magmaGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
@@ -305,14 +396,11 @@ export function LiveKnowledgeGraph({
             </filter>
 
             {/* Arrowhead Markers */}
-            <marker id="arrowIce" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 9 5 L 0 9 z" fill="rgba(56, 189, 248, 0.5)" />
+            <marker id="arrowSteel" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="rgba(111, 143, 168, 0.6)" />
             </marker>
-            <marker id="arrowChilli" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 9 5 L 0 9 z" fill="#ef4444" />
-            </marker>
-            <marker id="arrowTeal" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 9 5 L 0 9 z" fill="#2dd4bf" />
+            <marker id="arrowLavaRed" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#E5301F" />
             </marker>
           </defs>
 
@@ -320,187 +408,184 @@ export function LiveKnowledgeGraph({
           <rect width="100%" height="100%" fill="url(#faintGrid)" />
 
           {/* Graph Transform Group */}
-          <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-            {/* Edges */}
-            {edges.map((edge, idx) => {
-              const src = nodePositions.get(edge.source);
-              const tgt = nodePositions.get(edge.target);
-              if (!src || !tgt) return null;
+          {hasNodes && (
+            <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+              {/* Edges */}
+              {edges.map((edge, idx) => {
+                const src = nodePositions.get(edge.source);
+                const tgt = nodePositions.get(edge.target);
+                if (!src || !tgt) return null;
 
-              const edgeType = (edge.type || '').toUpperCase();
-              const isBlocked = edgeType.includes('BLOCK');
-              const isRequires = edgeType.includes('REQUIRE');
-              const isDepends = edgeType.includes('DEPEND');
+                const edgeType = (edge.type || '').toUpperCase();
+                const isBlocked = edgeType.includes('BLOCK');
+                const isRequires = edgeType.includes('REQUIRE');
 
-              let strokeColor = 'rgba(56, 189, 248, 0.35)';
-              let dashArray = 'none';
-              let markerEnd = 'url(#arrowIce)';
+                let strokeColor = 'rgba(111, 143, 168, 0.4)';
+                let dashArray = 'none'; // DEPENDS_ON = solid
+                let markerEnd = 'url(#arrowSteel)';
 
-              if (isBlocked) {
-                strokeColor = '#ef4444';
-                dashArray = '6,3';
-                markerEnd = 'url(#arrowChilli)';
-              } else if (isRequires) {
-                strokeColor = '#2dd4bf';
-                dashArray = '2,3';
-                markerEnd = 'url(#arrowTeal)';
-              } else if (isDepends) {
-                dashArray = '5,4';
-              }
+                if (isBlocked) {
+                  strokeColor = '#E5301F';
+                  dashArray = '6,3'; // BLOCKED_BY = dashed lava-red
+                  markerEnd = 'url(#arrowLavaRed)';
+                } else if (isRequires) {
+                  strokeColor = '#6F8FA8';
+                  dashArray = '2,3'; // REQUIRES = dotted steel
+                  markerEnd = 'url(#arrowSteel)';
+                }
 
-              // Dim edges if neighbor highlighting is active
-              const isEdgeHighlighted =
-                !neighborSet ||
-                (neighborSet.has(edge.source) && neighborSet.has(edge.target));
+                // Dim non-neighbor edges on hover
+                const isEdgeHighlighted =
+                  !neighborSet ||
+                  (neighborSet.has(edge.source) && neighborSet.has(edge.target));
 
-              return (
-                <g key={`edge-${edge.source}-${edge.target}-${idx}`} style={{ opacity: isEdgeHighlighted ? 1 : 0.15 }}>
-                  <line
-                    x1={src.x}
-                    y1={src.y}
-                    x2={tgt.x}
-                    y2={tgt.y}
-                    stroke={strokeColor}
-                    strokeWidth={isBlocked ? 2 : 1.5}
-                    strokeDasharray={dashArray}
-                    markerEnd={markerEnd}
-                    className="transition-all duration-300"
-                  />
-                  {/* Subtle edge label on hover */}
-                  {(hoveredNodeId === edge.source || hoveredNodeId === edge.target) && (
-                    <text
-                      x={(src.x + tgt.x) / 2}
-                      y={(src.y + tgt.y) / 2 - 4}
-                      fill="#bae6fd"
-                      fontSize="9"
-                      fontFamily="monospace"
-                      textAnchor="middle"
-                      className="select-none pointer-events-none"
-                    >
-                      {edge.type}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-
-            {/* Nodes */}
-            {nodes.map((node) => {
-              const pos = nodePositions.get(node.id);
-              if (!pos) return null;
-
-              const isRecommended = recommendedTaskId === node.id;
-              const matchesFilter =
-                activeFilter === 'ALL' ||
-                (node.type || '').toUpperCase().includes(activeFilter);
-
-              // Neighbor dimming
-              const isNeighborOrFocal = !neighborSet || neighborSet.has(node.id);
-              const nodeOpacity = !matchesFilter ? 0.15 : isNeighborOrFocal ? 1 : 0.25;
-
-              return (
-                <g
-                  key={node.id}
-                  transform={`translate(0, 0)`}
-                  style={{ opacity: nodeOpacity }}
-                  className="transition-opacity duration-300 cursor-pointer"
-                  onClick={() => onSelectNode(node)}
-                  onMouseEnter={() => setHoveredNodeId(node.id)}
-                  onMouseLeave={() => setHoveredNodeId(null)}
-                >
-                  {/* Pulsing Chilli Ring for Recommended Task */}
-                  {isRecommended && (
-                    <g filter="url(#chilliGlow)">
-                      <circle
-                        cx={pos.x}
-                        cy={pos.y}
-                        r={32}
-                        fill="none"
-                        stroke="#ef4444"
-                        strokeWidth={2}
-                        className="animate-ping opacity-60"
-                      />
-                      <circle
-                        cx={pos.x}
-                        cy={pos.y}
-                        r={27}
-                        fill="none"
-                        stroke="#ef4444"
-                        strokeWidth={1.5}
-                        strokeDasharray="4,2"
-                        className="animate-spin-slow opacity-80"
-                      />
-                    </g>
-                  )}
-
-                  {/* Node Shape */}
-                  {renderNodeShape(node, pos, isRecommended)}
-
-                  {/* Readiness Score Badge if Recommended */}
-                  {isRecommended && readinessScore !== undefined && (
-                    <g transform={`translate(${pos.x}, ${pos.y - 30})`}>
-                      <rect
-                        x="-38"
-                        y="-10"
-                        width="76"
-                        height="18"
-                        rx="9"
-                        fill="#090d14"
-                        stroke="#ef4444"
-                        strokeWidth="1.5"
-                      />
+                return (
+                  <g key={`edge-${edge.source}-${edge.target}-${idx}`} style={{ opacity: isEdgeHighlighted ? 1 : 0.15 }}>
+                    <line
+                      x1={src.x}
+                      y1={src.y}
+                      x2={tgt.x}
+                      y2={tgt.y}
+                      stroke={strokeColor}
+                      strokeWidth={isBlocked ? 2 : 1.5}
+                      strokeDasharray={dashArray}
+                      markerEnd={markerEnd}
+                      className="transition-all duration-300"
+                    />
+                    {(hoveredNodeId === edge.source || hoveredNodeId === edge.target) && (
                       <text
-                        x="0"
-                        y="3"
-                        fill="#ef4444"
+                        x={(src.x + tgt.x) / 2}
+                        y={(src.y + tgt.y) / 2 - 4}
+                        fill="#3E5A72"
                         fontSize="9"
-                        fontWeight="bold"
-                        fontFamily="monospace"
+                        fontFamily="JetBrains Mono, monospace"
                         textAnchor="middle"
+                        className="select-none pointer-events-none"
                       >
-                        SCORE {readinessScore}
+                        {edge.type}
                       </text>
-                    </g>
-                  )}
+                    )}
+                  </g>
+                );
+              })}
 
-                  {/* Node Label */}
-                  <text
-                    x={pos.x}
-                    y={pos.y + 28}
-                    fill={isRecommended ? '#ef4444' : '#f1f5f9'}
-                    fontSize="10"
-                    fontWeight={isRecommended ? 'bold' : 'medium'}
-                    textAnchor="middle"
-                    className="select-none pointer-events-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]"
+              {/* Nodes */}
+              {nodes.map((node) => {
+                const pos = nodePositions.get(node.id);
+                if (!pos) return null;
+
+                const isRecommended = recommendedTaskId === node.id;
+                const matchesFilter =
+                  activeFilter === 'ALL' ||
+                  (node.type || '').toUpperCase().includes(activeFilter);
+
+                // Neighbors stay bright, others dim to 25%
+                const isNeighborOrFocal = !neighborSet || neighborSet.has(node.id);
+                const nodeOpacity = !matchesFilter ? 0.15 : isNeighborOrFocal ? 1 : 0.25;
+
+                return (
+                  <g
+                    key={node.id}
+                    style={{ opacity: nodeOpacity }}
+                    className="transition-opacity duration-300 cursor-pointer"
+                    onClick={() => onSelectNode(node)}
+                    onMouseEnter={() => setHoveredNodeId(node.id)}
+                    onMouseLeave={() => setHoveredNodeId(null)}
                   >
-                    {node.label || node.id}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
+                    {/* Pulsing Glow Ring for Recommended Task */}
+                    {isRecommended && (
+                      <g filter="url(#magmaGlow)">
+                        <circle
+                          cx={pos.x}
+                          cy={pos.y}
+                          r={34}
+                          fill="none"
+                          stroke="#FF7A1A"
+                          strokeWidth={2}
+                          className="animate-ping opacity-60"
+                        />
+                        <circle
+                          cx={pos.x}
+                          cy={pos.y}
+                          r={28}
+                          fill="none"
+                          stroke="#FFC93C"
+                          strokeWidth={1.5}
+                          strokeDasharray="4,2"
+                          className="animate-spin-slow opacity-80"
+                        />
+                      </g>
+                    )}
+
+                    {/* Node Shape */}
+                    {renderNodeShape(node, pos, isRecommended)}
+
+                    {/* Readiness Score Badge if Recommended */}
+                    {isRecommended && readinessScore !== undefined && (
+                      <g transform={`translate(${pos.x}, ${pos.y - 34})`}>
+                        <rect
+                          x="-38"
+                          y="-10"
+                          width="76"
+                          height="18"
+                          rx="9"
+                          fill="#0C0A0B"
+                          stroke="#FF7A1A"
+                          strokeWidth="1.5"
+                        />
+                        <text
+                          x="0"
+                          y="3"
+                          fill="#FFC93C"
+                          fontSize="9"
+                          fontWeight="bold"
+                          fontFamily="JetBrains Mono, monospace"
+                          textAnchor="middle"
+                        >
+                          SCORE {readinessScore}
+                        </text>
+                      </g>
+                    )}
+
+                    {/* Node Label */}
+                    <text
+                      x={pos.x}
+                      y={pos.y + 30}
+                      fill={isRecommended ? '#FF7A1A' : 'var(--text-primary)'}
+                      fontSize="10"
+                      fontWeight={isRecommended ? '600' : '500'}
+                      textAnchor="middle"
+                      className="select-none pointer-events-none drop-shadow-sm font-sans"
+                    >
+                      {node.label || node.id}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          )}
         </svg>
 
         {/* Floating Pan/Zoom Controls in Bottom-Right */}
-        <div className="absolute bottom-20 right-3 z-20 flex flex-col items-center space-y-1 bg-background/80 backdrop-blur-md border border-ice/20 p-1 rounded-xl shadow-lg">
+        <div className="absolute bottom-20 right-3 z-20 flex flex-col items-center space-y-1 bg-surface/90 backdrop-blur-md border border-border-subtle p-1 rounded-lg shadow-md">
           <button
             onClick={() => setZoom((z) => Math.min(2.2, z + 0.2))}
             title="Zoom In"
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-ice hover:bg-secondary/60 transition-colors"
+            className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-ice-100 transition-colors"
           >
             <ZoomIn className="h-4 w-4" />
           </button>
           <button
             onClick={() => setZoom((z) => Math.max(0.4, z - 0.2))}
             title="Zoom Out"
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-ice hover:bg-secondary/60 transition-colors"
+            className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-ice-100 transition-colors"
           >
             <ZoomOut className="h-4 w-4" />
           </button>
           <button
             onClick={handleResetZoom}
             title="Recenter / Zoom to Fit"
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-ice hover:bg-secondary/60 transition-colors"
+            className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-ice-100 transition-colors"
           >
             <Maximize2 className="h-4 w-4" />
           </button>
@@ -508,13 +593,13 @@ export function LiveKnowledgeGraph({
       </div>
 
       {/* Bottom: Reasoning Panel */}
-      <div className="relative z-20 border-t border-ice/15 bg-background/80 backdrop-blur-md p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+      <div className="relative z-20 border-t border-border-subtle bg-surface/95 backdrop-blur-md p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
         {/* Typewriter Explanation Strip */}
         <div className="flex-1 min-w-0 flex items-center space-x-2">
-          <div className="h-2 w-2 rounded-full bg-ice shadow-[0_0_8px_rgba(56,189,248,0.8)] shrink-0 animate-pulse" />
-          <p className="text-xs font-mono text-foreground tracking-tight truncate leading-relaxed">
+          <div className="h-2 w-2 rounded-full bg-lava-orange shadow-[0_0_8px_rgba(255,122,26,0.8)] shrink-0 animate-pulse" />
+          <p className="text-xs font-mono text-text-primary tracking-tight truncate leading-relaxed">
             {displayedReasoning}
-            <span className="inline-block w-1.5 h-3 bg-ice ml-1 animate-pulse" />
+            <span className="inline-block w-1.5 h-3 bg-lava-orange ml-1 animate-pulse" />
           </p>
         </div>
 
@@ -524,34 +609,34 @@ export function LiveKnowledgeGraph({
           <div className="relative">
             <button
               onClick={() => setIsBlockerPopoverOpen((v) => !v)}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-ice/30 hover:border-ice/60 bg-ice/10 hover:bg-ice/20 text-ice text-xs font-medium transition-all shadow-[0_0_10px_rgba(56,189,248,0.15)]"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium"
             >
-              <ShieldAlert className="h-3.5 w-3.5 text-ice" />
+              <ShieldAlert className="h-3.5 w-3.5 text-steel-500" />
               <span>Inject Blocker</span>
             </button>
 
             {/* Confirmation Popover */}
             {isBlockerPopoverOpen && (
-              <div className="absolute right-0 bottom-full mb-2 w-64 p-3 rounded-xl bg-card border border-chilli/40 shadow-[0_8px_24px_rgba(239,68,68,0.3)] z-50 animate-page-enter">
+              <div className="absolute right-0 bottom-full mb-2 w-64 p-3 rounded-xl bg-surface border border-lava-red/40 shadow-xl z-50 animate-page-enter">
                 <div className="flex items-start space-x-2">
-                  <AlertTriangle className="h-4 w-4 text-chilli shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-4 w-4 text-lava-red shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="text-xs font-bold text-foreground">Inject Synthetic Blocker?</h5>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
+                    <h5 className="font-heading text-xs font-semibold text-text-primary">Inject Synthetic Blocker?</h5>
+                    <p className="text-[11px] text-text-secondary mt-0.5 leading-snug">
                       Simulate a dependency blocker on {recommendedTaskId || 'the active task'} to demonstrate FalkorDB re-ranking.
                     </p>
                   </div>
                 </div>
-                <div className="flex justify-end space-x-2 mt-3 pt-2 border-t border-border/60">
+                <div className="flex justify-end space-x-2 mt-3 pt-2 border-t border-border-subtle">
                   <button
                     onClick={() => setIsBlockerPopoverOpen(false)}
-                    className="px-2 py-1 text-[11px] rounded text-muted-foreground hover:text-foreground"
+                    className="px-2 py-1 text-[11px] rounded text-text-secondary hover:text-text-primary"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleConfirmInjectBlocker}
-                    className="px-2.5 py-1 text-[11px] rounded bg-chilli text-white font-medium hover:bg-chilli/90 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                    className="px-2.5 py-1 text-[11px] rounded bg-lava-red text-white font-medium hover:bg-lava-deep shadow-sm"
                   >
                     Confirm Inject
                   </button>
@@ -560,11 +645,11 @@ export function LiveKnowledgeGraph({
             )}
           </div>
 
-          {/* Run FalkorDB Re-rank button */}
+          {/* Run FalkorDB Re-rank button (Primary Magma Button) */}
           <button
             onClick={handleRerankClick}
             disabled={isReranking}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-chilli hover:bg-chilli/90 text-white font-semibold text-xs transition-all shadow-[0_0_15px_rgba(239,68,68,0.4)] disabled:opacity-50"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-sm disabled:opacity-50"
           >
             {isReranking ? (
               <RefreshCw className="h-3.5 w-3.5 animate-spin" />

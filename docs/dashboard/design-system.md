@@ -1,45 +1,46 @@
-# Barsa Dashboard Design System
+# Barsa Dashboard Design System: Ice & Lava
 
-The Barsa dashboard visual style follows a minimalist, developer-first aesthetic inspired by tools like GitHub, Linear, and Supabase.
+"Ice and Lava": A bright frosted-white interface (ice) with molten yellow-orange-red energy (lava). Calm and precise like glacier ice, with a hot volcanic spark where the user should act.
 
 ---
 
 ## 1. Visual Philosophy & Principles
 
-- **Zero Clutter:** No decorative gradients, glowing borders, or unnecessary animations.
-- **High Information Density:** Clean, compact tables, monospaced hashes, and structured badges.
-- **Accessible Contrast:** Meets WCAG 2.1 AA standards in both light and dark modes.
-- **Predictable Focus & Navigation:** Fully keyboard navigable with prominent outline rings.
+- **90/10 Balance:** 90% of every screen is composed of calm, crystalline ice neutrals, glass surfaces, and steel accents. Lava is reserved strictly for high-salience moments (primary buttons, live indicators, recommendations, blockers).
+- **Dual-Themed:**
+  - **ICE (Default Light Mode):** High clarity frost white canvas, pale blue ice tints, crisp steel typography, and frosted glass cards.
+  - **OBSIDIAN (Dark Mode):** Volcanic black with warm ash undertones, dark glass surfaces, and warm bottom edge glow.
+- **Accessible Contrast:** Meets WCAG 2.1 AA standards in both light and dark modes with high contrast ratios.
+- **Predictable Focus & Navigation:** Fully keyboard navigable with outline rings in `steel-500` (Ice) or `lava-yellow` (Obsidian).
 
 ---
 
 ## 2. Color System & Design Tokens
 
-Colors are defined using HSL variables in `src/index.css` and extended in `tailwind.config.js`:
+Colors are defined using CSS custom properties in `src/index.css` and extended in `tailwind.config.js`:
 
-| Token | Light Value | Dark Value | Purpose |
+| Token | Ice Mode (Light) | Obsidian Mode (Dark) | Purpose |
 | :--- | :--- | :--- | :--- |
-| `--background` | `hsl(210 20% 98%)` | `hsl(222 47% 8%)` | Page canvas background |
-| `--foreground` | `hsl(222 47% 11%)` | `hsl(210 40% 98%)` | Primary typography |
-| `--card` | `hsl(0 0% 100%)` | `hsl(222 47% 11%)` | Card surface container |
-| `--border` | `hsl(214 32% 91%)` | `hsl(217 32% 18%)` | Structural borders & dividers |
-| `--primary` | `hsl(217 91% 60%)` | `hsl(217 91% 60%)` | Interactive actions & brand blue |
-| `--muted-foreground` | `hsl(215 16% 47%)` | `hsl(215 20% 65%)` | Secondary labels & metadata |
-| `--destructive` | `hsl(0 84% 60%)` | `hsl(0 63% 31%)` | Error states & delete actions |
+| `--bg-base` | `#F3F7FA` | `#0C0A0B` | Page canvas background |
+| `--bg-surface` | `#FFFFFF` | `#151113` | Card & surface container |
+| `--bg-elevated` | `#E9F0F6` | `#1E1819` | Elevated popovers, drawers |
+| `--ice-100` | `#E3EDF5` | `rgba(255,255,255,0.06)` | Pill backgrounds, subtle hover |
+| `--ice-200` | `#CFE0EC` | `rgba(255,255,255,0.12)` | Secondary hover |
+| `--ice-300` | `#B3CDE0` | `rgba(255,255,255,0.20)` | Subtle divider line |
+| `--steel-500`| `#6F8FA8` | `#6F7A83` | Inactive icons, secondary nodes |
+| `--steel-700`| `#3E5A72` | `#A9B4BD` | Primary typography, borders |
+| `--lava-yellow` | `#FFC93C` | `#FFC93C` | Decision nodes, spark |
+| `--lava-orange` | `#FF7A1A` | `#FF7A1A` | Live dot, agents, primary spark |
+| `--lava-red` | `#E5301F` | `#E5301F` | Blockers, issue nodes, critical |
+| `--magma` | `linear-gradient(135deg, #FFC93C, #FF7A1A, #E5301F)` | Brand primary interactive gradient |
 
 ---
 
 ## 3. Core UI Primitives
 
-1. **Button (`components/ui/Button.tsx`):**
-   - Variants: `primary`, `secondary`, `outline`, `ghost`, `destructive`
-   - Sizes: `sm`, `md`, `lg`, `icon`
-   - Integrated loading spinner state and accessible focus rings.
-2. **Card (`components/ui/Card.tsx`):**
-   - Standardized `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, and `CardFooter` containers.
-3. **Badge (`components/ui/Badge.tsx`):**
-   - Semantic color tags: `default` (primary), `success` (green), `warning` (amber), `destructive` (red), `outline`.
-4. **Modal / Dialog (`components/ui/Modal.tsx`):**
-   - Accessible keyboard dismissal (`Escape` key), body scroll lock, backdrop click dismissal, and `role="dialog"`.
-5. **EmptyState (`components/ui/EmptyState.tsx`):**
-   - Consistent zero-state UI with action button when collections are empty.
+1. **Primary Button:** Magma gradient with heat-shimmer sweep and lava glow.
+2. **Secondary Button:** White glass fill with 1px steel border and cool glow on hover.
+3. **Card:** Glass container with inset top highlight and subtle cool shadow in Ice; warm bottom edge in Obsidian.
+4. **Recommended Task Card:** Molten rotating border with "Recommended" ribbon.
+5. **Next Action Callout:** Elevated container with prominent `--magma` left border.
+6. **Live Indicator:** Pulsing lava-orange dot with "Live" label; muted gray when offline.

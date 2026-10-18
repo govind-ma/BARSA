@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Input, Textarea } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
 import { Check, AlertCircle } from 'lucide-react';
 import type { BMSRecord } from '@/types';
@@ -56,7 +55,7 @@ export function NewDecisionModal({
 
     const payload: Partial<BMSRecord> = {
       record_id: recId,
-      schema_version: '0.1',
+      schema_version: '0.2',
       record_type: 'decision',
       project_id: projectId,
       title: title.trim(),
@@ -108,15 +107,15 @@ export function NewDecisionModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         {errors.form && (
-          <div className="p-3 rounded-xl bg-chilli/10 border border-chilli/30 text-chilli flex items-center space-x-2">
+          <div className="p-3 rounded-lg bg-lava-red/10 border border-lava-red/30 text-lava-red flex items-center space-x-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{errors.form}</span>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-foreground mb-1.5">
-            Decision Title <span className="text-chilli">*</span>
+          <label className="block text-xs font-semibold text-text-primary mb-1.5">
+            Decision Title <span className="text-lava-red">*</span>
           </label>
           <Input
             placeholder="e.g. SQLite WAL Mode for High-Concurrency Memory"
@@ -125,10 +124,10 @@ export function NewDecisionModal({
               setTitle(e.target.value);
               if (errors.title) setErrors((prev) => ({ ...prev, title: '' }));
             }}
-            className={errors.title ? 'border-chilli focus:border-chilli' : ''}
+            className={errors.title ? 'border-lava-red focus:border-lava-red' : ''}
           />
           {errors.title && (
-            <p className="text-[11px] text-chilli mt-1 flex items-center space-x-1">
+            <p className="text-[11px] text-lava-red mt-1 flex items-center space-x-1">
               <AlertCircle className="h-3 w-3 inline" />
               <span>{errors.title}</span>
             </p>
@@ -136,8 +135,8 @@ export function NewDecisionModal({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-foreground mb-1.5">
-            Decision Statement <span className="text-chilli">*</span>
+          <label className="block text-xs font-semibold text-text-primary mb-1.5">
+            Decision Statement <span className="text-lava-red">*</span>
           </label>
           <Textarea
             placeholder="State clearly what architectural choice has been made..."
@@ -147,10 +146,10 @@ export function NewDecisionModal({
               setDecision(e.target.value);
               if (errors.decision) setErrors((prev) => ({ ...prev, decision: '' }));
             }}
-            className={errors.decision ? 'border-chilli focus:border-chilli' : ''}
+            className={errors.decision ? 'border-lava-red focus:border-lava-red' : ''}
           />
           {errors.decision && (
-            <p className="text-[11px] text-chilli mt-1 flex items-center space-x-1">
+            <p className="text-[11px] text-lava-red mt-1 flex items-center space-x-1">
               <AlertCircle className="h-3 w-3 inline" />
               <span>{errors.decision}</span>
             </p>
@@ -158,8 +157,8 @@ export function NewDecisionModal({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-foreground mb-1.5">
-            Rationale & Trade-Offs <span className="text-chilli">*</span>
+          <label className="block text-xs font-semibold text-text-primary mb-1.5">
+            Rationale & Trade-Offs <span className="text-lava-red">*</span>
           </label>
           <Textarea
             placeholder="Why was this chosen? Include performance, security, and complexity trade-offs..."
@@ -169,10 +168,10 @@ export function NewDecisionModal({
               setRationale(e.target.value);
               if (errors.rationale) setErrors((prev) => ({ ...prev, rationale: '' }));
             }}
-            className={errors.rationale ? 'border-chilli focus:border-chilli' : ''}
+            className={errors.rationale ? 'border-lava-red focus:border-lava-red' : ''}
           />
           {errors.rationale && (
-            <p className="text-[11px] text-chilli mt-1 flex items-center space-x-1">
+            <p className="text-[11px] text-lava-red mt-1 flex items-center space-x-1">
               <AlertCircle className="h-3 w-3 inline" />
               <span>{errors.rationale}</span>
             </p>
@@ -180,7 +179,7 @@ export function NewDecisionModal({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-foreground mb-1.5">
+          <label className="block text-xs font-semibold text-text-primary mb-1.5">
             Alternatives Considered (one per line)
           </label>
           <Textarea
@@ -192,7 +191,7 @@ export function NewDecisionModal({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-foreground mb-1.5">
+          <label className="block text-xs font-semibold text-text-primary mb-1.5">
             Affected Tasks (comma-separated IDs)
           </label>
           <Input
@@ -202,18 +201,23 @@ export function NewDecisionModal({
           />
         </div>
 
-        <div className="flex justify-end space-x-2 pt-3 border-t border-border/60">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
+        <div className="flex justify-end space-x-2 pt-3 border-t border-border-subtle">
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={isSubmitting}
+            className="px-3 py-1.5 rounded-lg btn-secondary-ice text-xs"
+          >
             Cancel
-          </Button>
+          </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-chilli hover:bg-chilli/90 text-white font-bold text-xs shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-all active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97] disabled:opacity-50"
           >
             {isSubmitting ? (
               <span className="flex items-center space-x-1.5">
-                <span className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="h-3 w-3 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                 <span>Saving ADR...</span>
               </span>
             ) : (

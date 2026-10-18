@@ -4,7 +4,7 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { Sparkles, Check, Loader2 } from 'lucide-react';
+import { Flame, Check, Loader2 } from 'lucide-react';
 
 export interface NewProjectModalProps {
   isOpen: boolean;
@@ -71,26 +71,26 @@ export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalP
     <Modal isOpen={isOpen} onClose={onClose} title="Create New Project" className="max-w-lg">
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
         {error && (
-          <div className="p-3 text-xs bg-destructive/15 border border-destructive/30 text-destructive rounded-lg">
+          <div className="p-3 text-xs bg-lava-red/10 border border-lava-red/30 text-lava-red rounded-lg">
             {error}
           </div>
         )}
 
         {isSuccess && (
-          <div className="relative overflow-hidden p-4 rounded-xl bg-ice/15 border border-ice/40 text-ice flex items-center space-x-3 animate-crystal-burst shadow-[0_0_30px_rgba(56,189,248,0.4)]">
-            <div className="h-8 w-8 rounded-full bg-ice/20 flex items-center justify-center shrink-0">
-              <Check className="h-5 w-5 text-ice" />
+          <div className="relative overflow-hidden p-4 rounded-xl bg-ice-100 dark:bg-bg-elevated border border-border-strong text-text-primary flex items-center space-x-3 shadow-[0_4px_20px_rgba(60,100,130,0.12)]">
+            <div className="h-8 w-8 rounded-full bg-lava-orange/20 flex items-center justify-center shrink-0">
+              <Check className="h-5 w-5 text-lava-orange" />
             </div>
             <div>
-              <div className="font-semibold text-sm">Project Created Successfully</div>
-              <div className="text-xs text-ice/80">Connecting memory standard & FalkorDB graph...</div>
+              <div className="font-semibold text-sm font-display text-text-primary">Project Created Successfully</div>
+              <div className="text-xs text-text-muted">Connecting memory standard & FalkorDB graph...</div>
             </div>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
-            Project Name <span className="text-chilli">*</span>
+          <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-1.5">
+            Project Name <span className="text-lava-red">*</span>
           </label>
           <Input
             value={name}
@@ -98,12 +98,12 @@ export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalP
             placeholder="e.g. Project NEXUS"
             required
             disabled={isSubmitting || isSuccess}
-            className="border-ice/20 focus-visible:ring-ice/50 bg-secondary/40"
+            className="border-border-subtle focus-visible:ring-lava-orange/40 bg-surface dark:bg-bg-elevated text-text-primary"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-1.5">
             Description
           </label>
           <Textarea
@@ -112,13 +112,13 @@ export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalP
             placeholder="High-level architectural scope, purpose, and domain..."
             rows={2}
             disabled={isSubmitting || isSuccess}
-            className="border-ice/20 focus-visible:ring-ice/50 bg-secondary/40"
+            className="border-border-subtle focus-visible:ring-lava-orange/40 bg-surface dark:bg-bg-elevated text-text-primary"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
-            Project Goals <span className="text-[10px] text-muted-foreground/70 normal-case">(one per line)</span>
+          <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-1.5">
+            Project Goals <span className="text-[10px] text-text-muted/70 normal-case">(one per line)</span>
           </label>
           <Textarea
             value={goals}
@@ -126,24 +126,24 @@ export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalP
             placeholder="Sub-millisecond cascade graph traversal&#10;Dynamic incident severity routing&#10;Cross-AI state persistence"
             rows={3}
             disabled={isSubmitting || isSuccess}
-            className="border-ice/20 focus-visible:ring-ice/50 bg-secondary/40 text-xs font-mono"
+            className="border-border-subtle focus-visible:ring-lava-orange/40 bg-surface dark:bg-bg-elevated text-text-primary text-xs font-mono"
           />
         </div>
 
-        <div className="flex items-center justify-end space-x-2 pt-3 border-t border-ice/10">
+        <div className="flex items-center justify-end space-x-2 pt-3 border-t border-border-subtle">
           <Button
             type="button"
             variant="ghost"
             onClick={onClose}
             disabled={isSubmitting || isSuccess}
-            className="hover:bg-secondary/60 text-xs"
+            className="btn-secondary-ice text-xs"
           >
             Cancel
           </Button>
           <button
             type="submit"
             disabled={isSubmitting || isSuccess || !name.trim()}
-            className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-semibold text-white bg-chilli hover:bg-chilli-hover active:scale-[0.98] transition-all duration-150 shadow-[0_0_15px_rgba(239,68,68,0.4)] disabled:opacity-50 disabled:pointer-events-none"
+            className="btn-magma inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-semibold text-white shadow-sm disabled:opacity-50 disabled:pointer-events-none"
           >
             {isSubmitting ? (
               <>
@@ -157,7 +157,7 @@ export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalP
               </>
             ) : (
               <>
-                <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                <Flame className="mr-1.5 h-3.5 w-3.5 text-lava-yellow" />
                 Create Project
               </>
             )}

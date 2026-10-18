@@ -3,10 +3,10 @@ import {
   AlertTriangle,
   Bot,
   User,
-  Sparkles,
   Link2,
   Info,
 } from 'lucide-react';
+import { BarsaLogo } from '@/components/ui/BarsaLogo';
 import type { CoordinationTask } from '@/types';
 
 interface TaskCardProps {
@@ -37,19 +37,19 @@ export function TaskCard({
   const [showPopover, setShowPopover] = React.useState(false);
 
   // Priority color styling per specification:
-  // critical = chilli, high = ember, normal/medium/low = ice
+  // critical = lava-red, high = ember/lava-yellow, normal/medium/low = ice
   const getPriorityStyle = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'critical':
-        return 'bg-chilli/15 text-chilli border-chilli/40 font-bold';
+        return 'bg-lava-red/15 text-lava-red border-lava-red/30 font-bold';
       case 'high':
-        return 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-semibold';
+        return 'bg-lava-yellow/20 text-lava-orange dark:text-lava-yellow border-lava-yellow/40 font-semibold';
       default:
-        return 'bg-ice/15 text-ice border-ice/30 font-medium';
+        return 'bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border-border-subtle font-medium';
     }
   };
 
-  // Status badge display (satisfies test 14 expecting "Running")
+  // Status badge display (satisfies test expecting "Running")
   const formatStatus = (status: string) => {
     switch (status.toLowerCase()) {
       case 'running':
@@ -67,26 +67,26 @@ export function TaskCard({
     }
   };
 
-  return (
+  const cardContent = (
     <div
-      ref={cardRef}
+      ref={!isRecommended ? cardRef : undefined}
       draggable={true}
       onDragStart={(e) => onDragStart(e, task)}
       onDragEnd={onDragEnd}
       onClick={onClick}
-      className={`relative p-3.5 rounded-xl border transition-all duration-200 cursor-grab active:cursor-grabbing select-none group ${
+      className={`relative p-3.5 rounded-lg border transition-all duration-200 cursor-grab active:cursor-grabbing select-none group ${
         isDragging
-          ? 'opacity-40 scale-95 border-dashed border-ice'
+          ? 'opacity-40 scale-95 border-dashed border-steel-500'
           : isRecommended
-          ? 'bg-card/90 border-2 border-chilli shadow-[0_0_24px_rgba(239,68,68,0.45)] ring-2 ring-chilli/30'
-          : 'bg-card/70 hover:bg-card/95 border-border/70 hover:border-ice/40 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)]'
+          ? 'bg-surface shadow-lg'
+          : 'bg-surface/85 hover:bg-surface border-border-subtle hover:border-border-strong hover:-translate-y-0.5 shadow-sm'
       }`}
     >
       {/* Recommended Ribbon on Top */}
       {isRecommended && (
         <div className="mb-2 -mt-1 flex items-center justify-between">
-          <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md bg-chilli text-white text-[10px] font-mono font-bold tracking-tight shadow-[0_0_12px_rgba(239,68,68,0.6)]">
-            <Sparkles className="h-2.5 w-2.5 animate-spin-slow" />
+          <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md btn-magma text-white text-[10px] font-mono font-bold tracking-tight shadow-sm">
+            <BarsaLogo size={12} />
             <span>Recommended — readiness {readinessScore ?? 270.0}</span>
           </div>
 
@@ -98,7 +98,7 @@ export function TaskCard({
                 setShowPopover((v) => !v);
               }}
               title="Why was this recommended by FalkorDB?"
-              className="p-1 rounded text-chilli hover:bg-chilli/10"
+              className="p-1 rounded text-lava-orange hover:bg-lava-orange/10"
             >
               <Info className="h-3.5 w-3.5" />
             </button>
@@ -107,19 +107,19 @@ export function TaskCard({
             {showPopover && (
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="absolute right-0 top-full mt-1.5 w-64 p-3 rounded-xl bg-card/95 border border-chilli/40 backdrop-blur-md shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-50 text-xs animate-page-enter"
+                className="absolute right-0 top-full mt-1.5 w-64 p-3 rounded-lg bg-surface border border-border-strong shadow-xl z-50 text-xs animate-page-enter"
               >
-                <div className="flex items-center space-x-1.5 font-bold text-chilli mb-1">
-                  <Sparkles className="h-3 w-3" />
-                  <span>FalkorDB Cypher Traversal</span>
+                <div className="flex items-center space-x-1.5 font-bold text-lava-orange mb-1">
+                  <BarsaLogo size={14} />
+                  <span className="font-heading">FalkorDB Graph Traversal</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[11px] text-text-secondary leading-relaxed">
                   {whyReadyText ||
                     'All prerequisites and inbound dependencies are satisfied in the knowledge graph. 0 active blockers. Readiness score calculated via Cypher multi-hop graph projection.'}
                 </p>
                 <button
                   onClick={() => setShowPopover(false)}
-                  className="mt-2 text-[10px] text-ice hover:underline block text-right font-mono"
+                  className="mt-2 text-[10px] text-steel-700 dark:text-text-primary hover:underline block text-right font-mono font-medium"
                 >
                   Close
                 </button>
@@ -131,7 +131,7 @@ export function TaskCard({
 
       {/* Header: ID in mono + Status / Priority badges */}
       <div className="flex items-center justify-between gap-1 mb-2">
-        <span className="font-mono text-xs font-bold text-ice tracking-tight">
+        <span className="font-mono text-xs font-bold text-text-primary tracking-tight">
           {task.task_id}
         </span>
 
@@ -140,12 +140,12 @@ export function TaskCard({
           <span
             className={`text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold ${
               task.status === 'running'
-                ? 'bg-ice/20 text-ice border-ice/40 shadow-[0_0_8px_rgba(56,189,248,0.25)]'
+                ? 'bg-lava-orange/15 text-lava-orange border-lava-orange/30'
                 : task.status === 'blocked'
-                ? 'bg-chilli/20 text-chilli border-chilli/40'
+                ? 'bg-lava-red/15 text-lava-red border-lava-red/30'
                 : task.status === 'completed'
-                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
-                : 'bg-secondary/70 text-muted-foreground border-border/80'
+                ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
+                : 'bg-ice-100 dark:bg-white/[0.08] text-text-muted border-border-subtle'
             }`}
           >
             {formatStatus(task.status)}
@@ -163,23 +163,23 @@ export function TaskCard({
       </div>
 
       {/* Title */}
-      <h4 className="text-xs font-bold text-foreground line-clamp-2 leading-snug mb-2 group-hover:text-ice transition-colors">
+      <h4 className="font-heading text-xs font-semibold text-text-primary line-clamp-2 leading-snug mb-2 group-hover:text-lava-orange transition-colors">
         {task.title}
       </h4>
 
       {/* Footer: Dependencies, Blockers & Assigned Agent */}
-      <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+      <div className="pt-2 border-t border-border-subtle flex items-center justify-between text-[11px] text-text-muted">
         <div className="flex items-center space-x-2">
           {/* Dependency count */}
           <span className="flex items-center space-x-1 font-mono text-[10px]" title="Dependencies">
-            <Link2 className="h-3 w-3 text-muted-foreground" />
+            <Link2 className="h-3 w-3 text-steel-500" />
             <span>{task.dependencies?.length || 0} deps</span>
           </span>
 
           {/* Blocker tag if any */}
           {task.blockers && task.blockers.length > 0 && (
             <span
-              className="inline-flex items-center space-x-1 px-1.5 py-0.2 rounded bg-chilli/15 border border-chilli/30 text-chilli font-mono text-[10px] font-bold"
+              className="inline-flex items-center space-x-1 px-1.5 py-0.2 rounded bg-lava-red/15 border border-lava-red/30 text-lava-red font-mono text-[10px] font-bold"
               title={`${task.blockers.length} Active Blocker(s)`}
             >
               <AlertTriangle className="h-2.5 w-2.5" />
@@ -196,8 +196,8 @@ export function TaskCard({
           <div
             className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono ${
               task.assigned_agent_id
-                ? 'bg-ice/20 border border-ice/40 text-ice shadow-[0_0_6px_rgba(56,189,248,0.3)]'
-                : 'bg-secondary text-muted-foreground border border-border'
+                ? 'bg-ice-200 dark:bg-white/[0.12] border border-border-strong text-text-primary shadow-sm'
+                : 'bg-ice-100 text-steel-500 border border-border-subtle'
             }`}
           >
             {task.assigned_agent_id ? (
@@ -206,11 +206,24 @@ export function TaskCard({
               <User className="h-3 w-3 opacity-60" />
             )}
           </div>
-          <span className="text-[10px] truncate max-w-[80px]">
+          <span className="text-[10px] truncate max-w-[80px] font-mono">
             {agentName ? agentName.split(' ')[0] : task.assigned_agent_id || 'Open'}
           </span>
         </div>
       </div>
     </div>
   );
+
+  // If recommended, wrap in the signature molten rotating border!
+  if (isRecommended) {
+    return (
+      <div ref={cardRef} className="molten-card-container">
+        <div className="molten-card-inner">
+          {cardContent}
+        </div>
+      </div>
+    );
+  }
+
+  return cardContent;
 }

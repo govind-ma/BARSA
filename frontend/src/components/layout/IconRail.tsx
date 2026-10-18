@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { BarsaLogo } from '@/components/ui/BarsaLogo';
 import {
   LayoutDashboard,
   CheckSquare,
   GitBranch,
   BrainCircuit,
   BookmarkCheck,
-  Sparkles,
+  Palette,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -24,6 +25,7 @@ export const railNavItems: NavItem[] = [
   { id: 'history', name: 'History', href: '/version-control', icon: GitBranch },
   { id: 'memory', name: 'Memory', href: '/memory', icon: BrainCircuit },
   { id: 'checkpoints', name: 'Checkpoints', href: '/checkpoints', icon: BookmarkCheck },
+  { id: 'styleguide', name: 'Style Guide', href: '/styleguide', icon: Palette },
 ];
 
 export interface IconRailProps {
@@ -50,15 +52,15 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
           'hidden md:flex flex-col fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-out',
-          'bg-card/90 backdrop-blur-2xl border-r border-ice/20 shadow-[4px_0_24px_rgba(0,0,0,0.4)] select-none group',
+          'bg-surface/90 backdrop-blur-2xl border-r border-border-subtle shadow-lg select-none group',
           isHovered ? 'w-[220px]' : 'w-16',
           className
         )}
       >
         {/* Top Logo Glyph */}
-        <div className="h-14 flex items-center px-4 border-b border-ice/10 shrink-0">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-ice/25 via-ice/10 to-transparent border border-ice/40 flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.25)] shrink-0">
-            <Sparkles className="h-4 w-4 text-ice animate-pulse" />
+        <div className="h-14 flex items-center px-4 border-b border-border-subtle shrink-0">
+          <div className="shrink-0 flex items-center justify-center">
+            <BarsaLogo size={28} />
           </div>
           <div
             className={cn(
@@ -66,10 +68,12 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
               isHovered ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0'
             )}
           >
-            <span className="font-bold tracking-wider text-xs bg-gradient-to-r from-ice to-foreground bg-clip-text text-transparent">
+            <span className="font-heading font-semibold tracking-tight text-xs text-text-primary">
               BARSA
             </span>
-            <span className="text-[9px] text-muted-foreground tracking-tight">Collective AI Brain</span>
+            <span className="text-[10px] text-text-muted font-mono tracking-tight uppercase">
+              Ice & Lava Engine
+            </span>
           </div>
         </div>
 
@@ -85,17 +89,17 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
                 to={item.href}
                 onClick={onItemClick}
                 className={cn(
-                  'relative flex items-center h-10 rounded-xl transition-all duration-200 group/btn',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ice/50',
+                  'relative flex items-center h-10 rounded-lg transition-all duration-200 group/btn',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-steel-500',
                   active
-                    ? 'text-ice bg-ice/10 shadow-[inset_0_0_12px_rgba(56,189,248,0.15)] font-semibold'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+                    ? 'text-text-primary bg-ice-100 dark:bg-white/[0.08] font-semibold shadow-sm'
+                    : 'text-steel-500 hover:text-text-primary hover:bg-ice-100/60 dark:hover:bg-white/[0.04]'
                 )}
                 title={!isHovered ? item.name : undefined}
               >
-                {/* Active Ice Indicator Bar */}
+                {/* Active Magma Indicator Bar */}
                 {active && (
-                  <div className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-ice shadow-[0_0_10px_rgba(56,189,248,0.9)] animate-in fade-in duration-300" />
+                  <div className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-gradient-to-b from-lava-yellow via-lava-orange to-lava-red shadow-[0_0_8px_rgba(255,122,26,0.5)] animate-in fade-in duration-200" />
                 )}
 
                 {/* Icon Container */}
@@ -103,7 +107,7 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
                   <Icon
                     className={cn(
                       'h-4 w-4 transition-transform duration-200 group-hover/btn:scale-110',
-                      active && 'text-ice drop-shadow-[0_0_8px_rgba(56,189,248,0.6)]'
+                      active ? 'text-lava-orange' : 'text-steel-500'
                     )}
                   />
                 </div>
@@ -117,35 +121,29 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
                 >
                   {item.name}
                 </span>
-
-                {/* Active Ambient Glow */}
-                {active && (
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-ice/10 to-transparent pointer-events-none" />
-                )}
               </NavLink>
             );
           })}
         </nav>
 
         {/* Bottom Rail Hint */}
-        <div className="p-3 border-t border-ice/10 shrink-0">
+        <div className="p-3 border-t border-border-subtle shrink-0">
           <div
             className={cn(
-              'flex items-center text-[10px] text-muted-foreground/80 font-mono transition-opacity duration-200',
+              'flex items-center text-[10px] text-text-muted font-mono transition-opacity duration-200',
               isHovered ? 'justify-between px-1' : 'justify-center'
             )}
           >
-            <span className={cn(isHovered ? 'inline' : 'hidden')}>Graph Hacks</span>
-            <span className="px-1.5 py-0.5 rounded bg-muted/60 text-ice/80 border border-ice/10">v0.1</span>
+            <span className={cn(isHovered ? 'inline' : 'hidden')}>Ice & Lava</span>
+            <span className="px-1.5 py-0.5 rounded bg-ice-100 dark:bg-white/[0.06] text-steel-700 dark:text-text-secondary border border-border-subtle">
+              v0.2
+            </span>
           </div>
         </div>
       </aside>
 
       {/* Mobile Bottom Tab Bar */}
-      <nav
-        aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 bg-card/95 backdrop-blur-2xl border-t border-ice/20 flex items-center justify-around px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]"
-      >
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 h-14 bg-surface/95 backdrop-blur-xl border-t border-border-subtle flex items-center justify-around px-2 shadow-lg">
         {railNavItems.map((item) => {
           const Icon = item.icon;
           const active = isItemActive(item.href);
@@ -156,22 +154,17 @@ export function IconRail({ className, onItemClick }: IconRailProps) {
               to={item.href}
               onClick={onItemClick}
               className={cn(
-                'relative flex flex-col items-center justify-center flex-1 h-full py-1 text-[10px] transition-all duration-150',
-                active
-                  ? 'text-ice font-semibold'
-                  : 'text-muted-foreground hover:text-foreground'
+                'relative flex flex-col items-center justify-center flex-1 h-full py-1 transition-all',
+                active ? 'text-lava-orange font-medium' : 'text-steel-500 hover:text-text-primary'
               )}
             >
               {active && (
-                <div className="absolute top-0 left-4 right-4 h-0.5 bg-ice shadow-[0_0_8px_rgba(56,189,248,0.9)] rounded-full" />
+                <div className="absolute top-0 left-3 right-3 h-0.5 rounded-full bg-gradient-to-r from-lava-yellow via-lava-orange to-lava-red shadow-[0_0_8px_rgba(255,122,26,0.6)]" />
               )}
-              <Icon
-                className={cn(
-                  'h-4 w-4 mb-1 transition-transform',
-                  active && 'text-ice drop-shadow-[0_0_8px_rgba(56,189,248,0.6)] scale-110'
-                )}
-              />
-              <span className="truncate max-w-[64px]">{item.name}</span>
+              <Icon className="h-4 w-4" />
+              <span className="text-[10px] tracking-tight mt-0.5 truncate max-w-[60px]">
+                {item.name}
+              </span>
             </NavLink>
           );
         })}

@@ -304,16 +304,16 @@ export function DashboardHome() {
         </div>
       </div>
 
-      {/* Floating Toast Notification */}
+      {/* Floating Toast Notification (White glass with left lava accent bar) */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-2.5 px-4 py-2.5 rounded-xl bg-card/95 border border-ice/40 text-foreground text-xs font-medium shadow-[0_8px_30px_rgba(56,189,248,0.3)] backdrop-blur-md animate-page-enter">
-          <div className="h-5 w-5 rounded-full bg-ice/20 border border-ice/40 flex items-center justify-center text-ice shrink-0">
-            <Check className="h-3 w-3 text-ice" />
+        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-lg bg-surface/95 border border-border-subtle border-l-4 border-l-lava-orange text-text-primary text-xs font-medium shadow-xl backdrop-blur-xl animate-page-enter">
+          <div className="h-5 w-5 rounded-full bg-lava-orange/15 border border-lava-orange/30 flex items-center justify-center text-lava-orange shrink-0">
+            <Check className="h-3 w-3" />
           </div>
           <span>{toastMessage}</span>
           <button
             onClick={() => setToastMessage(null)}
-            className="text-muted-foreground hover:text-foreground ml-2"
+            className="text-text-muted hover:text-text-primary ml-2 p-0.5"
           >
             <X className="h-3.5 w-3.5" />
           </button>

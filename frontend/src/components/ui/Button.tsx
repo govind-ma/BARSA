@@ -10,14 +10,20 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading = false, disabled, children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-lg active:scale-[0.98]';
+    const baseStyles =
+      'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-steel-500 dark:focus-visible:ring-lava-yellow disabled:opacity-50 disabled:pointer-events-none rounded-[8px] select-none';
 
     const variants = {
-      primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow',
-      secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-      outline: 'border border-border/80 bg-card/60 hover:bg-accent/80 hover:text-accent-foreground text-foreground',
-      ghost: 'hover:bg-accent/70 hover:text-accent-foreground text-muted-foreground hover:text-foreground',
-      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm',
+      primary:
+        'btn-magma text-[#0C0A0B] font-semibold active:scale-[0.97]',
+      secondary:
+        'btn-secondary-ice active:scale-[0.98]',
+      outline:
+        'border border-border-strong bg-surface/70 hover:bg-ice-200/60 dark:hover:bg-white/[0.1] text-text-primary active:scale-[0.98]',
+      ghost:
+        'hover:bg-ice-100 dark:hover:bg-white/[0.06] text-text-secondary hover:text-text-primary active:scale-[0.98]',
+      destructive:
+        'bg-lava-red hover:bg-lava-deep text-white shadow-sm hover:shadow-[0_0_15px_rgba(229,48,31,0.4)] active:scale-[0.97]',
     };
 
     const sizes = {
@@ -34,7 +40,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         {...props}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin shrink-0" />}
         {children}
       </button>
     );

@@ -4,91 +4,251 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98.5%;
-    --foreground: 240 10% 9%;
+    /* Theme 1: ICE (Default, Light) */
+    --bg-base: #F3F7FA;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #E9F0F6;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 9%;
+    --ice-100: #E3EDF5;
+    --ice-200: #CFE0EC;
+    --ice-300: #B3CDE0;
 
-    --primary: 246 80% 60%;
-    --primary-foreground: 0 0% 100%;
+    --steel-500: #6F8FA8;
+    --steel-700: #3E5A72;
 
-    --secondary: 240 5% 94%;
-    --secondary-foreground: 240 10% 10%;
+    --text-primary: #0D1A24;
+    --text-secondary: #4A5B69;
+    --text-muted: #7D8D99;
 
-    --muted: 240 5% 95%;
-    --muted-foreground: 240 4% 46%;
+    --border-subtle: rgba(110, 150, 180, 0.22);
+    --border-strong: rgba(110, 150, 180, 0.40);
+    --border: rgba(110, 150, 180, 0.22);
+    --input: rgba(110, 150, 180, 0.22);
+    --ring: #6F8FA8;
 
-    --accent: 246 75% 96%;
-    --accent-foreground: 246 80% 50%;
+    --radius: 8px;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    /* Lava tokens */
+    --lava-yellow: #FFC93C;
+    --lava-orange: #FF7A1A;
+    --lava-red: #E5301F;
+    --lava-deep: #A81414;
+    --magma: linear-gradient(135deg, #FFC93C 0%, #FF7A1A 45%, #E5301F 100%);
+    --lava-glow: 0 0 28px rgba(255, 122, 26, 0.35);
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 246 80% 60%;
-
-    --radius: 0.625rem;
-
-    --ice: 195 90% 65%;
-    --ice-foreground: 222 47% 6%;
-    --ice-glow: 195 100% 70%;
-    --ice-border: 195 80% 80% / 0.2;
-
-    --chilli: 12 90% 55%;
-    --chilli-foreground: 0 0% 100%;
-    --chilli-glow: 12 100% 60%;
-    --chilli-hover: 12 95% 50%;
+    /* Card styling */
+    --card-bg: rgba(255, 255, 255, 0.72);
+    --card-shadow: 0 8px 30px rgba(60, 100, 130, 0.08);
+    --card-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 210 40% 98%;
+    /* Theme 2: OBSIDIAN (Dark) */
+    --bg-base: #0C0A0B;
+    --bg-surface: #151113;
+    --bg-elevated: #1E1819;
 
-    --card: 222 47% 7%;
-    --card-foreground: 210 40% 98%;
+    --ice-100: rgba(255, 255, 255, 0.06);
+    --ice-200: rgba(255, 255, 255, 0.12);
+    --ice-300: rgba(255, 255, 255, 0.20);
 
-    --primary: 195 90% 65%;
-    --primary-foreground: 222 47% 6%;
+    --steel-500: #6F7A83;
+    --steel-700: #A9B4BD;
 
-    --secondary: 217 33% 14%;
-    --secondary-foreground: 210 40% 98%;
+    --text-primary: #F4F8FB;
+    --text-secondary: #A9B4BD;
+    --text-muted: #6F7A83;
 
-    --muted: 217 33% 12%;
-    --muted-foreground: 215 20% 65%;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --border: rgba(255, 255, 255, 0.08);
+    --input: rgba(255, 255, 255, 0.08);
+    --ring: #FFC93C;
 
-    --accent: 217 33% 15%;
-    --accent-foreground: 195 90% 80%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 217 33% 14%;
-    --input: 217 33% 14%;
-    --ring: 195 90% 65%;
-
-    --ice: 195 90% 65%;
-    --ice-foreground: 222 47% 6%;
-    --ice-glow: 195 100% 70%;
-    --ice-border: 195 80% 70% / 0.25;
-
-    --chilli: 12 90% 55%;
-    --chilli-foreground: 0 0% 100%;
-    --chilli-glow: 12 100% 60%;
-    --chilli-hover: 12 95% 50%;
+    /* Card styling for dark glass */
+    --card-bg: rgba(21, 17, 19, 0.75);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --card-highlight: inset 0 -1px 0 0 rgba(255, 122, 26, 0.12);
+    --lava-glow: 0 0 32px rgba(255, 122, 26, 0.45);
   }
 
   * {
-    @apply border-border;
+    border-color: var(--border-subtle);
   }
 
   html,
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-primary;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-weight: 600;
+  }
+
+  code, kbd, samp, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Background facet gradient decoration */
+.bg-ice-facets {
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(179, 205, 224, 0.25) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(207, 224, 236, 0.20) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+}
+
+.dark .bg-ice-facets {
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(255, 122, 26, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(168, 20, 20, 0.06) 0%, transparent 45%);
+}
+
+/* Frosted glass cards */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow), var(--card-highlight);
+  border-radius: 8px;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-card-interactive {
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow), var(--card-highlight);
+  border-radius: 8px;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: 0 12px 35px rgba(60, 100, 130, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+}
+
+.dark .glass-card-interactive:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), inset 0 -1px 0 0 rgba(255, 122, 26, 0.25);
+}
+
+/* Primary Magma Button */
+.btn-magma {
+  background: linear-gradient(135deg, #FFC93C 0%, #FF7A1A 45%, #E5301F 100%);
+  color: #0C0A0B;
+  font-weight: 600;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-magma:hover {
+  box-shadow: var(--lava-glow);
+}
+
+.btn-magma:active {
+  transform: scale(0.97);
+}
+
+.btn-magma::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-150%);
+  transition: none;
+}
+
+.btn-magma:hover::after {
+  animation: heatSweep 1.6s infinite ease-in-out;
+}
+
+@keyframes heatSweep {
+  0% { transform: translateX(-150%); }
+  100% { transform: translateX(150%); }
+}
+
+/* Secondary Button (Ice) */
+.btn-secondary-ice {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(110, 150, 180, 0.35);
+  color: var(--text-primary);
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark .btn-secondary-ice {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.btn-secondary-ice:hover {
+  background: var(--ice-200);
+  box-shadow: 0 0 15px rgba(179, 205, 224, 0.4);
+}
+
+.dark .btn-secondary-ice:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+}
+
+/* Molten Border Card Effect (Signature effect for recommended task) */
+.molten-card-container {
+  position: relative;
+  border-radius: 9px;
+  padding: 1.5px;
+  overflow: hidden;
+}
+
+.molten-card-container::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  background: conic-gradient(from 0deg, #FFC93C, #FF7A1A, #E5301F, #FFC93C);
+  animation: moltenSpin 6s linear infinite;
+  z-index: 0;
+}
+
+.molten-card-inner {
+  position: relative;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  z-index: 1;
+}
+
+/* Subtle fading divider line */
+.divider-ice {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--ice-300) 50%, transparent 100%);
+}
+
+.dark .divider-ice {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
+}
+
+/* Next Action Callout */
+.next-action-callout {
+  border-left: 4px solid #FF7A1A;
+  border-image: linear-gradient(to bottom, #FFC93C, #FF7A1A, #E5301F) 1;
 }
 
 /* Page transitions */
@@ -104,32 +264,39 @@
 }
 
 .animate-page-enter {
-  animation: pageFadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageFadeIn 250ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Crystal burst & ember sparks */
 @keyframes crystalBurst {
   0% {
     transform: scale(0.6);
     opacity: 0;
-    box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+    box-shadow: 0 0 0 rgba(255, 122, 26, 0);
   }
   50% {
-    transform: scale(1.08);
+    transform: scale(1.06);
     opacity: 1;
-    box-shadow: 0 0 35px rgba(56, 189, 248, 0.6);
+    box-shadow: 0 0 35px rgba(255, 122, 26, 0.5);
   }
   100% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 15px rgba(255, 122, 26, 0.15);
   }
 }
 
 .animate-crystal-burst {
-  animation: crystalBurst 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: crystalBurst 450ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Custom scrollbar for technical dashboard */
+/* Focus styles */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -138,9 +305,15 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
+  background: rgba(110, 150, 180, 0.35);
   border-radius: 9999px;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+}
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
+  background: rgba(110, 150, 180, 0.6);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }

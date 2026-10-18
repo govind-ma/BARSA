@@ -12,7 +12,7 @@ export function DashboardLayout() {
   const isNoProjectSelected = !activeProject && (location.pathname === '/' || location.pathname.startsWith('/projects'));
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground antialiased selection:bg-ice/20 selection:text-ice font-sans">
+    <div className="flex min-h-screen bg-bg-base bg-ice-facets text-text-primary antialiased selection:bg-lava-orange/20 selection:text-lava-orange font-sans relative">
       {/* Desktop 64px Icon Rail (Expands to 220px on hover) & Mobile Bottom Tab */}
       <IconRail />
 

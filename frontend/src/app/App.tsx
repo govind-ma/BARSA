@@ -15,6 +15,7 @@ import { SecurityPage } from '@/features/security/SecurityPage';
 import { StoragePage } from '@/features/storage/StoragePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { CheckpointsPage } from '@/features/checkpoints/CheckpointsPage';
+import { StyleGuidePage } from '@/features/styleguide/StyleGuidePage';
 import { NotFoundPage } from '@/features/notfound/NotFoundPage';
 
 const queryClient = new QueryClient({
@@ -47,6 +48,7 @@ export function App() {
               <Route path="security" element={<SecurityPage />} />
               <Route path="storage" element={<StoragePage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="styleguide" element={<StyleGuidePage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
