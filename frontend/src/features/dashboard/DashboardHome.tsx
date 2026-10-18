@@ -46,11 +46,14 @@ export function DashboardHome() {
   // Resume Quick Drawer / Modal
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const hasLoadedOnce = React.useRef(false);
 
   useEffect(() => {
     let isMounted = true;
     const loadOverviewData = async () => {
-      setIsLoading(true);
+      if (!hasLoadedOnce.current) {
+        setIsLoading(true);
+      }
       try {
         if (activeProject) {
           const [cmts, conft, grph, recs] = await Promise.allSettled([
@@ -69,7 +72,10 @@ export function DashboardHome() {
         const agts = await api.listAgents().catch(() => []);
         if (isMounted) setAgents(agts);
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+          hasLoadedOnce.current = true;
+        }
       }
     };
 

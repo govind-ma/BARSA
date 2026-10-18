@@ -155,6 +155,26 @@ def list_projects_in_workspace(
 
 
 @router.get(
+    "/projects",
+    response_model=list[Project],
+    summary="List all projects across all workspaces",
+)
+def list_all_projects(
+    workspace_id: str | None = Query(default=None),
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    storage: StorageProvider = Depends(get_storage),
+) -> list[Project]:
+    if workspace_id:
+        return storage.list_projects(workspace_id, limit=limit, offset=offset)
+    workspaces = storage.list_workspaces()
+    all_projects: list[Project] = []
+    for ws in workspaces:
+        all_projects.extend(storage.list_projects(ws.id))
+    return all_projects[offset : offset + limit]
+
+
+@router.get(
     "/projects/{project_id}",
     response_model=Project,
     summary="Get a project by ID",

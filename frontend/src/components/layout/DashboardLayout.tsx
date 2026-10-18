@@ -1,47 +1,35 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
-import { Navbar } from './Navbar';
-import { X } from 'lucide-react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { IconRail } from './IconRail';
+import { TopBar } from './TopBar';
+import { ProjectOnboarding } from '@/components/projects/ProjectOnboarding';
+import { useApp } from '@/app/AppContext';
 
 export function DashboardLayout() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { activeProject, projects } = useApp();
+  const location = useLocation();
+
+  // If no project is selected and user is on home screen, show clean onboarding state
+  const isNoProjectSelected = !activeProject && (location.pathname === '/' || location.pathname.startsWith('/projects'));
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex">
-        <Sidebar />
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden" role="dialog" aria-modal="true">
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
-            aria-hidden="true"
-          />
-          <div className="relative flex flex-col flex-1 w-full max-w-xs bg-card z-50">
-            <div className="absolute top-3 right-3">
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Close menu"
-                className="p-2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <Sidebar onItemClick={() => setMobileMenuOpen(false)} />
-          </div>
-        </div>
-      )}
+    <div className="flex min-h-screen bg-background text-foreground antialiased selection:bg-ice/20 selection:text-ice font-sans">
+      {/* Desktop 64px Icon Rail (Expands to 220px on hover) & Mobile Bottom Tab */}
+      <IconRail />
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1 w-0 min-w-0">
-        <Navbar onMenuClick={() => setMobileMenuOpen(true)} />
-        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
-          <Outlet />
+      <div className="flex flex-col flex-1 w-full md:pl-16 min-h-screen transition-all duration-300">
+        {/* Top 56px Frosted Glass Bar */}
+        <TopBar />
+
+        {/* Page View with upward slide transition */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8">
+          {isNoProjectSelected && projects.length > 0 ? (
+            <ProjectOnboarding />
+          ) : (
+            <div key={location.pathname} className="animate-page-enter">
+              <Outlet />
+            </div>
+          )}
         </main>
       </div>
     </div>

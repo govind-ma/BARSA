@@ -14,6 +14,7 @@ import { TasksPage } from '@/features/coordination/TasksPage';
 import { SecurityPage } from '@/features/security/SecurityPage';
 import { StoragePage } from '@/features/storage/StoragePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
+import { CheckpointsPage } from '@/features/checkpoints/CheckpointsPage';
 import { NotFoundPage } from '@/features/notfound/NotFoundPage';
 
 const queryClient = new QueryClient({
@@ -39,6 +40,7 @@ export function App() {
               <Route path="projects/:projectId/resume" element={<ProjectDetailPage />} />
               <Route path="memory" element={<MemoryExplorerPage />} />
               <Route path="version-control" element={<VersionControlPage />} />
+              <Route path="checkpoints" element={<CheckpointsPage />} />
               <Route path="graph" element={<GraphExplorerPage />} />
               <Route path="agents" element={<AgentsPage />} />
               <Route path="tasks" element={<TasksPage />} />

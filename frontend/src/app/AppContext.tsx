@@ -89,13 +89,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const refreshProjects = async () => {
-    if (!activeWorkspaceId || activeWorkspaceId === 'undefined') {
-      setProjects([]);
-      return;
-    }
+  const refreshProjects = async (targetWsId?: string | null) => {
     try {
-      const list = await api.listProjects(activeWorkspaceId);
+      // If an active workspace is set, query that workspace, otherwise query all projects
+      const wsId = targetWsId !== undefined ? targetWsId : activeWorkspaceId;
+      const list = await api.listProjects(wsId);
       setProjects(list);
       if (list.length > 0) {
         const storedProjId = localStorage.getItem('barsa_active_project');
@@ -131,14 +129,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         // Not authenticated or fallback
       }
 
-      await refreshWorkspaces();
+      try {
+        const wsList = await api.listWorkspaces();
+        setWorkspaces(wsList);
+        setIsBackendOnline(true);
+        let selectedWsId = localStorage.getItem('barsa_active_workspace');
+        if (!selectedWsId || !wsList.some((w) => (w.workspace_id || (w as any).id) === selectedWsId)) {
+          selectedWsId = wsList.length > 0 ? (wsList[0].workspace_id || (wsList[0] as any).id) : null;
+        }
+        if (selectedWsId) {
+          setActiveWorkspaceId(selectedWsId);
+        }
+        await refreshProjects(selectedWsId);
+      } catch {
+        setIsBackendOnline(false);
+      }
     };
 
     init();
   }, []);
 
   useEffect(() => {
-    refreshProjects();
+    if (activeWorkspaceId) {
+      refreshProjects(activeWorkspaceId);
+    }
   }, [activeWorkspaceId]);
 
   const activeWorkspace = workspaces.find((w) => (w.workspace_id || (w as any).id) === activeWorkspaceId) || null;
