@@ -1,0 +1,204 @@
+{
+  "cloud_host": "r-6jissuruar.instance-1aw58chmp.hc-7up0crkyn.ap-south-1.aws.f2e0a955bb84.cloud",
+  "cloud_port": 50013,
+  "server_os": "Linux 6.12.88 aarch64",
+  "redis_version": "8.10.2",
+  "modules": [
+    "falkordbe",
+    "graph",
+    "vectorset"
+  ],
+  "node_count": 124,
+  "edge_count": 369,
+  "flow_c_initial_rec": {
+    "task_id": "TASK-017",
+    "title": "Atomic Stock Reservation",
+    "priority": "critical",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 270.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (java-spring-boot, jpa-hibernate)",
+    "completed_dependencies": [
+      "TASK-005",
+      "TASK-016"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "java-spring-boot",
+      "jpa-hibernate"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "java-spring-boot",
+      "jpa-hibernate"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [
+      {
+        "decision": "Implement row-level versioning on stock pool records; reject reservations on version mismatch with exponential backoff.",
+        "id": "ADR-004",
+        "status": "approved",
+        "title": "Optimistic Concurrency Control with Versioned Stock Pools"
+      }
+    ],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-017)",
+      "(Task:TASK-017)-[:DEPENDS_ON]->(Task:TASK-005 {status: 'completed'})",
+      "(Task:TASK-017)-[:DEPENDS_ON]->(Task:TASK-016 {status: 'completed'})",
+      "(Task:TASK-017)-[:REQUIRES]->(Capability:java-spring-boot)",
+      "(Task:TASK-017)-[:REQUIRES]->(Capability:jpa-hibernate)",
+      "(Task:TASK-017)-[:AFFECTS]-(Decision:ADR-004)"
+    ]
+  },
+  "flow_d_post_completion_rec": {
+    "task_id": "TASK-023",
+    "title": "Supplier Purchase Order Intake REST & EDI Ingestion API",
+    "priority": "high",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 240.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (java-spring-boot, rest-api)",
+    "completed_dependencies": [
+      "TASK-005",
+      "TASK-022"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "java-spring-boot",
+      "rest-api"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "java-spring-boot",
+      "rest-api"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [
+      {
+        "decision": "Decouple supplier order submission from backend processing using an ingestion queue.",
+        "id": "ADR-005",
+        "status": "approved",
+        "title": "Asynchronous EDI/X12 and JSON Ingestion via Kafka/RabbitMQ"
+      }
+    ],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-023)",
+      "(Task:TASK-023)-[:DEPENDS_ON]->(Task:TASK-005 {status: 'completed'})",
+      "(Task:TASK-023)-[:DEPENDS_ON]->(Task:TASK-022 {status: 'completed'})",
+      "(Task:TASK-023)-[:REQUIRES]->(Capability:java-spring-boot)",
+      "(Task:TASK-023)-[:REQUIRES]->(Capability:rest-api)",
+      "(Task:TASK-023)-[:AFFECTS]-(Decision:ADR-005)"
+    ]
+  },
+  "flow_e_post_blocker_rec": {
+    "task_id": "TASK-027",
+    "title": "Customer Order Placement & Line-Item Validation REST API",
+    "priority": "high",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 240.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (java-spring-boot, rest-api)",
+    "completed_dependencies": [
+      "TASK-005",
+      "TASK-026"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "java-spring-boot",
+      "rest-api"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "java-spring-boot",
+      "rest-api"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-027)",
+      "(Task:TASK-027)-[:DEPENDS_ON]->(Task:TASK-005 {status: 'completed'})",
+      "(Task:TASK-027)-[:DEPENDS_ON]->(Task:TASK-026 {status: 'completed'})",
+      "(Task:TASK-027)-[:REQUIRES]->(Capability:java-spring-boot)",
+      "(Task:TASK-027)-[:REQUIRES]->(Capability:rest-api)"
+    ]
+  },
+  "flow_f_devops_rec": {
+    "task_id": "TASK-060",
+    "title": "Kubernetes Production Helm Chart with HPA & Zero-Downtime Rolling Update",
+    "priority": "medium",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 210.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-devops' matches all required capabilities (docker-containers, kubernetes)",
+    "completed_dependencies": [
+      "TASK-059"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "docker-containers",
+      "kubernetes"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "docker-containers",
+      "kubernetes"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-060)",
+      "(Task:TASK-060)-[:DEPENDS_ON]->(Task:TASK-059 {status: 'completed'})",
+      "(Task:TASK-060)-[:REQUIRES]->(Capability:docker-containers)",
+      "(Task:TASK-060)-[:REQUIRES]->(Capability:kubernetes)"
+    ]
+  },
+  "flow_g_error": {
+    "error": "FalkorDB is required for graph-powered memory reasoning and project continuation. FalkorDB is currently offline or unreachable at 127.0.0.1:59999.",
+    "code": "FALKORDB_UNAVAILABLE",
+    "status_code": 503,
+    "details": {},
+    "timestamp": "2026-10-18T15:55:00.882544Z"
+  },
+  "flow_h_recovered_task": {
+    "task_id": "TASK-027",
+    "title": "Customer Order Placement & Line-Item Validation REST API",
+    "priority": "high",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 240.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (java-spring-boot, rest-api)",
+    "completed_dependencies": [
+      "TASK-005",
+      "TASK-026"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "java-spring-boot",
+      "rest-api"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "java-spring-boot",
+      "rest-api"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-027)",
+      "(Task:TASK-027)-[:DEPENDS_ON]->(Task:TASK-005 {status: 'completed'})",
+      "(Task:TASK-027)-[:DEPENDS_ON]->(Task:TASK-026 {status: 'completed'})",
+      "(Task:TASK-027)-[:REQUIRES]->(Capability:java-spring-boot)",
+      "(Task:TASK-027)-[:REQUIRES]->(Capability:rest-api)"
+    ]
+  }
+}

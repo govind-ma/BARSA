@@ -8,6 +8,7 @@ from barsa.models.graph import (
     DecisionImpactResult,
     GraphNode,
     GraphRelationship,
+    GraphResumeResponse,
     ProjectOverviewResult,
     ResumeContextResult,
     TaskDependenciesResult,
@@ -110,6 +111,15 @@ class GraphProvider(Protocol):
         task_id: str,
     ) -> ResumeContextResult:
         """Retrieve full structured context to resume work on a task."""
+        ...
+
+    @abstractmethod
+    def barsa_graph_resume(
+        self,
+        project_id: str,
+        agent_id: str | None = None,
+    ) -> GraphResumeResponse:
+        """Execute FalkorDB-powered project continuation, next-task discovery, and capability matching."""
         ...
 
     @abstractmethod

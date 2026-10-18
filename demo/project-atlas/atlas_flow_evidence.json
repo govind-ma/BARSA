@@ -1,0 +1,201 @@
+{
+  "graph_nodes": 124,
+  "graph_edges": 388,
+  "flow_c_initial_rec": {
+    "task_id": "TASK-017",
+    "title": "Atomic Stock Reservation Service with Exponential Backoff Retry",
+    "priority": "critical",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 270.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (cap-java-spring, cap-jpa-hibernate)",
+    "completed_dependencies": [
+      "TASK-016",
+      "TASK-005"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "cap-java-spring",
+      "cap-jpa-hibernate"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "cap-java-spring",
+      "cap-jpa-hibernate"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [
+      {
+        "id": "ADR-004",
+        "title": "Optimistic Concurrency Control with Versioned Stock Pools",
+        "decision": "Implement row-level versioning on stock pool records; reject reservations on version mismatch with exponential backoff.",
+        "status": "approved"
+      }
+    ],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-017)",
+      "(Task:TASK-017)-[:DEPENDS_ON]->(Task:TASK-016 {status: 'completed'})",
+      "(Task:TASK-017)-[:DEPENDS_ON]->(Task:TASK-005 {status: 'completed'})",
+      "(Task:TASK-017)-[:REQUIRES]->(Capability:cap-java-spring)",
+      "(Task:TASK-017)-[:REQUIRES]->(Capability:cap-jpa-hibernate)",
+      "(Task:TASK-017)-[:AFFECTS]-(Decision:ADR-004)"
+    ]
+  },
+  "flow_d_updated_rec": {
+    "task_id": "TASK-010",
+    "title": "Warehouse Cross-Dock Reallocation Trigger",
+    "priority": "high",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 240.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (cap-java-spring)",
+    "completed_dependencies": [
+      "TASK-008",
+      "TASK-009"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "cap-java-spring"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "cap-java-spring"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [],
+    "related_knowledge": [
+      {
+        "id": "DOC-010",
+        "title": "Database Indexing & Partitioning Strategy",
+        "content": "Composite indexes for (hub_id, sku_id, status) on inventory records."
+      }
+    ],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-010)",
+      "(Task:TASK-010)-[:DEPENDS_ON]->(Task:TASK-008 {status: 'completed'})",
+      "(Task:TASK-010)-[:DEPENDS_ON]->(Task:TASK-009 {status: 'completed'})",
+      "(Task:TASK-010)-[:REQUIRES]->(Capability:cap-java-spring)"
+    ]
+  },
+  "flow_e_blocked_rec": {
+    "task_id": "TASK-023",
+    "title": "Supplier Purchase Order Intake REST & EDI Ingestion API",
+    "priority": "high",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 240.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (cap-java-spring, cap-rest-api)",
+    "completed_dependencies": [
+      "TASK-022",
+      "TASK-005"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "cap-java-spring",
+      "cap-rest-api"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "cap-java-spring",
+      "cap-rest-api"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [
+      {
+        "id": "ADR-005",
+        "title": "Asynchronous EDI/X12 and JSON Ingestion via Kafka/RabbitMQ",
+        "decision": "Decouple supplier order submission from backend processing using an ingestion queue.",
+        "status": "approved"
+      }
+    ],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-023)",
+      "(Task:TASK-023)-[:DEPENDS_ON]->(Task:TASK-022 {status: 'completed'})",
+      "(Task:TASK-023)-[:DEPENDS_ON]->(Task:TASK-005 {status: 'completed'})",
+      "(Task:TASK-023)-[:REQUIRES]->(Capability:cap-java-spring)",
+      "(Task:TASK-023)-[:REQUIRES]->(Capability:cap-rest-api)",
+      "(Task:TASK-023)-[:AFFECTS]-(Decision:ADR-005)"
+    ]
+  },
+  "flow_f_devops_rec": {
+    "task_id": "TASK-060",
+    "title": "Kubernetes Production Helm Chart with HPA & Zero-Downtime Rolling Update",
+    "priority": "medium",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 210.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-devops' matches all required capabilities (cap-docker, cap-k8s)",
+    "completed_dependencies": [
+      "TASK-059"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "cap-docker",
+      "cap-k8s"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "cap-docker",
+      "cap-k8s"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [],
+    "related_knowledge": [],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-060)",
+      "(Task:TASK-060)-[:DEPENDS_ON]->(Task:TASK-059 {status: 'completed'})",
+      "(Task:TASK-060)-[:REQUIRES]->(Capability:cap-docker)",
+      "(Task:TASK-060)-[:REQUIRES]->(Capability:cap-k8s)"
+    ]
+  },
+  "flow_g_error": {
+    "error": "FalkorDB is required for graph-powered memory reasoning and project continuation. FalkorDB is currently offline or unreachable at 127.0.0.1:6389.",
+    "code": "FALKORDB_UNAVAILABLE",
+    "status_code": 503,
+    "details": {},
+    "timestamp": "2026-10-17T19:10:43.986691Z"
+  },
+  "flow_h_recovered_task": {
+    "task_id": "TASK-010",
+    "title": "Warehouse Cross-Dock Reallocation Trigger",
+    "priority": "high",
+    "status": "todo",
+    "is_ready": true,
+    "readiness_score": 240.0,
+    "readiness_reason": "All upstream dependencies completed \u2022 No active blockers \u2022 Agent 'agent-backend' matches all required capabilities (cap-java-spring)",
+    "completed_dependencies": [
+      "TASK-008",
+      "TASK-009"
+    ],
+    "uncompleted_dependencies": [],
+    "active_blockers": [],
+    "required_capabilities": [
+      "cap-java-spring"
+    ],
+    "agent_capability_match": true,
+    "matched_capabilities": [
+      "cap-java-spring"
+    ],
+    "missing_capabilities": [],
+    "related_decisions": [],
+    "related_knowledge": [
+      {
+        "id": "DOC-010",
+        "title": "Database Indexing & Partitioning Strategy",
+        "content": "Composite indexes for (hub_id, sku_id, status) on inventory records."
+      }
+    ],
+    "graph_paths": [
+      "(Project:proj-atlas)-[:HAS_TASK]->(Task:TASK-010)",
+      "(Task:TASK-010)-[:DEPENDS_ON]->(Task:TASK-008 {status: 'completed'})",
+      "(Task:TASK-010)-[:DEPENDS_ON]->(Task:TASK-009 {status: 'completed'})",
+      "(Task:TASK-010)-[:REQUIRES]->(Capability:cap-java-spring)"
+    ]
+  }
+}

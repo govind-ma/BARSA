@@ -111,3 +111,19 @@ class AuthorizationError(BarsaError):
 
 
 PermissionDeniedError = AuthorizationError
+
+
+class FalkorDBUnavailableError(StorageError):
+    """Raised when FalkorDB graph engine is offline, unreachable, or required for an essential graph capability."""
+
+    def __init__(
+        self,
+        message: str = "FalkorDB is required for graph-powered memory reasoning and project continuation, but is currently offline or unreachable.",
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(
+            message=message,
+            code="FALKORDB_UNAVAILABLE",
+            status_code=503,
+            details=details,
+        )

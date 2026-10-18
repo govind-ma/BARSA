@@ -12,7 +12,7 @@ from barsa.bms.serialization import validate_record
 from barsa.context.engine import SmartContextEngine
 from barsa.context.models import ContextLevel, ContextRequest
 from barsa.context.ranking import RelevanceRanker
-from barsa.core.exceptions import ConflictError, ResourceNotFoundError, ValidationError
+from barsa.core.exceptions import ConflictError, FalkorDBUnavailableError, ResourceNotFoundError, ValidationError
 from barsa.graph.projection import GraphProjectionWorker
 from barsa.graph.protocol import GraphProvider
 from barsa.graph.retrieval import GraphRetrievalService
@@ -1147,3 +1147,32 @@ def get_assignment_tool(
         }
     except ResourceNotFoundError as e:
         raise BarsaMCPError(MCPErrorCode.RECORD_NOT_FOUND, str(e)) from e
+
+
+def graph_resume_tool(
+    storage: StorageProvider,
+    retrieval: GraphRetrievalService,
+    worker: GraphProjectionWorker,
+    project_id: str,
+    agent_id: str | None = None,
+) -> dict[str, Any]:
+    """Execute FalkorDB-powered project continuation, next-task discovery, and capability matching.
+
+    CRITICAL HACKATHON GUARANTEE (Rule 2 & 3):
+    Requires active FalkorDB graph connectivity. Fails explicitly with ToolError if FalkorDB is offline.
+    """
+    clean_proj_id = validate_identifier("project_id", project_id)
+    verify_project_access(clean_proj_id, storage)
+    clean_agent_id = validate_identifier("agent_id", agent_id) if agent_id else None
+
+    with contextlib.suppress(Exception):
+        worker.process_pending_events(clean_proj_id)
+
+    try:
+        res = retrieval.barsa_graph_resume(project_id=clean_proj_id, agent_id=clean_agent_id)
+        return res.model_dump(mode="json")
+    except FalkorDBUnavailableError as err:
+        raise BarsaMCPError(
+            MCPErrorCode.STORAGE_UNAVAILABLE,
+            f"FalkorDB is required for graph-powered memory reasoning: {err.message}",
+        ) from err

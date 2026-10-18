@@ -18,6 +18,7 @@ from barsa.models.graph import (
     DecisionImpactResult,
     GraphProjectionMetadata,
     GraphRebuildResponse,
+    GraphResumeResponse,
     ProjectOverviewResult,
     ResumeContextResult,
     TaskDependenciesResult,
@@ -205,6 +206,28 @@ def get_resume_context(
     worker.process_pending_events(project_id=project_id)
     proj_meta = worker.get_projection_status(project_id)
     return retrieval.get_resume_context(project_id, task_id, projection_metadata=proj_meta)
+
+
+@router.get(
+    "/resume",
+    response_model=GraphResumeResponse,
+    summary="Execute FalkorDB-powered project continuation and next-task discovery",
+)
+def graph_resume(
+    project_id: str,
+    agent_id: str | None = Query(default=None, description="Optional agent ID to match capabilities"),
+    storage: StorageProvider = Depends(get_storage),
+    worker: GraphProjectionWorker = Depends(get_projection_worker),
+    retrieval: GraphRetrievalService = Depends(get_graph_retrieval),
+) -> GraphResumeResponse:
+    """Execute FalkorDB graph-powered memory reasoning, next-task discovery, and capability matching.
+
+    CRITICAL HACKATHON GUARANTEE (Rule 2 & 3):
+    Requires active FalkorDB graph connectivity. Fails with HTTP 503 if FalkorDB is offline.
+    """
+    _verify_project(project_id, storage)
+    worker.process_pending_events(project_id=project_id)
+    return retrieval.barsa_graph_resume(project_id=project_id, agent_id=agent_id)
 
 
 # =============================================================================

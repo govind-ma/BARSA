@@ -27,6 +27,7 @@ from barsa.mcp.tools import (
     get_history_tool,
     get_memory_tool,
     get_project_tool,
+    graph_resume_tool,
     list_conflicts_tool,
     list_projects_tool,
     propose_changes_tool,
@@ -217,6 +218,28 @@ def create_mcp_server(
             raise ToolError(f"[{e.code}] {e.message}") from e
         except Exception as e:
             logger.exception("Unexpected error in barsa_resume")
+            raise ToolError(f"[INTERNAL_ERROR] {e}") from e
+
+    @server.tool(
+        name="barsa_graph_resume",
+        description="Execute FalkorDB graph-powered memory reasoning, multi-hop dependency traversal, next-task discovery, and agent capability matching.",
+    )
+    def barsa_graph_resume(
+        project_id: str,
+        agent_id: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            return graph_resume_tool(
+                storage=storage,
+                retrieval=retrieval,
+                worker=worker,
+                project_id=project_id,
+                agent_id=agent_id,
+            )
+        except BarsaMCPError as e:
+            raise ToolError(f"[{e.code}] {e.message}") from e
+        except Exception as e:
+            logger.exception("Unexpected error in barsa_graph_resume")
             raise ToolError(f"[INTERNAL_ERROR] {e}") from e
 
     @server.tool(

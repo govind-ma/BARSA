@@ -1,0 +1,4280 @@
+{
+  "workspace": {
+    "id": "ws-atlas",
+    "name": "ATLAS Global Logistics Workspace",
+    "owner_id": "org-atlas-ops",
+    "description": "Enterprise workspace for Autonomous Supply Chain & Emergency Logistics"
+  },
+  "project": {
+    "id": "proj-atlas",
+    "workspace_id": "ws-atlas",
+    "name": "Project ATLAS \u2014 Autonomous Supply Chain & Emergency Logistics Platform",
+    "status": "active",
+    "description": "Mission-critical, distributed supply chain platform with real-time emergency medical prioritization",
+    "goals": [
+      "Real-time warehouse inventory synchronization across 50 regional distribution hubs",
+      "Autonomous multi-modal route optimization and GPS shipment tracking",
+      "Sub-minute emergency supply reallocation for disaster response hospitals",
+      "Zero-trust auditability and cryptographic traceability for medical and hazardous cargo"
+    ]
+  },
+  "modules": [
+    {
+      "id": "MOD-AUTH",
+      "name": "Identity & Authentication",
+      "description": "OAuth2/OIDC, JWT tokens, RBAC, and zero-trust service mTLS"
+    },
+    {
+      "id": "MOD-WAREHOUSE",
+      "name": "Warehouse Management",
+      "description": "Zone/aisle slotting, automated bin tracking, and dock scheduling"
+    },
+    {
+      "id": "MOD-CATALOG",
+      "name": "Product Catalog",
+      "description": "SKU definitions, cold-chain temperature thresholds, and hazardous cargo classifications"
+    },
+    {
+      "id": "MOD-INVENTORY",
+      "name": "Inventory Management",
+      "description": "Real-time stock reservation, batch expiration, and optimistic concurrency locks"
+    },
+    {
+      "id": "MOD-SUPPLIER",
+      "name": "Supplier Management",
+      "description": "Vendor reliability scoring, purchase order intake, and SLA contracts"
+    },
+    {
+      "id": "MOD-ORDER",
+      "name": "Order Management",
+      "description": "Multi-item order lifecycle, validation, approval workflows, and back-orders"
+    },
+    {
+      "id": "MOD-SHIPMENT",
+      "name": "Shipment Tracking",
+      "description": "IoT GPS telemetry, sensor cold-chain alerts, and carrier status webhooks"
+    },
+    {
+      "id": "MOD-ROUTE",
+      "name": "Route Planning",
+      "description": "Multi-modal routing algorithms, fuel efficiency, and traffic impedance bypass"
+    },
+    {
+      "id": "MOD-EMERGENCY",
+      "name": "Emergency Prioritization",
+      "description": "Disaster triage protocol, military/hospital pre-emption, and emergency re-allocation"
+    },
+    {
+      "id": "MOD-ALERT",
+      "name": "Alerts & Notifications",
+      "description": "Low-latency WebSocket streaming, SMS fallback, and urgent broadcast dispatcher"
+    },
+    {
+      "id": "MOD-ANALYTICS",
+      "name": "Analytics Dashboard",
+      "description": "Supply chain velocity metrics, stockout risk predictions, and delivery heatmaps"
+    },
+    {
+      "id": "MOD-AUDIT",
+      "name": "Audit & Reporting",
+      "description": "Tamper-evident regulatory compliance reports, chain-of-custody logging"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "cap-arch-design",
+      "name": "arch-design",
+      "category": "architecture"
+    },
+    {
+      "id": "cap-domain-modeling",
+      "name": "domain-modeling",
+      "category": "architecture"
+    },
+    {
+      "id": "cap-java-spring",
+      "name": "java-spring-boot",
+      "category": "backend"
+    },
+    {
+      "id": "cap-rest-api",
+      "name": "rest-api",
+      "category": "backend"
+    },
+    {
+      "id": "cap-jpa-hibernate",
+      "name": "jpa-hibernate",
+      "category": "backend"
+    },
+    {
+      "id": "cap-react-ts",
+      "name": "react-typescript",
+      "category": "frontend"
+    },
+    {
+      "id": "cap-tailwind-ui",
+      "name": "tailwind-ui",
+      "category": "frontend"
+    },
+    {
+      "id": "cap-mysql-dba",
+      "name": "mysql-dba",
+      "category": "database"
+    },
+    {
+      "id": "cap-liquibase",
+      "name": "liquibase-flyway",
+      "category": "database"
+    },
+    {
+      "id": "cap-sec-jwt",
+      "name": "security-jwt",
+      "category": "security"
+    },
+    {
+      "id": "cap-rbac-audit",
+      "name": "rbac-audit",
+      "category": "security"
+    },
+    {
+      "id": "cap-automated-qa",
+      "name": "automated-testing",
+      "category": "qa"
+    },
+    {
+      "id": "cap-playwright",
+      "name": "e2e-playwright",
+      "category": "qa"
+    },
+    {
+      "id": "cap-docker",
+      "name": "docker-containers",
+      "category": "devops"
+    },
+    {
+      "id": "cap-k8s",
+      "name": "kubernetes",
+      "category": "devops"
+    },
+    {
+      "id": "cap-supply-chain",
+      "name": "supply-chain-analytics",
+      "category": "domain"
+    },
+    {
+      "id": "cap-emergency-routing",
+      "name": "emergency-routing",
+      "category": "domain"
+    },
+    {
+      "id": "cap-emergency-allocation",
+      "name": "emergency-allocation",
+      "category": "domain"
+    }
+  ],
+  "agents": [
+    {
+      "id": "agent-architect",
+      "name": "Sarah Chen (Chief Architect)",
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet",
+      "capabilities": [
+        "cap-arch-design",
+        "cap-domain-modeling",
+        "cap-sec-jwt"
+      ],
+      "role": "Lead System Architect"
+    },
+    {
+      "id": "agent-backend",
+      "name": "David Miller (Senior Backend Lead)",
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet",
+      "capabilities": [
+        "cap-java-spring",
+        "cap-rest-api",
+        "cap-jpa-hibernate"
+      ],
+      "role": "Java / Spring Boot Backend Lead"
+    },
+    {
+      "id": "agent-frontend",
+      "name": "Elena Rostova (Frontend Architect)",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "role": "React & TypeScript UI Architect"
+    },
+    {
+      "id": "agent-database",
+      "name": "Marcus Vance (Principal Data Engineer)",
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet",
+      "capabilities": [
+        "cap-mysql-dba",
+        "cap-liquibase",
+        "cap-domain-modeling"
+      ],
+      "role": "MySQL Database & Migration Specialist"
+    },
+    {
+      "id": "agent-security",
+      "name": "Amina Al-Mansoor (SecOps Architect)",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "capabilities": [
+        "cap-sec-jwt",
+        "cap-rbac-audit"
+      ],
+      "role": "Security Engineer & Compliance Auditor"
+    },
+    {
+      "id": "agent-qa",
+      "name": "Liam O'Connor (Lead Automation QA)",
+      "provider": "google",
+      "model": "gemini-1.5-pro",
+      "capabilities": [
+        "cap-automated-qa",
+        "cap-playwright"
+      ],
+      "role": "Quality Assurance & Performance Tester"
+    },
+    {
+      "id": "agent-devops",
+      "name": "Kavita Patel (Staff Site Reliability)",
+      "provider": "google",
+      "model": "gemini-1.5-pro",
+      "capabilities": [
+        "cap-docker",
+        "cap-k8s"
+      ],
+      "role": "DevOps & Cloud Infrastructure Engineer"
+    },
+    {
+      "id": "agent-logistics",
+      "name": "Dr. Hans Meyer (Logistics Domain Expert)",
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet",
+      "capabilities": [
+        "cap-supply-chain",
+        "cap-emergency-routing",
+        "cap-emergency-allocation"
+      ],
+      "role": "Logistics & Disaster Response Domain Analyst"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "module_id": "MOD-AUTH",
+      "title": "Stateless OAuth2/JWT Authentication with Refresh Rotation",
+      "category": "security"
+    },
+    {
+      "id": "REQ-002",
+      "module_id": "MOD-AUTH",
+      "title": "Role-Based Access Control for Warehouse, Carrier, and Ops Personas",
+      "category": "security"
+    },
+    {
+      "id": "REQ-003",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Multi-Hub Warehouse Topology with Bin Slot Hierarchy",
+      "category": "warehouse"
+    },
+    {
+      "id": "REQ-004",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Inbound Dock Scheduling & Cross-Dock Staging Rules",
+      "category": "warehouse"
+    },
+    {
+      "id": "REQ-005",
+      "module_id": "MOD-CATALOG",
+      "title": "Global SKU Registry with Cold-Chain Storage Classifications",
+      "category": "catalog"
+    },
+    {
+      "id": "REQ-006",
+      "module_id": "MOD-CATALOG",
+      "title": "Hazardous Materials Classification & Packaging Protocols",
+      "category": "catalog"
+    },
+    {
+      "id": "REQ-007",
+      "module_id": "MOD-INVENTORY",
+      "title": "Real-Time Stock Reservation with Optimistic Concurrency Control",
+      "category": "inventory"
+    },
+    {
+      "id": "REQ-008",
+      "module_id": "MOD-INVENTORY",
+      "title": "FEFO (First Expired, First Out) Batch Allocation Engine",
+      "category": "inventory"
+    },
+    {
+      "id": "REQ-009",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Supplier Purchase Order Intake & ASN (Advanced Shipping Notice) API",
+      "category": "supplier"
+    },
+    {
+      "id": "REQ-010",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Automated Vendor Lead Time & Performance Scorecard Engine",
+      "category": "supplier"
+    },
+    {
+      "id": "REQ-011",
+      "module_id": "MOD-ORDER",
+      "title": "Transactional Order Validation & Split-Fulfillment Coordinator",
+      "category": "order"
+    },
+    {
+      "id": "REQ-012",
+      "module_id": "MOD-ORDER",
+      "title": "Order Priority Queuing with Automatic SLA Escalation",
+      "category": "order"
+    },
+    {
+      "id": "REQ-013",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Carrier Waybill Generation & Multi-Carrier Dispatch Webhooks",
+      "category": "shipment"
+    },
+    {
+      "id": "REQ-014",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Real-Time GPS Telemetry & Temperature Sensor Ingestion",
+      "category": "shipment"
+    },
+    {
+      "id": "REQ-015",
+      "module_id": "MOD-ROUTE",
+      "title": "Multi-Stop Vehicle Routing Problem (VRP) Solver with Traffic Feeds",
+      "category": "route"
+    },
+    {
+      "id": "REQ-016",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Hospital Emergency Supply Pre-emption & Disaster Allocation Protocol",
+      "category": "emergency"
+    },
+    {
+      "id": "REQ-017",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Inter-Warehouse Emergency Stock Rebalancing Trigger",
+      "category": "emergency"
+    },
+    {
+      "id": "REQ-018",
+      "module_id": "MOD-ALERT",
+      "title": "High-Priority Notification Dispatch (WebSocket + SMS Gateway)",
+      "category": "alert"
+    },
+    {
+      "id": "REQ-019",
+      "module_id": "MOD-ANALYTICS",
+      "title": "Stockout Risk Predictive Model & Hub Congestion Heatmap",
+      "category": "analytics"
+    },
+    {
+      "id": "REQ-020",
+      "module_id": "MOD-AUDIT",
+      "title": "Immutable Cryptographic Audit Trail for DEA/FDA Regulated Deliveries",
+      "category": "audit"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "module_id": "MOD-AUTH",
+      "title": "Stateless JWT Auth with HMAC-SHA256 & Redis Revocation List",
+      "decision": "Adopt stateless signed JWT access tokens with 15-minute expiration coupled with Redis bloom filter for immediate revocation.",
+      "rationale": "Enables horizontal scaling of backend pods while supporting instant security invalidation."
+    },
+    {
+      "id": "ADR-002",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Hierarchical Bin Addressing Scheme (Hub:Zone:Aisle:Shelf:Bin)",
+      "decision": "Standardize all warehouse coordinate storage on a canonical 5-tier hierarchical string token.",
+      "rationale": "Simplifies prefix-based range queries and physical warehouse forklift routing."
+    },
+    {
+      "id": "ADR-003",
+      "module_id": "MOD-CATALOG",
+      "title": "Polyglot Schema: Relational SKU Core with JSONB Attribute Bag",
+      "decision": "Store fixed SKU dimensions in standard MySQL columns and dynamic certification tags in indexed JSON columns.",
+      "rationale": "Accommodates diverse supplier specs without requiring DDL alterations for new cargo types."
+    },
+    {
+      "id": "ADR-004",
+      "module_id": "MOD-INVENTORY",
+      "title": "Optimistic Concurrency Control with Versioned Stock Pools",
+      "decision": "Implement row-level versioning on stock pool records; reject reservations on version mismatch with exponential backoff.",
+      "rationale": "Prevents catastrophic overselling during flash-order peaks while avoiding deadlock-prone SELECT FOR UPDATE."
+    },
+    {
+      "id": "ADR-005",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Asynchronous EDI/X12 and JSON Ingestion via Kafka/RabbitMQ",
+      "decision": "Decouple supplier order submission from backend processing using an ingestion queue.",
+      "rationale": "Shields core database from vendor retry storms during EDI batch uploads."
+    },
+    {
+      "id": "ADR-006",
+      "module_id": "MOD-ORDER",
+      "title": "Saga Pattern for Multi-Warehouse Split Order Orchestration",
+      "decision": "Coordinate split order fulfillment using an orchestrated Saga coordinator with compensating rollbacks.",
+      "rationale": "Guarantees eventual consistency across regional hub databases without distributed 2PC transactions."
+    },
+    {
+      "id": "ADR-007",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Time-Series Telemetry Ingestion via Partitioned MySQL Tables",
+      "decision": "Partition IoT waypoint records by month and vehicle_id hash.",
+      "rationale": "Maintains high write throughput and enables rolling archival of historical tracking data."
+    },
+    {
+      "id": "ADR-008",
+      "module_id": "MOD-ROUTE",
+      "title": "Hybrid Dijkstra/Genetic Algorithm for Dynamic Rerouting",
+      "decision": "Use pre-computed highway graphs with local genetic algorithm optimizations for urban last-mile delivery.",
+      "rationale": "Satisfies the sub-500ms route calculation requirement for dispatchers."
+    },
+    {
+      "id": "ADR-009",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Two-Tier Priority Pre-emption Protocol for Medical Disasters",
+      "decision": "Hospital emergency requests automatically pre-empt commercial orders and reserve stock at the closest reachable hub.",
+      "rationale": "Ensures FEMA/WHO compliance for disaster relief response."
+    },
+    {
+      "id": "ADR-010",
+      "module_id": "MOD-ALERT",
+      "title": "Server-Sent Events (SSE) for Ops Web UI with SMS Twilio Fallback",
+      "decision": "Stream operational alerts over SSE; trigger SMS webhook when alert severity is CRITICAL and unacknowledged within 60s.",
+      "rationale": "Minimizes connection overhead while guaranteeing delivery to on-call warehouse managers."
+    },
+    {
+      "id": "ADR-011",
+      "module_id": "MOD-ANALYTICS",
+      "title": "Read-Replicated Analytics Views with Materialized 15-Minute Rollups",
+      "decision": "Route analytical queries to read-replicas querying materialized summary tables.",
+      "rationale": "Protects OLTP write performance on core order/inventory tables."
+    },
+    {
+      "id": "ADR-012",
+      "module_id": "MOD-AUDIT",
+      "title": "SHA-256 Merkle Audit Log for Chain-of-Custody Signoffs",
+      "decision": "Every custody transfer event is hashed with the previous event hash, forming an append-only chain.",
+      "rationale": "Provides non-repudiation and meets regulatory inspection mandates."
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "DOC-001",
+      "title": "Security Architecture & Key Management Guide",
+      "content": "Defines rotation cycle for RSA-256 JWT keypairs and Vault secret integration."
+    },
+    {
+      "id": "DOC-002",
+      "title": "Warehouse Slotting Best Practices & Safety Standards",
+      "content": "OSHA physical layout constraints, heavy item ground-level requirements."
+    },
+    {
+      "id": "DOC-003",
+      "title": "Cold Chain Storage & Transportation Guidelines",
+      "content": "Thresholds: Category A (Ultra-cold -80C), Category B (-20C), Category C (2C to 8C)."
+    },
+    {
+      "id": "DOC-004",
+      "title": "Concurrency Locking & High-Volume Inventory Guide",
+      "content": "Explains optimistic locking retry strategy, avoiding phantom reservations."
+    },
+    {
+      "id": "DOC-005",
+      "title": "Vendor EDI Integration Specification",
+      "content": "EDIFACT and X12 mapping rules for purchase orders and ASNs."
+    },
+    {
+      "id": "DOC-006",
+      "title": "Order State Machine & Transition Rules",
+      "content": "States: CREATED, VALIDATED, ALLOCATED, PICKING, PACKED, DISPATCHED, DELIVERED, CANCELLED."
+    },
+    {
+      "id": "DOC-007",
+      "title": "Carrier API Integration Protocol",
+      "content": "REST specifications for FedEx, DHL, and local regional courier dispatches."
+    },
+    {
+      "id": "DOC-008",
+      "title": "Emergency Dispatch & Priority Escalation Standard",
+      "content": "Triage priority levels: NORMAL (0), EXPEDITED (10), CRITICAL_HOSPITAL (100)."
+    },
+    {
+      "id": "DOC-009",
+      "title": "WebSocket/SSE Alert Channel Formatting",
+      "content": "Event structure: {event_id, channel, severity, timestamp, payload, ack_url}."
+    },
+    {
+      "id": "DOC-010",
+      "title": "Database Indexing & Partitioning Strategy",
+      "content": "Composite indexes for (hub_id, sku_id, status) on inventory records."
+    },
+    {
+      "id": "DOC-011",
+      "title": "Docker Compose & Kubernetes Staging Topology",
+      "content": "Cluster deployment manifests, replica sets, resource limits."
+    },
+    {
+      "id": "DOC-012",
+      "title": "Spring Boot Security Filter Chain Implementation",
+      "content": "SecurityFilterChain configuration, JwtAuthenticationConverter bean setup."
+    },
+    {
+      "id": "DOC-013",
+      "title": "React Dashboard Component Architecture",
+      "content": "Folder structure, Zustand state stores, and Tailwind CSS design tokens."
+    },
+    {
+      "id": "DOC-014",
+      "title": "End-to-End Automated Testing Strategy",
+      "content": "Unit (JUnit 5), integration (Testcontainers MySQL), and E2E (Playwright)."
+    },
+    {
+      "id": "DOC-015",
+      "title": "Regulatory Chain-of-Custody Compliance Handbook",
+      "content": "FDA 21 CFR Part 11 electronic signature and audit compliance criteria."
+    }
+  ],
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "title": "JWT Expiration Drift across Distributed Hub Clocks",
+      "severity": "high",
+      "status": "resolved",
+      "module_id": "MOD-AUTH"
+    },
+    {
+      "id": "ISSUE-002",
+      "title": "MySQL Deadlock during Bulk Inventory Reservation",
+      "severity": "critical",
+      "status": "resolved",
+      "module_id": "MOD-INVENTORY"
+    },
+    {
+      "id": "ISSUE-003",
+      "title": "Carrier Waybill Webhook Timeout on DHL Sandbox",
+      "severity": "medium",
+      "status": "resolved",
+      "module_id": "MOD-SHIPMENT"
+    },
+    {
+      "id": "ISSUE-004",
+      "title": "Cold-Chain Sensor Out-of-Range False Alarm Trigger",
+      "severity": "medium",
+      "status": "open",
+      "module_id": "MOD-SHIPMENT"
+    },
+    {
+      "id": "ISSUE-005",
+      "title": "Cross-Dock Allocation Lag Under Peak Traffic",
+      "severity": "high",
+      "status": "open",
+      "module_id": "MOD-WAREHOUSE"
+    },
+    {
+      "id": "ISSUE-006",
+      "title": "Emergency Priority Pre-emption Fails on Multi-Item Split",
+      "severity": "critical",
+      "status": "open",
+      "module_id": "MOD-EMERGENCY"
+    },
+    {
+      "id": "ISSUE-007",
+      "title": "SSE Connection Drop on Mobile Warehouse Scanners",
+      "severity": "medium",
+      "status": "open",
+      "module_id": "MOD-ALERT"
+    },
+    {
+      "id": "ISSUE-008",
+      "title": "VRP Route Optimizer Memory Leak with 500+ Waypoints",
+      "severity": "high",
+      "status": "open",
+      "module_id": "MOD-ROUTE"
+    },
+    {
+      "id": "ISSUE-009",
+      "title": "Analytics Read-Replica Replication Delay exceeding 30s",
+      "severity": "low",
+      "status": "open",
+      "module_id": "MOD-ANALYTICS"
+    },
+    {
+      "id": "ISSUE-010",
+      "title": "Emergency Allocation Capability Missing in Core Hub Service",
+      "severity": "critical",
+      "status": "open",
+      "module_id": "MOD-EMERGENCY"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "ART-001",
+      "name": "SecurityConfig.java",
+      "type": "source_code",
+      "uri": "backend/src/main/java/com/atlas/config/SecurityConfig.java"
+    },
+    {
+      "id": "ART-002",
+      "name": "WarehouseService.java",
+      "type": "source_code",
+      "uri": "backend/src/main/java/com/atlas/warehouse/WarehouseService.java"
+    },
+    {
+      "id": "ART-003",
+      "name": "InventoryPool.java",
+      "type": "source_code",
+      "uri": "backend/src/main/java/com/atlas/inventory/InventoryPool.java"
+    },
+    {
+      "id": "ART-004",
+      "name": "EmergencyAllocationService.java",
+      "type": "source_code",
+      "uri": "backend/src/main/java/com/atlas/emergency/EmergencyAllocationService.java"
+    },
+    {
+      "id": "ART-005",
+      "name": "OrderController.java",
+      "type": "source_code",
+      "uri": "backend/src/main/java/com/atlas/order/OrderController.java"
+    },
+    {
+      "id": "ART-006",
+      "name": "ShipmentTracker.tsx",
+      "type": "source_code",
+      "uri": "frontend/src/features/shipments/ShipmentTracker.tsx"
+    },
+    {
+      "id": "ART-007",
+      "name": "EmergencyTriageDashboard.tsx",
+      "type": "source_code",
+      "uri": "frontend/src/features/emergency/EmergencyTriageDashboard.tsx"
+    },
+    {
+      "id": "ART-008",
+      "name": "V001__init_atlas_schema.sql",
+      "type": "config",
+      "uri": "backend/src/main/resources/db/migration/V001__init_atlas_schema.sql"
+    },
+    {
+      "id": "ART-009",
+      "name": "docker-compose.atlas.yml",
+      "type": "config",
+      "uri": "deploy/docker-compose.atlas.yml"
+    },
+    {
+      "id": "ART-010",
+      "name": "AtlasOpenApiSpec.yaml",
+      "type": "specification",
+      "uri": "docs/api/AtlasOpenApiSpec.yaml"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "CP-001",
+      "task_id": "TASK-003",
+      "status": "completed",
+      "agent_id": "agent-database",
+      "next_action": "Proceed to TASK-004 (JWT Token Generation)",
+      "completed_actions": [
+        "Executed Liquibase baseline migration",
+        "Verified foreign key cascade on hub_zones"
+      ],
+      "pending_actions": [],
+      "base_revision": "commit-atlas-001"
+    },
+    {
+      "id": "CP-002",
+      "task_id": "TASK-004",
+      "status": "completed",
+      "agent_id": "agent-backend",
+      "next_action": "Proceed to TASK-005 (RBAC Controller)",
+      "completed_actions": [
+        "Created JwtTokenProvider",
+        "Added unit tests with mock tokens"
+      ],
+      "pending_actions": [],
+      "base_revision": "commit-atlas-002"
+    },
+    {
+      "id": "CP-003",
+      "task_id": "TASK-009",
+      "status": "completed",
+      "agent_id": "agent-backend",
+      "next_action": "Proceed to TASK-010 (Inventory Reservation)",
+      "completed_actions": [
+        "Created WarehouseRepository and ProductEntity",
+        "Added CRUD REST endpoints"
+      ],
+      "pending_actions": [],
+      "base_revision": "commit-atlas-003"
+    },
+    {
+      "id": "CP-004",
+      "task_id": "TASK-010",
+      "status": "in_progress",
+      "agent_id": "agent-backend",
+      "next_action": "Implement optimistic locking check in InventoryService.reserve()",
+      "completed_actions": [
+        "Added @Version column to inventory_pools",
+        "Created test scenario for concurrency"
+      ],
+      "pending_actions": [
+        "Add retry loop with exponential jitter",
+        "Expose reservation REST endpoint"
+      ],
+      "base_revision": "commit-atlas-004"
+    },
+    {
+      "id": "CP-005",
+      "task_id": "TASK-035",
+      "status": "active",
+      "agent_id": "agent-logistics",
+      "next_action": "Review multi-hub stock rebalancing heuristic for emergency supplies",
+      "completed_actions": [
+        "Documented triage criteria in DOC-008"
+      ],
+      "pending_actions": [
+        "Formulate mathematical solver constraints"
+      ],
+      "base_revision": "commit-atlas-005"
+    },
+    {
+      "id": "CP-006",
+      "task_id": "TASK-041",
+      "status": "blocked",
+      "agent_id": "agent-backend",
+      "next_action": "Resolve ISSUE-010 before continuing emergency allocation implementation",
+      "completed_actions": [
+        "Outlined EmergencyAllocationService skeleton"
+      ],
+      "pending_actions": [
+        "Implement multi-warehouse stock diversion algorithm"
+      ],
+      "base_revision": "commit-atlas-006"
+    },
+    {
+      "id": "CP-007",
+      "task_id": "TASK-051",
+      "status": "active",
+      "agent_id": "agent-frontend",
+      "next_action": "Integrate React Query hooks with emergency triage REST endpoint",
+      "completed_actions": [
+        "Created EmergencyTriageDashboard layout and Tailwind badges"
+      ],
+      "pending_actions": [
+        "Connect SSE live alert listener"
+      ],
+      "base_revision": "commit-atlas-007"
+    },
+    {
+      "id": "CP-008",
+      "task_id": "TASK-058",
+      "status": "active",
+      "agent_id": "agent-qa",
+      "next_action": "Execute concurrency stress test on 500 simultaneous checkout requests",
+      "completed_actions": [
+        "Configured Gatling load test script"
+      ],
+      "pending_actions": [
+        "Execute test run against staging pod",
+        "Record latency percentiles"
+      ],
+      "base_revision": "commit-atlas-008"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "module_id": "MOD-AUTH",
+      "title": "Security Baseline & JWT Architecture Design",
+      "status": "completed",
+      "priority": "critical",
+      "dependencies": [],
+      "required_capabilities": [
+        "cap-arch-design",
+        "cap-sec-jwt"
+      ],
+      "adr_id": "ADR-001",
+      "assigned_agent_id": "agent-architect",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-002",
+      "module_id": "MOD-AUTH",
+      "title": "Database Migration: Users, Roles, and Permission Grants",
+      "status": "completed",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-001"
+      ],
+      "required_capabilities": [
+        "cap-mysql-dba",
+        "cap-liquibase"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-database",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-003",
+      "module_id": "MOD-AUTH",
+      "title": "Spring Security Configuration & JWT Filter Chain",
+      "status": "completed",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-002"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-sec-jwt"
+      ],
+      "adr_id": "ADR-001",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-004",
+      "module_id": "MOD-AUTH",
+      "title": "JWT Token Generation, Validation & Refresh Rotation Endpoint",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-003"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-sec-jwt"
+      ],
+      "adr_id": "ADR-001",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-005",
+      "module_id": "MOD-AUTH",
+      "title": "Role-Based Access Control Middleware & Controller Annotations",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-004"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rbac-audit"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-security",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-006",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Warehouse Hub & Coordinate Bin Data Model Design",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-002"
+      ],
+      "required_capabilities": [
+        "cap-domain-modeling",
+        "cap-mysql-dba"
+      ],
+      "adr_id": "ADR-002",
+      "assigned_agent_id": "agent-database",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-007",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Warehouse Hub CRUD & Capacity Allocation API",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-006",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rest-api"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-008",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Dock Door Scheduling & Inbound Staging Area Manager",
+      "status": "completed",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-007"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-009",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Bin Slot Hierarchy Validation & Capacity Utilization Calculator",
+      "status": "completed",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-007"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": "ADR-002",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-010",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Warehouse Cross-Dock Reallocation Trigger",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-008",
+        "TASK-009"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-011",
+      "module_id": "MOD-CATALOG",
+      "title": "Product SKU Schema Design & Category Taxonomy",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-002"
+      ],
+      "required_capabilities": [
+        "cap-domain-modeling",
+        "cap-mysql-dba"
+      ],
+      "adr_id": "ADR-003",
+      "assigned_agent_id": "agent-database",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-012",
+      "module_id": "MOD-CATALOG",
+      "title": "Product Catalog REST API with Cold-Chain Classification Attributes",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-011",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rest-api"
+      ],
+      "adr_id": "ADR-003",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-013",
+      "module_id": "MOD-CATALOG",
+      "title": "Hazardous Material Labeling & Special Handling Validation Service",
+      "status": "completed",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-012"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-014",
+      "module_id": "MOD-CATALOG",
+      "title": "Product SKU Search API with Dynamic JSONB Specification Filters",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-012"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-mysql-dba"
+      ],
+      "adr_id": "ADR-003",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-015",
+      "module_id": "MOD-CATALOG",
+      "title": "Cold-Chain Temperature Threshold Verifier Service",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-013"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-016",
+      "module_id": "MOD-INVENTORY",
+      "title": "Inventory Pool Schema with Optimistic Locking Columns",
+      "status": "completed",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-006",
+        "TASK-011"
+      ],
+      "required_capabilities": [
+        "cap-mysql-dba",
+        "cap-liquibase"
+      ],
+      "adr_id": "ADR-004",
+      "assigned_agent_id": "agent-database",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-017",
+      "module_id": "MOD-INVENTORY",
+      "title": "Atomic Stock Reservation Service with Exponential Backoff Retry",
+      "status": "todo",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-016",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-jpa-hibernate"
+      ],
+      "adr_id": "ADR-004",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-018",
+      "module_id": "MOD-INVENTORY",
+      "title": "First-Expired First-Out (FEFO) Batch Allocation Engine",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-017"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-supply-chain"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-019",
+      "module_id": "MOD-INVENTORY",
+      "title": "Low Stock Event Notification Trigger & Threshold Calculator",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-017"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-020",
+      "module_id": "MOD-INVENTORY",
+      "title": "Warehouse Stock Quarantine & Expiration Disposal Workflow",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-018"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-021",
+      "module_id": "MOD-INVENTORY",
+      "title": "Multi-Hub Global Stock Aggregate View API",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-017",
+        "TASK-007"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-mysql-dba"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-022",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Supplier Registry & Contract Agreement Data Model",
+      "status": "completed",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-002"
+      ],
+      "required_capabilities": [
+        "cap-domain-modeling",
+        "cap-mysql-dba"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-database",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-023",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Supplier Purchase Order Intake REST & EDI Ingestion API",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-022",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rest-api"
+      ],
+      "adr_id": "ADR-005",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-024",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Advanced Shipping Notice (ASN) Intake & Inbound Verification",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-023",
+        "TASK-008"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-025",
+      "module_id": "MOD-SUPPLIER",
+      "title": "Supplier On-Time In-Full (OTIF) Performance Scoring Service",
+      "status": "todo",
+      "priority": "low",
+      "dependencies": [
+        "TASK-024"
+      ],
+      "required_capabilities": [
+        "cap-supply-chain"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-logistics",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-026",
+      "module_id": "MOD-ORDER",
+      "title": "Order Aggregate Data Model with State Machine Definition",
+      "status": "completed",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-011",
+        "TASK-002"
+      ],
+      "required_capabilities": [
+        "cap-domain-modeling"
+      ],
+      "adr_id": "ADR-006",
+      "assigned_agent_id": "agent-architect",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-027",
+      "module_id": "MOD-ORDER",
+      "title": "Customer Order Placement & Line-Item Validation REST API",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-026",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rest-api"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-028",
+      "module_id": "MOD-ORDER",
+      "title": "Order Fulfillment Saga Coordinator with Stock Reservation Calls",
+      "status": "todo",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-027",
+        "TASK-017"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": "ADR-006",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-029",
+      "module_id": "MOD-ORDER",
+      "title": "Multi-Hub Split Fulfillment Order Routing Logic",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-028",
+        "TASK-021"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-supply-chain"
+      ],
+      "adr_id": "ADR-006",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-030",
+      "module_id": "MOD-ORDER",
+      "title": "Order Cancellation & Compensating Inventory Rollback Workflow",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-028"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": "ADR-006",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-031",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Shipment Entity & Waybill Tracking Schema",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-026"
+      ],
+      "required_capabilities": [
+        "cap-mysql-dba",
+        "cap-domain-modeling"
+      ],
+      "adr_id": "ADR-007",
+      "assigned_agent_id": "agent-database",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-032",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Carrier Dispatch API with Rate Shopping & Waybill Generation",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-031",
+        "TASK-028"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rest-api"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-033",
+      "module_id": "MOD-SHIPMENT",
+      "title": "IoT Waypoint Telemetry Streaming & GPS Ingestion Pipeline",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-031"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": "ADR-007",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-034",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Cold-Chain Continuous Temperature Telemetry Monitor",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-033",
+        "TASK-015"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-035",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Carrier Proof-of-Delivery Signature & Geofence Webhook",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-032"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-036",
+      "module_id": "MOD-ROUTE",
+      "title": "Route Planning Graph Network & Highway Distance Topology",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-006"
+      ],
+      "required_capabilities": [
+        "cap-domain-modeling"
+      ],
+      "adr_id": "ADR-008",
+      "assigned_agent_id": "agent-architect",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-037",
+      "module_id": "MOD-ROUTE",
+      "title": "Multi-Stop Vehicle Routing Problem (VRP) Solver Engine",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-036",
+        "TASK-032"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-emergency-routing"
+      ],
+      "adr_id": "ADR-008",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-038",
+      "module_id": "MOD-ROUTE",
+      "title": "Real-Time Traffic Congestion Rerouting Calculator",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-037",
+        "TASK-033"
+      ],
+      "required_capabilities": [
+        "cap-emergency-routing"
+      ],
+      "adr_id": "ADR-008",
+      "assigned_agent_id": "agent-logistics",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-039",
+      "module_id": "MOD-ROUTE",
+      "title": "Fleet Fuel Consumption & Electric Vehicle Charging Optimizer",
+      "status": "todo",
+      "priority": "low",
+      "dependencies": [
+        "TASK-037"
+      ],
+      "required_capabilities": [
+        "cap-supply-chain"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-logistics",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-040",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Disaster Response Priority Pre-emption Protocol Specification",
+      "status": "completed",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-026"
+      ],
+      "required_capabilities": [
+        "cap-arch-design",
+        "cap-emergency-allocation"
+      ],
+      "adr_id": "ADR-009",
+      "assigned_agent_id": "agent-architect",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-041",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Hospital Emergency Supply Order Intake with Instant Pre-emption",
+      "status": "todo",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-040",
+        "TASK-028"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-emergency-allocation"
+      ],
+      "adr_id": "ADR-009",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-042",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Multi-Hub Emergency Stock Rebalancing & Urgent Diversion Solver",
+      "status": "todo",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-041",
+        "TASK-021",
+        "TASK-037"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-emergency-allocation",
+        "cap-emergency-routing"
+      ],
+      "adr_id": "ADR-009",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-043",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Commercial Order Deferral & Customer Notification Service",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-041"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-044",
+      "module_id": "MOD-EMERGENCY",
+      "title": "FEMA/Emergency Agency Live Telemetry Broadcast Dispatcher",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-042",
+        "TASK-033"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-emergency-routing"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-045",
+      "module_id": "MOD-ALERT",
+      "title": "Server-Sent Events (SSE) & WebSocket Operational Stream Gateway",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": "ADR-010",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-046",
+      "module_id": "MOD-ALERT",
+      "title": "Twilio SMS & PagerDuty Critical Escalation Fallback Channel",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-045"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": "ADR-010",
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-047",
+      "module_id": "MOD-ALERT",
+      "title": "Warehouse Terminal Audio/Visual Flashing Alert Dispatcher",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-045"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-048",
+      "module_id": "MOD-ALERT",
+      "title": "Alert Acknowledgment & On-Call SLA Tracker",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-046"
+      ],
+      "required_capabilities": [
+        "cap-java-spring"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-backend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-049",
+      "module_id": "MOD-ANALYTICS",
+      "title": "React Project Scaffolding, Tailwind Design System & Auth Context",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-004"
+      ],
+      "required_capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "adr_id": "ADR-013",
+      "assigned_agent_id": "agent-frontend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-050",
+      "module_id": "MOD-WAREHOUSE",
+      "title": "Interactive Warehouse Bin Slotting & Floor Plan Visualizer UI",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-049",
+        "TASK-007"
+      ],
+      "required_capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-frontend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-051",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Emergency Triage & Hospital Reallocation Control Room Dashboard",
+      "status": "todo",
+      "priority": "critical",
+      "dependencies": [
+        "TASK-049",
+        "TASK-041",
+        "TASK-045"
+      ],
+      "required_capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-frontend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-052",
+      "module_id": "MOD-SHIPMENT",
+      "title": "Live Leaflet/Mapbox GPS Fleet Tracking Map with Cold-Chain Status",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-049",
+        "TASK-033"
+      ],
+      "required_capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-frontend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-053",
+      "module_id": "MOD-INVENTORY",
+      "title": "Stock Inventory Health, Reorder Levels & Batch Lifespan Table",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-049",
+        "TASK-021"
+      ],
+      "required_capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-frontend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-054",
+      "module_id": "MOD-ANALYTICS",
+      "title": "Executive Supply Chain KPI Dashboard with Real-Time Charting",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-049"
+      ],
+      "required_capabilities": [
+        "cap-react-ts",
+        "cap-tailwind-ui"
+      ],
+      "adr_id": "ADR-011",
+      "assigned_agent_id": "agent-frontend",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-055",
+      "module_id": "MOD-AUDIT",
+      "title": "SHA-256 Merkle Chain Immutable Custody Logging Engine",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-035",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-sec-jwt"
+      ],
+      "adr_id": "ADR-012",
+      "assigned_agent_id": "agent-security",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-056",
+      "module_id": "MOD-AUDIT",
+      "title": "FDA/DEA Electronic Signature Regulatory Report Exporter",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-055"
+      ],
+      "required_capabilities": [
+        "cap-java-spring",
+        "cap-rbac-audit"
+      ],
+      "adr_id": "ADR-012",
+      "assigned_agent_id": "agent-security",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-057",
+      "module_id": "MOD-AUTH",
+      "title": "Security Penetration & OAuth Token Tampering Automated Test Suite",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-004",
+        "TASK-005"
+      ],
+      "required_capabilities": [
+        "cap-automated-qa",
+        "cap-sec-jwt"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-qa",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-058",
+      "module_id": "MOD-INVENTORY",
+      "title": "Concurrent Inventory Allocation Stress Test (500 Threads)",
+      "status": "todo",
+      "priority": "high",
+      "dependencies": [
+        "TASK-017"
+      ],
+      "required_capabilities": [
+        "cap-automated-qa"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-qa",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-059",
+      "module_id": "MOD-AUTH",
+      "title": "Docker Compose Multi-Container Staging Environment Setup",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [
+        "TASK-003",
+        "TASK-002"
+      ],
+      "required_capabilities": [
+        "cap-docker"
+      ],
+      "adr_id": "ADR-011",
+      "assigned_agent_id": "agent-devops",
+      "project_id": "proj-atlas"
+    },
+    {
+      "id": "TASK-060",
+      "module_id": "MOD-EMERGENCY",
+      "title": "Kubernetes Production Helm Chart with HPA & Zero-Downtime Rolling Update",
+      "status": "todo",
+      "priority": "medium",
+      "dependencies": [
+        "TASK-059"
+      ],
+      "required_capabilities": [
+        "cap-docker",
+        "cap-k8s"
+      ],
+      "adr_id": null,
+      "assigned_agent_id": "agent-devops",
+      "project_id": "proj-atlas"
+    }
+  ],
+  "relationships": [
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-001",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-003",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-004",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-006",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-WAREHOUSE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-007",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-WAREHOUSE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-008",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-WAREHOUSE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-009",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-WAREHOUSE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-010",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-WAREHOUSE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-011",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-CATALOG"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-012",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-CATALOG"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-013",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-CATALOG"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-014",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-CATALOG"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-015",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-CATALOG"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-016",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-018",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-019",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-020",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-021",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-022",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SUPPLIER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-023",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SUPPLIER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-024",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SUPPLIER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-025",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SUPPLIER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-026",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ORDER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-027",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ORDER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-028",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ORDER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-029",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ORDER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-030",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ORDER"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-031",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SHIPMENT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-032",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SHIPMENT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-033",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SHIPMENT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-034",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SHIPMENT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-035",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SHIPMENT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-036",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ROUTE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-037",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ROUTE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-038",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ROUTE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-039",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ROUTE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-040",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-041",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-042",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-043",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-044",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-045",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ALERT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-046",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ALERT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-047",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ALERT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-048",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ALERT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ANALYTICS"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-050",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-WAREHOUSE"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-051",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-052",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-SHIPMENT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-053",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-054",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-ANALYTICS"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-055",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUDIT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-056",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUDIT"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-057",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-058",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-INVENTORY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-059",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-AUTH"
+      }
+    },
+    {
+      "source_id": "proj-atlas:project",
+      "target_id": "proj-atlas:TASK-060",
+      "rel_type": "HAS_TASK",
+      "properties": {
+        "module_id": "MOD-EMERGENCY"
+      }
+    },
+    {
+      "source_id": "proj-atlas:TASK-002",
+      "target_id": "proj-atlas:TASK-001",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-003",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-004",
+      "target_id": "proj-atlas:TASK-003",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-005",
+      "target_id": "proj-atlas:TASK-004",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-006",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-007",
+      "target_id": "proj-atlas:TASK-006",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-007",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-008",
+      "target_id": "proj-atlas:TASK-007",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-009",
+      "target_id": "proj-atlas:TASK-007",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-010",
+      "target_id": "proj-atlas:TASK-008",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-010",
+      "target_id": "proj-atlas:TASK-009",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-011",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-012",
+      "target_id": "proj-atlas:TASK-011",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-012",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-013",
+      "target_id": "proj-atlas:TASK-012",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-014",
+      "target_id": "proj-atlas:TASK-012",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-015",
+      "target_id": "proj-atlas:TASK-013",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-016",
+      "target_id": "proj-atlas:TASK-006",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-016",
+      "target_id": "proj-atlas:TASK-011",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-017",
+      "target_id": "proj-atlas:TASK-016",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-017",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-018",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-019",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-020",
+      "target_id": "proj-atlas:TASK-018",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-021",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-021",
+      "target_id": "proj-atlas:TASK-007",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-022",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-023",
+      "target_id": "proj-atlas:TASK-022",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-023",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-024",
+      "target_id": "proj-atlas:TASK-023",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-024",
+      "target_id": "proj-atlas:TASK-008",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-025",
+      "target_id": "proj-atlas:TASK-024",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-026",
+      "target_id": "proj-atlas:TASK-011",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-026",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-027",
+      "target_id": "proj-atlas:TASK-026",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-027",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-028",
+      "target_id": "proj-atlas:TASK-027",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-028",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-029",
+      "target_id": "proj-atlas:TASK-028",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-029",
+      "target_id": "proj-atlas:TASK-021",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-030",
+      "target_id": "proj-atlas:TASK-028",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-031",
+      "target_id": "proj-atlas:TASK-026",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-032",
+      "target_id": "proj-atlas:TASK-031",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-032",
+      "target_id": "proj-atlas:TASK-028",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-033",
+      "target_id": "proj-atlas:TASK-031",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-034",
+      "target_id": "proj-atlas:TASK-033",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-034",
+      "target_id": "proj-atlas:TASK-015",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-035",
+      "target_id": "proj-atlas:TASK-032",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-036",
+      "target_id": "proj-atlas:TASK-006",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-037",
+      "target_id": "proj-atlas:TASK-036",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-037",
+      "target_id": "proj-atlas:TASK-032",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-038",
+      "target_id": "proj-atlas:TASK-037",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-038",
+      "target_id": "proj-atlas:TASK-033",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-039",
+      "target_id": "proj-atlas:TASK-037",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-040",
+      "target_id": "proj-atlas:TASK-026",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-041",
+      "target_id": "proj-atlas:TASK-040",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-041",
+      "target_id": "proj-atlas:TASK-028",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:TASK-041",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:TASK-021",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:TASK-037",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-043",
+      "target_id": "proj-atlas:TASK-041",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-044",
+      "target_id": "proj-atlas:TASK-042",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-044",
+      "target_id": "proj-atlas:TASK-033",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-045",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-046",
+      "target_id": "proj-atlas:TASK-045",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-047",
+      "target_id": "proj-atlas:TASK-045",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-048",
+      "target_id": "proj-atlas:TASK-046",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-049",
+      "target_id": "proj-atlas:TASK-004",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-050",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-050",
+      "target_id": "proj-atlas:TASK-007",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-051",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-051",
+      "target_id": "proj-atlas:TASK-041",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-051",
+      "target_id": "proj-atlas:TASK-045",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-052",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-052",
+      "target_id": "proj-atlas:TASK-033",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-053",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-053",
+      "target_id": "proj-atlas:TASK-021",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-054",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-055",
+      "target_id": "proj-atlas:TASK-035",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-055",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-056",
+      "target_id": "proj-atlas:TASK-055",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-057",
+      "target_id": "proj-atlas:TASK-004",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-057",
+      "target_id": "proj-atlas:TASK-005",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-058",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-059",
+      "target_id": "proj-atlas:TASK-003",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-059",
+      "target_id": "proj-atlas:TASK-002",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-060",
+      "target_id": "proj-atlas:TASK-059",
+      "rel_type": "DEPENDS_ON",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-001",
+      "target_id": "proj-atlas:cap-arch-design",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-001",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-002",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-002",
+      "target_id": "proj-atlas:cap-liquibase",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-003",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-003",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-004",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-004",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-005",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-005",
+      "target_id": "proj-atlas:cap-rbac-audit",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-006",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-006",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-007",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-007",
+      "target_id": "proj-atlas:cap-rest-api",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-008",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-009",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-010",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-011",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-011",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-012",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-012",
+      "target_id": "proj-atlas:cap-rest-api",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-013",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-014",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-014",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-015",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-016",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-016",
+      "target_id": "proj-atlas:cap-liquibase",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-017",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-017",
+      "target_id": "proj-atlas:cap-jpa-hibernate",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-018",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-018",
+      "target_id": "proj-atlas:cap-supply-chain",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-019",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-020",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-021",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-021",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-022",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-022",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-023",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-023",
+      "target_id": "proj-atlas:cap-rest-api",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-024",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-025",
+      "target_id": "proj-atlas:cap-supply-chain",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-026",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-027",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-027",
+      "target_id": "proj-atlas:cap-rest-api",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-028",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-029",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-029",
+      "target_id": "proj-atlas:cap-supply-chain",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-030",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-031",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-031",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-032",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-032",
+      "target_id": "proj-atlas:cap-rest-api",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-033",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-034",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-035",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-036",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-037",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-037",
+      "target_id": "proj-atlas:cap-emergency-routing",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-038",
+      "target_id": "proj-atlas:cap-emergency-routing",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-039",
+      "target_id": "proj-atlas:cap-supply-chain",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-040",
+      "target_id": "proj-atlas:cap-arch-design",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-040",
+      "target_id": "proj-atlas:cap-emergency-allocation",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-041",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-041",
+      "target_id": "proj-atlas:cap-emergency-allocation",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:cap-emergency-allocation",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:cap-emergency-routing",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-043",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-044",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-044",
+      "target_id": "proj-atlas:cap-emergency-routing",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-045",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-046",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-047",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-048",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-049",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-049",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-050",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-050",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-051",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-051",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-052",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-052",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-053",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-053",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-054",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-054",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-055",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-055",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-056",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-056",
+      "target_id": "proj-atlas:cap-rbac-audit",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-057",
+      "target_id": "proj-atlas:cap-automated-qa",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-057",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-058",
+      "target_id": "proj-atlas:cap-automated-qa",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-059",
+      "target_id": "proj-atlas:cap-docker",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-060",
+      "target_id": "proj-atlas:cap-docker",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-060",
+      "target_id": "proj-atlas:cap-k8s",
+      "rel_type": "REQUIRES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-architect",
+      "target_id": "proj-atlas:cap-arch-design",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-architect",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-architect",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-backend",
+      "target_id": "proj-atlas:cap-java-spring",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-backend",
+      "target_id": "proj-atlas:cap-rest-api",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-backend",
+      "target_id": "proj-atlas:cap-jpa-hibernate",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-frontend",
+      "target_id": "proj-atlas:cap-react-ts",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-frontend",
+      "target_id": "proj-atlas:cap-tailwind-ui",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-database",
+      "target_id": "proj-atlas:cap-mysql-dba",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-database",
+      "target_id": "proj-atlas:cap-liquibase",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-database",
+      "target_id": "proj-atlas:cap-domain-modeling",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-security",
+      "target_id": "proj-atlas:cap-sec-jwt",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-security",
+      "target_id": "proj-atlas:cap-rbac-audit",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-qa",
+      "target_id": "proj-atlas:cap-automated-qa",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-qa",
+      "target_id": "proj-atlas:cap-playwright",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-devops",
+      "target_id": "proj-atlas:cap-docker",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-devops",
+      "target_id": "proj-atlas:cap-k8s",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-logistics",
+      "target_id": "proj-atlas:cap-supply-chain",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-logistics",
+      "target_id": "proj-atlas:cap-emergency-routing",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:agent-logistics",
+      "target_id": "proj-atlas:cap-emergency-allocation",
+      "rel_type": "HAS_CAPABILITY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-001",
+      "target_id": "proj-atlas:TASK-001",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-001",
+      "target_id": "proj-atlas:TASK-003",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-001",
+      "target_id": "proj-atlas:TASK-004",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-002",
+      "target_id": "proj-atlas:TASK-006",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-002",
+      "target_id": "proj-atlas:TASK-009",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-003",
+      "target_id": "proj-atlas:TASK-011",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-003",
+      "target_id": "proj-atlas:TASK-012",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-003",
+      "target_id": "proj-atlas:TASK-014",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-004",
+      "target_id": "proj-atlas:TASK-016",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-004",
+      "target_id": "proj-atlas:TASK-017",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-005",
+      "target_id": "proj-atlas:TASK-023",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-006",
+      "target_id": "proj-atlas:TASK-026",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-006",
+      "target_id": "proj-atlas:TASK-028",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-006",
+      "target_id": "proj-atlas:TASK-029",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-006",
+      "target_id": "proj-atlas:TASK-030",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-007",
+      "target_id": "proj-atlas:TASK-031",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-007",
+      "target_id": "proj-atlas:TASK-033",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-008",
+      "target_id": "proj-atlas:TASK-036",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-008",
+      "target_id": "proj-atlas:TASK-037",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-008",
+      "target_id": "proj-atlas:TASK-038",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-009",
+      "target_id": "proj-atlas:TASK-040",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-009",
+      "target_id": "proj-atlas:TASK-041",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-009",
+      "target_id": "proj-atlas:TASK-042",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-010",
+      "target_id": "proj-atlas:TASK-045",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-010",
+      "target_id": "proj-atlas:TASK-046",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-013",
+      "target_id": "proj-atlas:TASK-049",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-011",
+      "target_id": "proj-atlas:TASK-054",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-012",
+      "target_id": "proj-atlas:TASK-055",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-012",
+      "target_id": "proj-atlas:TASK-056",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ADR-011",
+      "target_id": "proj-atlas:TASK-059",
+      "rel_type": "AFFECTS",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-001",
+      "target_id": "proj-atlas:agent-architect",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-002",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-003",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-004",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-005",
+      "target_id": "proj-atlas:agent-security",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-006",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-007",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-008",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-009",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-010",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-011",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-012",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-013",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-014",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-015",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-016",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-017",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-018",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-019",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-020",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-021",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-022",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-023",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-024",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-025",
+      "target_id": "proj-atlas:agent-logistics",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-026",
+      "target_id": "proj-atlas:agent-architect",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-027",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-028",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-029",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-030",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-031",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-032",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-033",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-034",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-035",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-036",
+      "target_id": "proj-atlas:agent-architect",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-037",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-038",
+      "target_id": "proj-atlas:agent-logistics",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-039",
+      "target_id": "proj-atlas:agent-logistics",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-040",
+      "target_id": "proj-atlas:agent-architect",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-041",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-042",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-043",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-044",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-045",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-046",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-047",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-048",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-049",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-050",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-051",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-052",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-053",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-054",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-055",
+      "target_id": "proj-atlas:agent-security",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-056",
+      "target_id": "proj-atlas:agent-security",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-057",
+      "target_id": "proj-atlas:agent-qa",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-058",
+      "target_id": "proj-atlas:agent-qa",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-059",
+      "target_id": "proj-atlas:agent-devops",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-060",
+      "target_id": "proj-atlas:agent-devops",
+      "rel_type": "ASSIGNED_TO",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-001",
+      "target_id": "proj-atlas:DOC-001",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-002",
+      "target_id": "proj-atlas:DOC-002",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-003",
+      "target_id": "proj-atlas:DOC-003",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-004",
+      "target_id": "proj-atlas:DOC-004",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-005",
+      "target_id": "proj-atlas:DOC-005",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-006",
+      "target_id": "proj-atlas:DOC-006",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-007",
+      "target_id": "proj-atlas:DOC-007",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-008",
+      "target_id": "proj-atlas:DOC-008",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-009",
+      "target_id": "proj-atlas:DOC-009",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-010",
+      "target_id": "proj-atlas:DOC-010",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-011",
+      "target_id": "proj-atlas:DOC-011",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-012",
+      "target_id": "proj-atlas:DOC-012",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-013",
+      "target_id": "proj-atlas:DOC-013",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-014",
+      "target_id": "proj-atlas:DOC-014",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-015",
+      "target_id": "proj-atlas:DOC-015",
+      "rel_type": "REFERENCES",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:TASK-041",
+      "target_id": "proj-atlas:ISSUE-006",
+      "rel_type": "BLOCKED_BY",
+      "properties": {
+        "reason": "Multi-item split bug prevents hospital emergency fulfillment"
+      }
+    },
+    {
+      "source_id": "proj-atlas:TASK-037",
+      "target_id": "proj-atlas:ISSUE-008",
+      "rel_type": "BLOCKED_BY",
+      "properties": {
+        "reason": "Memory leak under 500+ waypoints"
+      }
+    },
+    {
+      "source_id": "proj-atlas:ART-001",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-002",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-003",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-004",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-005",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-006",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-007",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-008",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-009",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:ART-010",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-001",
+      "target_id": "proj-atlas:agent-database",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-002",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-003",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-004",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-005",
+      "target_id": "proj-atlas:agent-logistics",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-006",
+      "target_id": "proj-atlas:agent-backend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-007",
+      "target_id": "proj-atlas:agent-frontend",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    },
+    {
+      "source_id": "proj-atlas:CP-008",
+      "target_id": "proj-atlas:agent-qa",
+      "rel_type": "CREATED_BY",
+      "properties": {}
+    }
+  ]
+}

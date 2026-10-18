@@ -8,6 +8,7 @@ from barsa.models.graph import (
     AgentContributionsResult,
     DecisionImpactResult,
     GraphProjectionMetadata,
+    GraphResumeResponse,
     ProjectOverviewResult,
     ResumeContextResult,
     TaskDependenciesResult,
@@ -111,3 +112,11 @@ class GraphRetrievalService:
         res = self.graph.query_resume_context(project_id=project_id, task_id=task_id)
         res.projection_status = projection_metadata
         return res
+
+    def barsa_graph_resume(
+        self,
+        project_id: str,
+        agent_id: str | None = None,
+    ) -> GraphResumeResponse:
+        """Execute FalkorDB-powered project continuation, next-task discovery, and capability matching."""
+        return self.graph.barsa_graph_resume(project_id=project_id, agent_id=agent_id)

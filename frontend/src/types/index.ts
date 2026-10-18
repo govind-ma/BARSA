@@ -189,6 +189,49 @@ export interface SubgraphResponse {
   radius?: number;
 }
 
+export interface GraphCandidateTask {
+  task_id: string;
+  title: string;
+  priority: string;
+  status: string;
+  is_ready: boolean;
+  readiness_score: number;
+  readiness_reason: string;
+  completed_dependencies: string[];
+  uncompleted_dependencies: string[];
+  active_blockers: string[];
+  required_capabilities: string[];
+  agent_capability_match: boolean;
+  matched_capabilities: string[];
+  missing_capabilities: string[];
+  related_decisions: Array<Record<string, unknown>>;
+  related_knowledge: Array<Record<string, unknown>>;
+  graph_paths: string[];
+}
+
+export interface GraphResumeResponse {
+  project_id: string;
+  agent_id?: string | null;
+  recommended_task?: GraphCandidateTask | null;
+  why_ready: string;
+  total_tasks_evaluated: number;
+  all_candidate_tasks: GraphCandidateTask[];
+  completed_dependencies: string[];
+  remaining_blockers: string[];
+  suitable_agents: Array<{
+    agent_id: string;
+    display_name?: string;
+    capabilities?: string[];
+    is_assigned?: boolean;
+    missing_capabilities?: string[];
+  }>;
+  related_decisions: Array<Record<string, unknown>>;
+  related_knowledge: Array<Record<string, unknown>>;
+  supporting_graph_paths: string[];
+  falkordb_version: string;
+  cypher_queries_executed: string[];
+}
+
 // ==========================================
 // Smart Context Engine (SCE)
 // ==========================================

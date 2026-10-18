@@ -25,17 +25,11 @@ def get_graph_provider(settings: Settings) -> GraphProvider:
 
     if settings.graph_enabled:
         falkor_provider = FalkorDBGraphProvider(settings)
-        if falkor_provider.is_available():
-            logger.info(
-                "Using FalkorDBGraphProvider connected to %s:%s", settings.falkordb_host, settings.falkordb_port
-            )
-            _GRAPH_INSTANCES[cache_key] = falkor_provider
-            return falkor_provider
-        logger.warning(
-            "FalkorDB is enabled but unavailable at %s:%s. Falling back to InMemoryGraphProvider.",
-            settings.falkordb_host,
-            settings.falkordb_port,
+        logger.info(
+            "Using FalkorDBGraphProvider configured for %s:%s", settings.falkordb_host, settings.falkordb_port
         )
+        _GRAPH_INSTANCES[cache_key] = falkor_provider
+        return falkor_provider
 
     provider = InMemoryGraphProvider()
     _GRAPH_INSTANCES[cache_key] = provider

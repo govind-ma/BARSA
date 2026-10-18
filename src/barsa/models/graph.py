@@ -21,8 +21,10 @@ class GraphNodeType(StrEnum):
     DECISION = "Decision"
     TASK = "Task"
     AGENT = "Agent"
+    CAPABILITY = "Capability"
     CHECKPOINT = "Checkpoint"
     ARTIFACT = "Artifact"
+    ISSUE = "Issue"
     COMMIT = "Commit"
 
 
@@ -32,8 +34,15 @@ class GraphRelationshipType(StrEnum):
     HAS_REQUIREMENT = "HAS_REQUIREMENT"
     HAS_TASK = "HAS_TASK"
     DEPENDS_ON = "DEPENDS_ON"
+    BLOCKED_BY = "BLOCKED_BY"
+    REQUIRES = "REQUIRES"
+    HAS_CAPABILITY = "HAS_CAPABILITY"
+    ASSIGNED_TO = "ASSIGNED_TO"
+    DECIDED_BY = "DECIDED_BY"
     IMPLEMENTS = "IMPLEMENTS"
     REFERENCES = "REFERENCES"
+    AFFECTS = "AFFECTS"
+    RESOLVES = "RESOLVES"
     SUPPORTS = "SUPPORTS"
     BLOCKS = "BLOCKS"
     SUPERSEDES = "SUPERSEDES"
@@ -208,3 +217,44 @@ class GraphRebuildResponse(BaseModel):
     applied_commit_id: str
     status: ProjectionStatus
     message: str
+
+
+class GraphCandidateTask(BaseModel):
+    """Candidate uncompleted task analyzed for readiness via graph traversal."""
+
+    task_id: str
+    title: str
+    priority: str = "medium"
+    status: str = "todo"
+    is_ready: bool = False
+    readiness_score: float = 0.0
+    readiness_reason: str = ""
+    completed_dependencies: list[str] = Field(default_factory=list)
+    uncompleted_dependencies: list[str] = Field(default_factory=list)
+    active_blockers: list[str] = Field(default_factory=list)
+    required_capabilities: list[str] = Field(default_factory=list)
+    agent_capability_match: bool = False
+    matched_capabilities: list[str] = Field(default_factory=list)
+    missing_capabilities: list[str] = Field(default_factory=list)
+    related_decisions: list[dict[str, Any]] = Field(default_factory=list)
+    related_knowledge: list[dict[str, Any]] = Field(default_factory=list)
+    graph_paths: list[str] = Field(default_factory=list)
+
+
+class GraphResumeResponse(BaseModel):
+    """Authoritative response produced by the FalkorDB-powered Project Continuation Engine."""
+
+    project_id: str
+    agent_id: str | None = None
+    recommended_task: GraphCandidateTask | None = None
+    why_ready: str
+    total_tasks_evaluated: int = 0
+    all_candidate_tasks: list[GraphCandidateTask] = Field(default_factory=list)
+    completed_dependencies: list[str] = Field(default_factory=list)
+    remaining_blockers: list[str] = Field(default_factory=list)
+    suitable_agents: list[dict[str, Any]] = Field(default_factory=list)
+    related_decisions: list[dict[str, Any]] = Field(default_factory=list)
+    related_knowledge: list[dict[str, Any]] = Field(default_factory=list)
+    supporting_graph_paths: list[str] = Field(default_factory=list)
+    falkordb_version: str = "1.8.0"
+    cypher_queries_executed: list[str] = Field(default_factory=list)

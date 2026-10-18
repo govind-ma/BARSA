@@ -113,6 +113,10 @@ class Settings(BaseSettings):
         SecretStr | None,
         Field(default=None, description="FalkorDB password if required"),
     ]
+    falkordb_username: str | None = Field(
+        default=None,
+        description="FalkorDB username if required",
+    )
     falkordb_graph_prefix: str = Field(
         default="barsa",
         description="Prefix for FalkorDB graph identifiers (e.g. 'barsa_project_<id>')",

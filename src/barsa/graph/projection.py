@@ -319,6 +319,20 @@ class GraphProjectionWorker:
                     "uri": rdata.get("uri", ""),
                     "content_hash": rdata.get("content_hash", ""),
                 }
+            elif rtype == "issue":
+                gtype = GraphNodeType.ISSUE
+                props = {
+                    "title": rdata.get("title", ""),
+                    "severity": rdata.get("severity", "medium"),
+                    "status": rdata.get("status", "open"),
+                    "description": rdata.get("description", ""),
+                }
+            elif rtype == "capability":
+                gtype = GraphNodeType.CAPABILITY
+                props = {
+                    "name": rdata.get("name", rid),
+                    "description": rdata.get("description", ""),
+                }
             elif rtype == "relationship":
                 # Handle explicit BMS RelationshipRecord
                 src = f"{project_id}:{rdata['source_id']}"
@@ -404,6 +418,120 @@ class GraphProjectionWorker:
                             source_id=composite_id,
                             target_id=f"{project_id}:{aref}",
                             rel_type=GraphRelationshipType.REFERENCES_ARTIFACT,
+                            project_id=project_id,
+                        )
+                    )
+
+            # Link Task blockers, required capabilities, assignee
+            if gtype == GraphNodeType.TASK:
+                for b_id in rdata.get("blockers", []):
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=f"{project_id}:{b_id}",
+                            rel_type=GraphRelationshipType.BLOCKED_BY,
+                            project_id=project_id,
+                        )
+                    )
+                for cap in (rdata.get("required_capabilities") or rdata.get("capabilities") or []):
+                    cap_id = f"{project_id}:{cap}"
+                    self.graph.upsert_node(
+                        GraphNode(
+                            id=cap_id,
+                            raw_id=cap,
+                            project_id=project_id,
+                            node_type=GraphNodeType.CAPABILITY,
+                            properties={"name": cap},
+                        )
+                    )
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=cap_id,
+                            rel_type=GraphRelationshipType.REQUIRES,
+                            project_id=project_id,
+                        )
+                    )
+                if rdata.get("assignee_id"):
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=f"{project_id}:{rdata['assignee_id']}",
+                            rel_type=GraphRelationshipType.ASSIGNED_TO,
+                            project_id=project_id,
+                        )
+                    )
+
+            # Link Agent capabilities
+            if gtype == GraphNodeType.AGENT:
+                for cap in (rdata.get("capabilities") or rdata.get("claimed_capabilities") or []):
+                    cap_id = f"{project_id}:{cap}"
+                    self.graph.upsert_node(
+                        GraphNode(
+                            id=cap_id,
+                            raw_id=cap,
+                            project_id=project_id,
+                            node_type=GraphNodeType.CAPABILITY,
+                            properties={"name": cap},
+                        )
+                    )
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=cap_id,
+                            rel_type=GraphRelationshipType.HAS_CAPABILITY,
+                            project_id=project_id,
+                        )
+                    )
+
+            # Link Issue -> Task (blocks)
+            if gtype == GraphNodeType.ISSUE:
+                if rdata.get("task_id"):
+                    t_target = f"{project_id}:{rdata['task_id']}"
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=t_target,
+                            target_id=composite_id,
+                            rel_type=GraphRelationshipType.BLOCKED_BY,
+                            project_id=project_id,
+                        )
+                    )
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=t_target,
+                            rel_type=GraphRelationshipType.BLOCKS,
+                            project_id=project_id,
+                        )
+                    )
+
+            # Link Decision -> Agent (decided_by), affected tasks/requirements
+            if gtype == GraphNodeType.DECISION:
+                decider = rdata.get("decided_by") or rdata.get("author_id") or rdata.get("created_by")
+                if decider:
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=f"{project_id}:{decider}",
+                            rel_type=GraphRelationshipType.DECIDED_BY,
+                            project_id=project_id,
+                        )
+                    )
+                for atask in (rdata.get("affected_tasks") or rdata.get("task_refs") or []):
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=f"{project_id}:{atask}",
+                            rel_type=GraphRelationshipType.AFFECTS,
+                            project_id=project_id,
+                        )
+                    )
+                for areq in (rdata.get("affected_requirements") or rdata.get("requirement_refs") or []):
+                    relationships_to_create.append(
+                        GraphRelationship(
+                            source_id=composite_id,
+                            target_id=f"{project_id}:{areq}",
+                            rel_type=GraphRelationshipType.AFFECTS,
                             project_id=project_id,
                         )
                     )

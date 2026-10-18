@@ -70,3 +70,9 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
+# Media & Scratch
+demo/video/
+*.webm
+*.mp4
+scratch/
+

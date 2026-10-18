@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { EmptyState, LoadingSpinner } from '@/components/ui/EmptyState';
-import type { GraphNode, GraphOverview, SubgraphResponse } from '@/types';
+import type { GraphNode, GraphOverview, SubgraphResponse, GraphResumeResponse } from '@/types';
 import {
   Network,
   RefreshCw,
@@ -16,6 +16,12 @@ import {
   Layers,
   Info,
   AlertTriangle,
+  Sparkles,
+  CheckCircle2,
+  AlertCircle,
+  Play,
+  ArrowRight,
+  UserCheck,
 } from 'lucide-react';
 
 const NODE_COLORS: Record<string, string> = {
@@ -27,6 +33,8 @@ const NODE_COLORS: Record<string, string> = {
   Checkpoint: 'fill-purple-500 stroke-purple-600',
   Agent: 'fill-pink-500 stroke-pink-600',
   Artifact: 'fill-teal-500 stroke-teal-600',
+  Capability: 'fill-cyan-500 stroke-cyan-600',
+  Issue: 'fill-rose-500 stroke-rose-600',
 };
 
 export function GraphExplorerPage() {
@@ -40,11 +48,33 @@ export function GraphExplorerPage() {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'canvas' | 'table'>('canvas');
 
+  // FalkorDB Project Continuation State
+  const [resumeData, setResumeData] = useState<GraphResumeResponse | null>(null);
+  const [isResuming, setIsResuming] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [selectedAgentId, setSelectedAgentId] = useState<string>('');
+
   // Zoom & Pan state for SVG Canvas
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const loadResumeData = async (agentId?: string) => {
+    if (!activeProject) return;
+    setIsResuming(true);
+    setResumeError(null);
+    try {
+      const data = await api.getGraphResume(activeProject.project_id, agentId ?? (selectedAgentId || undefined));
+      setResumeData(data);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'FalkorDB graph continuation failed';
+      setResumeError(msg);
+      setResumeData(null);
+    } finally {
+      setIsResuming(false);
+    }
+  };
 
   const loadGraph = async () => {
     if (!activeProject) return;
@@ -63,6 +93,7 @@ export function GraphExplorerPage() {
 
   useEffect(() => {
     loadGraph();
+    loadResumeData();
   }, [activeProject]);
 
   const handleRebuild = async () => {
@@ -198,6 +229,251 @@ export function GraphExplorerPage() {
           </div>
         )}
       </div>
+
+      {/* FalkorDB Continuation Engine (Section 7) */}
+      <Card className="border-border bg-card/60 backdrop-blur-sm overflow-hidden">
+        <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  Graph-Powered Continuation Engine
+                  <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary">
+                    barsa_graph_resume
+                  </Badge>
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  FalkorDB Cypher multi-hop traversal, dependency analysis, blocker detection, and agent capability matching
+                </CardDescription>
+              </div>
+            </div>
+
+            {/* Agent Selector & Execution Control */}
+            <div className="flex items-center space-x-2">
+              <select
+                value={selectedAgentId}
+                onChange={(e) => {
+                  setSelectedAgentId(e.target.value);
+                  loadResumeData(e.target.value);
+                }}
+                className="h-8 rounded-md border border-input bg-card px-2.5 text-xs text-foreground focus:outline-none"
+                aria-label="Filter continuation by agent"
+              >
+                <option value="">Any / Unassigned Agent</option>
+                <option value="agent-backend-claude">Claude (Backend / Auth / DB)</option>
+                <option value="agent-frontend-gpt4o">GPT-4o (Frontend / React / UI)</option>
+                <option value="agent-tester">QA / Test Engineer</option>
+              </select>
+
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => loadResumeData()}
+                isLoading={isResuming}
+                className="h-8 text-xs font-medium"
+              >
+                <Play className="h-3.5 w-3.5 mr-1" />
+                Compute Next Task
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="pt-4 space-y-4">
+          {resumeError ? (
+            /* Explicit Failure Banner when FalkorDB is offline */
+            <div className="p-4 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive flex items-start space-x-3">
+              <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+              <div>
+                <h4 className="text-sm font-semibold">FalkorDB Required — Graph Reasoning Offline</h4>
+                <p className="text-xs mt-1 text-destructive/90">
+                  {resumeError}
+                </p>
+                <p className="text-[11px] mt-2 text-muted-foreground">
+                  Rule 3 Compliance: Non-graph storage and ordinary dashboard views remain functional, but authoritative next-task reasoning requires an active FalkorDB graph engine.
+                </p>
+              </div>
+            </div>
+          ) : isResuming ? (
+            <div className="py-8 text-center text-muted-foreground text-xs">
+              <LoadingSpinner text="Executing Cypher multi-hop traversals in FalkorDB..." />
+            </div>
+          ) : resumeData?.recommended_task ? (
+            <div className="space-y-4">
+              {/* Recommended Task Banner */}
+              <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="default" className="text-xs bg-primary text-primary-foreground font-medium">
+                      Recommended Next Task
+                    </Badge>
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {resumeData.recommended_task.task_id}
+                    </Badge>
+                    <Badge variant="secondary" className="capitalize text-[11px]">
+                      Priority: {resumeData.recommended_task.priority}
+                    </Badge>
+                    <Badge variant="outline" className="text-[11px] text-emerald-500 border-emerald-500/30">
+                      Readiness Score: {resumeData.recommended_task.readiness_score}
+                    </Badge>
+                  </div>
+
+                  <span className="text-[11px] text-muted-foreground font-mono">
+                    FalkorDB v{resumeData.falkordb_version} • {resumeData.total_tasks_evaluated} Tasks Evaluated
+                  </span>
+                </div>
+
+                <h3 className="text-base font-semibold text-foreground">
+                  {resumeData.recommended_task.title}
+                </h3>
+
+                {/* Why Ready Box */}
+                <div className="p-3 rounded-md bg-background/80 border border-border text-xs text-foreground/90 leading-relaxed flex items-start space-x-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold text-foreground">Graph Traversal Explanation: </span>
+                    {resumeData.why_ready}
+                  </div>
+                </div>
+              </div>
+
+              {/* 3-Column Diagnostic Details */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                {/* Column 1: Dependencies & Blockers */}
+                <div className="p-3 rounded-lg border border-border bg-card/40 space-y-2">
+                  <span className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider block">
+                    Dependencies & Blockers
+                  </span>
+                  <div>
+                    <span className="text-[11px] text-muted-foreground">Completed Prerequisites:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {resumeData.recommended_task.completed_dependencies.length > 0 ? (
+                        resumeData.recommended_task.completed_dependencies.map((dep) => (
+                          <Badge key={dep} variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/20 bg-emerald-500/5">
+                            ✓ {dep}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic text-[11px]">None required</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <span className="text-[11px] text-muted-foreground">Active Blockers:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {resumeData.recommended_task.active_blockers.length > 0 ? (
+                        resumeData.recommended_task.active_blockers.map((b) => (
+                          <Badge key={b} variant="destructive" className="text-[10px]">
+                            ✕ {b}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-emerald-500 text-[11px] flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Unblocked
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 2: Capabilities & Agent Match */}
+                <div className="p-3 rounded-lg border border-border bg-card/40 space-y-2">
+                  <span className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider block">
+                    Capabilities & Agent Match
+                  </span>
+                  <div>
+                    <span className="text-[11px] text-muted-foreground">Required Capabilities:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {resumeData.recommended_task.required_capabilities.map((cap) => (
+                        <Badge key={cap} variant="secondary" className="text-[10px]">
+                          {cap}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <span className="text-[11px] text-muted-foreground">Suitable AI Agents:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {resumeData.suitable_agents.length > 0 ? (
+                        resumeData.suitable_agents.map((ag) => (
+                          <Badge key={ag.agent_id} variant="outline" className="text-[10px] text-primary border-primary/30">
+                            <UserCheck className="h-2.5 w-2.5 mr-1" />
+                            {ag.display_name || ag.agent_id}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic text-[11px]">Any agent</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 3: Decisions & Domain Knowledge */}
+                <div className="p-3 rounded-lg border border-border bg-card/40 space-y-2">
+                  <span className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider block">
+                    ADR Lineage & Knowledge
+                  </span>
+                  <div>
+                    <span className="text-[11px] text-muted-foreground">Connected Decisions:</span>
+                    <div className="mt-1 space-y-1">
+                      {resumeData.recommended_task.related_decisions.length > 0 ? (
+                        resumeData.recommended_task.related_decisions.map((d: any, idx: number) => (
+                          <div key={idx} className="text-[11px] text-foreground truncate">
+                            • <strong className="text-primary">{d.decision_id || d.id}:</strong> {d.title || d.label}
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic text-[11px]">None linked</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <span className="text-[11px] text-muted-foreground">Linked Knowledge:</span>
+                    <div className="mt-1 space-y-1">
+                      {resumeData.recommended_task.related_knowledge.length > 0 ? (
+                        resumeData.recommended_task.related_knowledge.map((k: any, idx: number) => (
+                          <div key={idx} className="text-[11px] text-foreground truncate">
+                            • {k.title || k.label || k.id}
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic text-[11px]">None linked</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Supporting Graph Paths */}
+              {resumeData.supporting_graph_paths.length > 0 && (
+                <div className="p-3 rounded-lg border border-border bg-muted/20">
+                  <span className="font-semibold text-muted-foreground uppercase text-[10px] tracking-wider block mb-2">
+                    Verified FalkorDB Graph Paths ({resumeData.supporting_graph_paths.length})
+                  </span>
+                  <div className="space-y-1 font-mono text-[11px] text-muted-foreground max-h-32 overflow-y-auto pr-2">
+                    {resumeData.supporting_graph_paths.map((path, idx) => (
+                      <div key={idx} className="bg-background/60 px-2 py-1 rounded border border-border/50 text-foreground/80 flex items-center space-x-1">
+                        <ArrowRight className="h-3 w-3 text-primary shrink-0" />
+                        <span className="truncate">{path}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="py-6 text-center text-muted-foreground text-xs">
+              <p>No continuation data available. Select a project and click "Compute Next Task" to query FalkorDB.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-card p-3 rounded-lg border border-border">

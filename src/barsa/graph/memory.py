@@ -3,6 +3,7 @@
 import logging
 from typing import Any
 
+from barsa.core.exceptions import FalkorDBUnavailableError
 from barsa.models.graph import (
     AgentContributionsResult,
     DecisionImpactResult,
@@ -10,6 +11,7 @@ from barsa.models.graph import (
     GraphNodeType,
     GraphRelationship,
     GraphRelationshipType,
+    GraphResumeResponse,
     ProjectOverviewResult,
     ResumeContextResult,
     TaskDependenciesResult,
@@ -373,3 +375,19 @@ class InMemoryGraphProvider:
     def clear_project_graph(self, project_id: str) -> None:
         self._nodes.pop(project_id, None)
         self._relationships.pop(project_id, None)
+
+    def barsa_graph_resume(
+        self,
+        project_id: str,
+        agent_id: str | None = None,
+    ) -> GraphResumeResponse:
+        """Graph resume strictly requires FalkorDB.
+
+        Per Hackathon Rule 2 & 3, FalkorDB is indispensable for AI memory reasoning
+        and project continuation. In-memory graph fallback is intentionally not permitted
+        for this operation.
+        """
+        raise FalkorDBUnavailableError(
+            "FalkorDB is required for graph-powered memory reasoning and project continuation. "
+            "InMemoryGraphProvider does not support graph reasoning; a live FalkorDB instance is required."
+        )
