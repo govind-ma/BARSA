@@ -149,10 +149,12 @@ export function MemoryExplorerPage() {
     });
   }, [unifiedItems, searchQuery, activeFilter]);
 
-  // Clear activeRecord if it gets filtered out by search or filter
+  // Clear activeRecord if it gets filtered out by search or filter, or auto-select first record
   useEffect(() => {
     if (activeRecord && !filteredRecords.some((r) => r.record_id === activeRecord.record_id)) {
-      setActiveRecord(null);
+      setActiveRecord(filteredRecords.length > 0 ? filteredRecords[0] : null);
+    } else if (!activeRecord && filteredRecords.length > 0) {
+      setActiveRecord(filteredRecords[0]);
     }
   }, [filteredRecords, activeRecord]);
 
@@ -199,26 +201,27 @@ export function MemoryExplorerPage() {
             <BrainCircuit className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="font-heading text-base font-semibold text-text-primary tracking-tight flex items-center space-x-2">
-              <span>Memory Explorer</span>
+            <h1 className="font-heading text-lg font-bold text-text-primary tracking-tight flex items-center space-x-2">
+              <span>Memory</span>
+              <span className="sr-only">Memory Explorer</span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border border-border-subtle font-medium">
                 BMS v0.2
               </span>
             </h1>
-            <p className="text-xs text-text-secondary">
-              Search and inspect immutable memory records, ADR decisions, and artifacts.
+            <p className="text-xs text-text-muted mt-0.5">
+              Everything your agents have saved about this project.
             </p>
           </div>
         </div>
 
-        {/* Right Action: + New Decision Button (Primary Magma Button) */}
+        {/* Right Action: Add Memory */}
         <div className="flex items-center space-x-2.5 self-end md:self-auto">
           <button
             onClick={() => setIsDecisionModalOpen(true)}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97]"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg btn-primary-lava text-xs font-semibold shadow-xs"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>+ New decision</span>
+            <span>Add Memory</span>
           </button>
         </div>
       </div>
@@ -227,26 +230,26 @@ export function MemoryExplorerPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 shrink-0">
         {/* Large Search Input with "/" shortcut hint */}
         <div className="relative flex-1">
-          <Search className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             ref={searchInputRef}
             type="text"
             placeholder="Search records by title, summary, content, or ID... (press '/' to focus)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-20 rounded-xl border border-ice/20 focus:border-ice/60 bg-card/60 backdrop-blur-md text-foreground placeholder:text-muted-foreground text-xs shadow-inner focus:outline-none focus:ring-1 focus:ring-ice/50 transition-all"
+            className="w-full h-10 pl-10 pr-20 rounded-xl border border-border-subtle focus:border-steel-500 bg-surface dark:bg-bg-elevated text-text-primary placeholder:text-text-muted text-xs shadow-xs focus:outline-none focus:ring-1 focus:ring-steel-500/50 transition-all"
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1.5">
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 rounded-lg hover:bg-ice-100 dark:hover:bg-white/[0.08] text-text-muted hover:text-text-primary transition-colors"
                 title="Clear search"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
-            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border/80 bg-secondary/60 text-muted-foreground shadow-xs">
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border-subtle bg-ice-100 dark:bg-white/[0.08] text-text-muted shadow-xs">
               /
             </kbd>
           </div>
@@ -265,14 +268,14 @@ export function MemoryExplorerPage() {
       {/* 3. Main Two-Column Layout (List + Inspector) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0 overflow-hidden">
         {/* Left Column: Result List (5 of 12 cols on desktop) */}
-        <div className="lg:col-span-5 flex flex-col h-full rounded-2xl bg-card/40 backdrop-blur-md border border-ice/15 shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-hidden">
+        <div className="lg:col-span-5 flex flex-col h-full rounded-2xl glass-card border border-border-subtle shadow-sm overflow-hidden">
           {/* List Header */}
-          <div className="p-3 border-b border-ice/15 bg-card/60 flex items-center justify-between text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground flex items-center space-x-1.5">
-              <Layers className="h-3.5 w-3.5 text-ice" />
+          <div className="p-3 border-b border-border-subtle bg-surface/50 dark:bg-white/[0.02] flex items-center justify-between text-xs text-text-muted">
+            <span className="font-semibold text-text-primary flex items-center space-x-1.5">
+              <Layers className="h-3.5 w-3.5 text-lava-orange" />
               <span>Matching Records</span>
             </span>
-            <span className="font-mono text-[11px] px-2 py-0.5 rounded-full bg-secondary/80 text-foreground font-semibold">
+            <span className="font-mono text-[11px] px-2 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-text-primary font-semibold border border-border-subtle">
               {filteredRecords.length}
             </span>
           </div>
@@ -284,20 +287,32 @@ export function MemoryExplorerPage() {
                 <LoadingSpinner text="Retrieving memory records and artifacts..." />
               </div>
             ) : filteredRecords.length === 0 ? (
-              <div className="py-16 text-center text-muted-foreground px-4">
-                <BrainCircuit className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-                <h4 className="text-sm font-semibold text-foreground">
-                  No records match your search
+              <div className="py-16 text-center text-text-muted px-4">
+                <BrainCircuit className="h-10 w-10 mx-auto text-text-muted/40 mb-2" />
+                <h4 className="text-sm font-semibold text-text-primary">
+                  {unifiedItems.length === 0 ? 'No memory records yet' : 'No records match your search'}
                 </h4>
-                <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
-                  Try adjusting your query, clearing filters, or record a new architectural decision.
+                <p className="text-xs text-text-muted mt-1 max-w-xs mx-auto">
+                  {unifiedItems.length === 0
+                    ? 'As your AI agents collaborate, architectural decisions and runbooks will appear here.'
+                    : 'Try adjusting your query, clearing filters, or record a new architectural decision.'}
                 </p>
-                {searchQuery && (
+                {searchQuery || activeFilter !== 'all' ? (
                   <button
-                    onClick={() => setSearchQuery('')}
-                    className="mt-3 px-3 py-1 rounded-xl bg-ice/10 hover:bg-ice/20 border border-ice/30 text-ice text-xs font-semibold transition-colors"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setActiveFilter('all');
+                    }}
+                    className="mt-3 px-3 py-1 rounded-lg bg-ice-100 dark:bg-white/[0.08] hover:bg-ice-200 border border-border-subtle text-text-primary text-xs font-semibold transition-colors"
                   >
-                    Clear Search
+                    Reset Filters
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsDecisionModalOpen(true)}
+                    className="mt-3 px-3 py-1.5 rounded-lg btn-primary-lava text-xs font-semibold transition-colors"
+                  >
+                    Add Decision
                   </button>
                 )}
               </div>

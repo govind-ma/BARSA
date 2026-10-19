@@ -128,10 +128,10 @@ export function MemoryInspector({
 
   if (!record) {
     return (
-      <div className="h-full min-h-[450px] flex flex-col items-center justify-center p-8 rounded-2xl bg-card/40 backdrop-blur-md border border-ice/15 text-center text-muted-foreground select-none">
-        <Layers className="h-10 w-10 text-muted-foreground/30 mb-3 animate-pulse" />
-        <h3 className="text-sm font-semibold text-foreground">No Record Selected</h3>
-        <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+      <div className="h-full min-h-[450px] flex flex-col items-center justify-center p-8 rounded-2xl glass-card border border-border-subtle text-center text-text-muted select-none">
+        <Layers className="h-10 w-10 text-text-muted/30 mb-3" />
+        <h3 className="text-sm font-semibold text-text-primary">No Record Selected</h3>
+        <p className="text-xs text-text-muted mt-1 max-w-sm">
           Select any task, decision, checkpoint, knowledge item, or artifact from the list to inspect its schema and metadata.
         </p>
       </div>
@@ -194,30 +194,30 @@ export function MemoryInspector({
   const getArtifactIcon = (filename = '') => {
     const ext = filename.split('.').pop()?.toLowerCase() || '';
     if (['json', 'yaml', 'yml', 'ts', 'js', 'py', 'sh', 'sql'].includes(ext)) {
-      return <FileCode className="h-6 w-6 text-ice" />;
+      return <FileCode className="h-6 w-6 text-steel-500" />;
     }
     if (['csv', 'tsv', 'xlsx'].includes(ext)) {
       return <FileSpreadsheet className="h-6 w-6 text-emerald-400" />;
     }
     if (['md', 'txt', 'log'].includes(ext)) {
-      return <FileText className="h-6 w-6 text-ice-200" />;
+      return <FileText className="h-6 w-6 text-steel-500" />;
     }
     return <File className="h-6 w-6 text-amber-400" />;
   };
 
   return (
-    <div className="flex flex-col h-full rounded-2xl bg-card/60 backdrop-blur-md border border-ice/20 shadow-[0_8px_32px_rgba(0,0,0,0.3)] overflow-hidden select-none">
+    <div className="flex flex-col h-full rounded-2xl glass-card border border-border-subtle shadow-sm overflow-hidden select-none">
       {/* Header Strip */}
-      <div className="p-4 border-b border-ice/15 bg-card/80 space-y-3">
+      <div className="p-4 border-b border-border-subtle bg-surface/50 dark:bg-white/[0.02] space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
-            <span className="font-mono text-xs font-bold text-ice px-2 py-0.5 rounded-lg bg-ice/10 border border-ice/20">
+            <span className="font-mono text-xs font-bold text-lava-orange px-2 py-0.5 rounded-lg bg-lava-orange/10 border border-lava-orange/20">
               ID: {record.record_id}
             </span>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-secondary text-foreground font-semibold border border-border">
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-text-primary font-semibold border border-border-subtle">
               {record.record_type}
             </span>
-            <span className="text-[10px] font-mono text-muted-foreground">
+            <span className="text-[10px] font-mono text-text-muted">
               v{record.schema_version || '0.1'}
             </span>
           </div>
@@ -238,27 +238,27 @@ export function MemoryInspector({
         </div>
 
         <div>
-          <h2 className="text-base font-bold text-foreground leading-snug">
+          <h2 className="text-base font-bold text-text-primary leading-snug">
             {record.title}
           </h2>
-          <div className="flex items-center space-x-3 text-[11px] text-muted-foreground mt-1">
-            <span>Author: <strong className="text-foreground">{record.author}</strong></span>
+          <div className="flex items-center space-x-3 text-[11px] text-text-muted mt-1">
+            <span>Author: <strong className="text-text-primary">{record.author}</strong></span>
             <span>•</span>
             <span className="flex items-center space-x-1">
-              <Clock className="h-3 w-3 text-muted-foreground/70" />
+              <Clock className="h-3 w-3 text-text-muted" />
               <span>{formatDate(record.created_at)}</span>
             </span>
           </div>
         </div>
 
         {/* Tab Navigation: Overview, JSON, Related */}
-        <div className="flex items-center space-x-1 border-t border-border/40 pt-3">
+        <div className="flex items-center space-x-1 border-t border-border-subtle pt-3">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-3 py-1 rounded-xl text-xs font-semibold transition-colors ${
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === 'overview'
-                ? 'bg-ice/20 text-ice border border-ice/35 font-bold shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-ice-100 dark:bg-white/[0.08] text-text-primary border border-border-subtle font-bold shadow-xs'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             Overview
@@ -266,17 +266,17 @@ export function MemoryInspector({
 
           <button
             onClick={() => setActiveTab('json')}
-            className={`px-3 py-1 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
               activeTab === 'json'
-                ? 'bg-ice/20 text-ice border border-ice/35 font-bold shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-ice-100 dark:bg-white/[0.08] text-text-primary border border-border-subtle font-bold shadow-xs'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <span>JSON</span>
             {validationResult.isChecked && (
               <span
                 className={`h-2 w-2 rounded-full ${
-                  validationResult.isValid ? 'bg-emerald-400' : 'bg-chilli'
+                  validationResult.isValid ? 'bg-emerald-500' : 'bg-lava-red'
                 }`}
               />
             )}
@@ -284,16 +284,16 @@ export function MemoryInspector({
 
           <button
             onClick={() => setActiveTab('related')}
-            className={`px-3 py-1 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
               activeTab === 'related'
-                ? 'bg-ice/20 text-ice border border-ice/35 font-bold shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-ice-100 dark:bg-white/[0.08] text-text-primary border border-border-subtle font-bold shadow-xs'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <Network className="h-3 w-3" />
             <span>Related</span>
             {relatedNodes.length > 0 && (
-              <span className="text-[10px] font-mono px-1.5 rounded-full bg-secondary text-muted-foreground">
+              <span className="text-[10px] font-mono px-1.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-text-muted">
                 {relatedNodes.length}
               </span>
             )}
@@ -318,67 +318,67 @@ export function MemoryInspector({
                     className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-foreground bg-ice/5 hover:bg-ice/10 transition-colors"
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="h-2 w-2 rounded-full bg-ice" />
+                      <span className="h-2 w-2 rounded-full bg-steel-500" />
                       <span>Decision Statement</span>
                     </span>
                     {isDecisionOpen ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
                     ) : (
-                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
                     )}
                   </button>
                   {isDecisionOpen && (
-                    <div className="p-3 text-xs text-foreground/90 leading-relaxed border-t border-border/40 bg-card/40">
+                    <div className="p-3 text-xs text-text-primary leading-relaxed border-t border-border-subtle bg-surface/50 dark:bg-white/[0.02]">
                       {decisionStatement}
                     </div>
                   )}
                 </div>
 
                 {/* 2. Rationale Accordion */}
-                <div className="rounded-xl border border-ice/20 bg-background/50 overflow-hidden shadow-sm">
+                <div className="rounded-xl border border-border-subtle bg-surface overflow-hidden shadow-sm">
                   <button
                     onClick={() => setIsRationaleOpen((prev) => !prev)}
-                    className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-foreground bg-ice/5 hover:bg-ice/10 transition-colors"
+                    className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-text-primary bg-ice-100/50 dark:bg-white/[0.02] hover:bg-ice-100 dark:hover:bg-white/[0.05] transition-colors"
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="h-2 w-2 rounded-full bg-teal-400" />
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
                       <span>Rationale & Trade-Offs</span>
                     </span>
                     {isRationaleOpen ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
                     ) : (
-                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
                     )}
                   </button>
                   {isRationaleOpen && (
-                    <div className="p-3 text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed border-t border-border/40 bg-card/40">
+                    <div className="p-3 text-xs text-text-primary whitespace-pre-wrap leading-relaxed border-t border-border-subtle bg-surface/50 dark:bg-white/[0.02]">
                       {rationaleText}
                     </div>
                   )}
                 </div>
 
                 {/* 3. Alternatives Accordion */}
-                <div className="rounded-xl border border-ice/20 bg-background/50 overflow-hidden shadow-sm">
+                <div className="rounded-xl border border-border-subtle bg-surface overflow-hidden shadow-sm">
                   <button
                     onClick={() => setIsAlternativesOpen((prev) => !prev)}
-                    className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-foreground bg-ice/5 hover:bg-ice/10 transition-colors"
+                    className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-text-primary bg-ice-100/50 dark:bg-white/[0.02] hover:bg-ice-100 dark:hover:bg-white/[0.05] transition-colors"
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="h-2 w-2 rounded-full bg-amber-400" />
+                      <span className="h-2 w-2 rounded-full bg-amber-500" />
                       <span>Alternatives Considered</span>
                     </span>
                     {isAlternativesOpen ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
                     ) : (
-                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
                     )}
                   </button>
                   {isAlternativesOpen && (
-                    <div className="p-3 text-xs border-t border-border/40 bg-card/40">
+                    <div className="p-3 text-xs border-t border-border-subtle bg-surface/50 dark:bg-white/[0.02]">
                       {alternativesList.length === 0 ? (
-                        <p className="text-muted-foreground italic">No alternatives recorded.</p>
+                        <p className="text-text-muted italic">No alternatives recorded.</p>
                       ) : (
-                        <ul className="space-y-1.5 list-disc list-inside text-foreground/90">
+                        <ul className="space-y-1.5 list-disc list-inside text-text-primary">
                           {alternativesList.map((alt, idx) => (
                             <li key={idx} className="leading-relaxed">
                               {alt}
@@ -391,32 +391,32 @@ export function MemoryInspector({
                 </div>
 
                 {/* 4. Affected Tasks Accordion */}
-                <div className="rounded-xl border border-ice/20 bg-background/50 overflow-hidden shadow-sm">
+                <div className="rounded-xl border border-border-subtle bg-surface overflow-hidden shadow-sm">
                   <button
                     onClick={() => setIsTasksOpen((prev) => !prev)}
-                    className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-foreground bg-ice/5 hover:bg-ice/10 transition-colors"
+                    className="w-full flex items-center justify-between p-3 text-left font-semibold text-xs text-text-primary bg-ice-100/50 dark:bg-white/[0.02] hover:bg-ice-100 dark:hover:bg-white/[0.05] transition-colors"
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="h-2 w-2 rounded-full bg-chilli" />
+                      <span className="h-2 w-2 rounded-full bg-lava-red" />
                       <span>Affected Tasks</span>
                     </span>
                     {isTasksOpen ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
                     ) : (
-                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
                     )}
                   </button>
                   {isTasksOpen && (
-                    <div className="p-3 text-xs border-t border-border/40 bg-card/40">
+                    <div className="p-3 text-xs border-t border-border-subtle bg-surface/50 dark:bg-white/[0.02]">
                       {affectedTasksList.length === 0 ? (
-                        <p className="text-muted-foreground italic">No specific tasks linked.</p>
+                        <p className="text-text-muted italic">No specific tasks linked.</p>
                       ) : (
                         <div className="flex flex-wrap gap-2">
                           {affectedTasksList.map((taskId) => (
                             <button
                               key={taskId}
                               onClick={() => onSelectRelatedRecord?.(taskId)}
-                              className="px-2.5 py-1 rounded-lg bg-ice/10 hover:bg-ice/20 border border-ice/30 text-ice font-mono font-semibold text-xs transition-colors shadow-sm"
+                              className="px-2.5 py-1 rounded-lg bg-ice-100 dark:bg-white/[0.08] hover:bg-ice-200 border border-border-subtle text-text-primary font-mono font-semibold text-xs transition-colors shadow-sm"
                             >
                               {taskId}
                             </button>
@@ -430,14 +430,14 @@ export function MemoryInspector({
             ) : isArtifact ? (
               /* If Artifact: Render File Type, View Raw & Download Buttons */
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-background/60 border border-ice/20 flex items-center justify-between">
+                <div className="p-4 rounded-xl bg-surface border border-border-subtle flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2.5 rounded-xl bg-secondary/80 border border-border">
+                    <div className="p-2.5 rounded-xl bg-ice-100 dark:bg-white/[0.08] border border-border-subtle">
                       {getArtifactIcon(record.title)}
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-foreground">{record.title}</h4>
-                      <p className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                      <h4 className="text-xs font-bold text-text-primary">{record.title}</h4>
+                      <p className="text-[11px] text-text-muted font-mono mt-0.5">
                         {record.summary || 'binary package artifact'}
                       </p>
                     </div>
@@ -446,7 +446,7 @@ export function MemoryInspector({
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => setIsRawModalOpen(true)}
-                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-ice/30 hover:border-ice/50 bg-ice/10 hover:bg-ice/20 text-ice text-xs font-semibold transition-all shadow-sm"
+                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-semibold transition-all shadow-sm"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       <span>View raw</span>
@@ -454,7 +454,7 @@ export function MemoryInspector({
 
                     <button
                       onClick={handleDownload}
-                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-ice hover:bg-ice/90 text-background font-bold text-xs shadow-[0_0_15px_rgba(56,189,248,0.35)] transition-all active:scale-[0.98]"
+                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-primary-lava text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
                     >
                       <Download className="h-3.5 w-3.5" />
                       <span>Download</span>
@@ -463,18 +463,18 @@ export function MemoryInspector({
                 </div>
 
                 {/* Artifact Metadata */}
-                <div className="p-4 rounded-xl bg-card/60 border border-border/80 space-y-2 text-xs">
-                  <h5 className="font-semibold text-foreground uppercase tracking-wider text-[10px]">
+                <div className="p-4 rounded-xl bg-surface border border-border-subtle space-y-2 text-xs">
+                  <h5 className="font-semibold text-text-primary uppercase tracking-wider text-[10px]">
                     Artifact Specification
                   </h5>
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                    <div className="p-2 rounded bg-secondary/40">
-                      <span className="text-[10px] text-muted-foreground block font-sans">Filename</span>
-                      <span className="text-foreground">{record.title}</span>
+                    <div className="p-2 rounded bg-ice-100 dark:bg-white/[0.06] border border-border-subtle">
+                      <span className="text-[10px] text-text-muted block font-sans">Filename</span>
+                      <span className="text-text-primary">{record.title}</span>
                     </div>
-                    <div className="p-2 rounded bg-secondary/40">
-                      <span className="text-[10px] text-muted-foreground block font-sans">Identifier</span>
-                      <span className="text-foreground">{record.record_id}</span>
+                    <div className="p-2 rounded bg-ice-100 dark:bg-white/[0.06] border border-border-subtle">
+                      <span className="text-[10px] text-text-muted block font-sans">Identifier</span>
+                      <span className="text-text-primary">{record.record_id}</span>
                     </div>
                   </div>
                 </div>
@@ -483,20 +483,20 @@ export function MemoryInspector({
               /* General Record Content */
               <div className="space-y-4">
                 {record.summary && (
-                  <div className="p-3.5 rounded-xl bg-secondary/40 border border-border/60">
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">
+                  <div className="p-3.5 rounded-xl bg-ice-100/50 dark:bg-white/[0.03] border border-border-subtle">
+                    <span className="text-[10px] uppercase font-bold text-text-muted block mb-1">
                       Summary
                     </span>
-                    <p className="text-xs text-foreground leading-relaxed">{record.summary}</p>
+                    <p className="text-xs text-text-primary leading-relaxed">{record.summary}</p>
                   </div>
                 )}
 
                 {record.content && (
-                  <div className="p-3.5 rounded-xl bg-background/60 border border-ice/15">
-                    <span className="text-[10px] uppercase font-bold text-ice block mb-1">
+                  <div className="p-3.5 rounded-xl bg-surface border border-border-subtle">
+                    <span className="text-[10px] uppercase font-bold text-steel-500 block mb-1">
                       Content Body
                     </span>
-                    <p className="text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                    <p className="text-xs text-text-primary whitespace-pre-wrap leading-relaxed">
                       {record.content}
                     </p>
                   </div>
@@ -506,8 +506,8 @@ export function MemoryInspector({
 
             {/* Tags Strip */}
             {record.tags && record.tags.length > 0 && (
-              <div className="p-3 rounded-xl bg-card/50 border border-border/60 space-y-1.5">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground flex items-center space-x-1">
+              <div className="p-3 rounded-xl bg-surface border border-border-subtle space-y-1.5">
+                <span className="text-[10px] uppercase font-bold text-text-muted flex items-center space-x-1">
                   <Tag className="h-3 w-3" />
                   <span>Tags</span>
                 </span>
@@ -515,7 +515,7 @@ export function MemoryInspector({
                   {record.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-secondary text-foreground border border-border"
+                      className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-ice-100 dark:bg-white/[0.08] text-text-primary border border-border-subtle"
                     >
                       #{tag}
                     </span>
@@ -532,20 +532,20 @@ export function MemoryInspector({
         {activeTab === 'json' && (
           <div className="space-y-3 animate-page-enter">
             {/* Schema Validation Status Badge */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-background/70 border border-border">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border-subtle">
               <div className="flex items-center space-x-2">
                 {isValidating ? (
-                  <span className="inline-flex items-center space-x-1.5 text-xs text-muted-foreground">
-                    <span className="h-3 w-3 border-2 border-ice border-t-transparent rounded-full animate-spin" />
+                  <span className="inline-flex items-center space-x-1.5 text-xs text-text-muted">
+                    <span className="h-3 w-3 border-2 border-lava-orange border-t-transparent rounded-full animate-spin" />
                     <span>Validating against BMS schema...</span>
                   </span>
                 ) : validationResult.isValid ? (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-ice/15 text-ice border border-ice/35 shadow-[0_0_12px_rgba(56,189,248,0.25)]">
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     <span>Schema Valid (BMS v0.1)</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-chilli/15 text-chilli border border-chilli/35 shadow-[0_0_12px_rgba(239,68,68,0.25)]">
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-lava-red/10 text-lava-red border border-lava-red/20">
                     <AlertCircle className="h-3.5 w-3.5" />
                     <span>Schema Invalid ({validationResult.errors.length} errors)</span>
                   </span>
@@ -555,16 +555,16 @@ export function MemoryInspector({
               {/* Copy JSON Button */}
               <button
                 onClick={handleCopyJSON}
-                className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-secondary/80 hover:bg-secondary border border-border text-xs font-medium text-foreground transition-all shadow-sm"
+                className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg btn-secondary-ice text-xs font-medium transition-all shadow-xs"
               >
                 {copied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-400" />
-                    <span className="text-emerald-400 font-bold">Copied!</span>
+                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    <span className="text-emerald-500 font-bold">Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Copy className="h-3.5 w-3.5 text-text-muted" />
                     <span>Copy JSON</span>
                   </>
                 )}
@@ -573,7 +573,7 @@ export function MemoryInspector({
 
             {/* Validation Error Callout if Invalid */}
             {!validationResult.isValid && validationResult.errors.length > 0 && (
-              <div className="p-3 rounded-xl bg-chilli/10 border border-chilli/30 text-chilli text-xs space-y-1">
+              <div className="p-3 rounded-xl bg-lava-red/10 border border-lava-red/20 text-lava-red text-xs space-y-1">
                 <span className="font-bold block">Validation Errors:</span>
                 <ul className="list-disc list-inside space-y-0.5">
                   {validationResult.errors.map((err, idx) => (
@@ -584,8 +584,8 @@ export function MemoryInspector({
             )}
 
             {/* Mono Code View */}
-            <div className="relative rounded-xl border border-ice/20 bg-background/90 p-3.5 overflow-x-auto shadow-inner">
-              <pre className="font-mono text-[11px] text-ice-200 leading-relaxed">
+            <div className="relative rounded-xl border border-border-subtle bg-ice-100/50 dark:bg-bg-elevated p-3.5 overflow-x-auto shadow-xs">
+              <pre className="font-mono text-[11px] text-text-primary leading-relaxed">
                 {JSON.stringify(record, null, 2)}
               </pre>
             </div>
@@ -597,32 +597,32 @@ export function MemoryInspector({
         {/* ============================================================ */}
         {activeTab === 'related' && (
           <div className="space-y-4 animate-page-enter">
-            <div className="p-3.5 rounded-xl bg-secondary/40 border border-border/60">
-              <div className="flex items-center space-x-2 text-xs font-semibold text-foreground">
-                <Network className="h-4 w-4 text-ice" />
+            <div className="p-3.5 rounded-xl bg-ice-100/50 dark:bg-white/[0.02] border border-border-subtle">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-text-primary">
+                <Network className="h-4 w-4 text-lava-orange" />
                 <span>Knowledge Graph Topology Links</span>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-1">
+              <p className="text-[11px] text-text-muted mt-1">
                 Connected memory entities, parent decisions, and implementing coordination tasks in FalkorDB.
               </p>
             </div>
 
             {isLoadingRelated ? (
-              <div className="p-8 text-center text-xs text-muted-foreground">
-                <span className="inline-block h-4 w-4 border-2 border-ice border-t-transparent rounded-full animate-spin mb-2" />
+              <div className="p-8 text-center text-xs text-text-muted">
+                <span className="inline-block h-4 w-4 border-2 border-lava-orange border-t-transparent rounded-full animate-spin mb-2" />
                 <p>Traversing graph relationships...</p>
               </div>
             ) : relatedNodes.length === 0 ? (
-              <div className="p-8 text-center text-xs text-muted-foreground bg-card/40 rounded-xl border border-border">
-                <Share2 className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-                <p className="font-semibold text-foreground">No direct graph connections</p>
+              <div className="p-8 text-center text-xs text-text-muted bg-surface rounded-xl border border-border-subtle">
+                <Share2 className="h-8 w-8 mx-auto text-text-muted/40 mb-2" />
+                <p className="font-semibold text-text-primary">No direct graph connections</p>
                 <p className="text-[11px] mt-0.5">
                   Run the FalkorDB re-rank or add task dependencies to link this node.
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                <span className="text-[10px] uppercase font-bold text-text-muted block">
                   Connected Entities ({relatedNodes.length})
                 </span>
                 <div className="grid grid-cols-1 gap-2">
@@ -630,23 +630,23 @@ export function MemoryInspector({
                     <div
                       key={node.id}
                       onClick={() => onSelectRelatedRecord?.(node.id)}
-                      className="p-3 rounded-xl bg-card/60 hover:bg-card border border-ice/20 hover:border-ice/40 flex items-center justify-between cursor-pointer transition-all shadow-sm"
+                      className="p-3 rounded-xl bg-surface hover:bg-ice-100/50 dark:hover:bg-white/[0.04] border border-border-subtle hover:border-steel-500/50 flex items-center justify-between cursor-pointer transition-all shadow-xs"
                     >
                       <div className="flex items-center space-x-2.5">
-                        <span className="p-1.5 rounded-lg bg-ice/10 text-ice border border-ice/20 font-mono text-[10px]">
+                        <span className="p-1.5 rounded-lg bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border border-border-subtle font-mono text-[10px]">
                           {node.type}
                         </span>
                         <div>
-                          <span className="text-xs font-bold text-foreground block">
+                          <span className="text-xs font-bold text-text-primary block">
                             {node.label}
                           </span>
-                          <span className="text-[10px] font-mono text-muted-foreground">
+                          <span className="text-[10px] font-mono text-text-muted">
                             {node.id}
                           </span>
                         </div>
                       </div>
 
-                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                      <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
                     </div>
                   ))}
                 </div>

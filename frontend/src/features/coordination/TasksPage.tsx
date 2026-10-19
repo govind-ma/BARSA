@@ -6,7 +6,6 @@ import { Modal } from '@/components/ui/Modal';
 import { Input, Textarea } from '@/components/ui/Input';
 import { TaskCard } from './TaskCard';
 import { TaskDetailDrawer } from './TaskDetailDrawer';
-import { BarsaLogo } from '@/components/ui/BarsaLogo';
 import type { CoordinationTask, AgentProfile, TaskStatus, GraphResumeResponse } from '@/types';
 import {
   CheckSquare,
@@ -19,6 +18,7 @@ import {
   RefreshCw,
   X,
   Check,
+  Sparkles,
 } from 'lucide-react';
 
 // 4 Canonical Kanban Columns per specification
@@ -304,14 +304,14 @@ export function TasksPage() {
         <div>
           <div className="flex items-center space-x-2.5">
             <h1 className="font-heading text-xl font-bold tracking-tight text-text-primary">
-              Coordination Tasks
+              Tasks
             </h1>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-ice-100 dark:bg-white/[0.08] text-steel-700 dark:text-text-primary border border-border-subtle font-mono font-medium">
               {tasks.length} Total
             </span>
           </div>
-          <p className="text-xs text-text-secondary mt-0.5">
-            Multi-agent task queue with FalkorDB Cypher dependency re-ranking.
+          <p className="text-xs text-text-muted mt-0.5">
+            Track what needs to be done and who's working on it.
           </p>
         </div>
 
@@ -336,33 +336,45 @@ export function TasksPage() {
             </select>
           </div>
 
-          {/* New Task Button */}
-          <button
-            onClick={() => setIsCreateOpen(true)}
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium"
-          >
-            <Plus className="h-3.5 w-3.5 text-steel-500" />
-            <span>New Task</span>
-          </button>
-
-          {/* Primary Magma "FalkorDB Recommend Next" Button */}
+          {/* Secondary Action: Recommend Next */}
           <button
             onClick={handleRecommendNext}
             disabled={isRecommending}
-            className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-lg btn-magma text-xs font-semibold shadow-md active:scale-[0.97] disabled:opacity-50"
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium disabled:opacity-50"
+            title="Use FalkorDB graph reasoning to find the next ready task"
           >
             {isRecommending ? (
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-steel-500" />
             ) : (
-              <BarsaLogo size={14} />
+              <Sparkles className="h-3.5 w-3.5 text-lava-orange" />
             )}
-            <span>FalkorDB Recommend Next</span>
+            <span>Recommend Next</span>
+          </button>
+
+          {/* Primary Action: New Task */}
+          <button
+            onClick={() => setIsCreateOpen(true)}
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg btn-primary-lava text-xs font-semibold shadow-xs"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>New Task</span>
           </button>
         </div>
       </div>
 
-      {/* 4 Kanban Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 flex-1 min-h-[550px]">
+      {/* 4 Kanban Columns or Empty State */}
+      {!isLoading && tasks.length === 0 ? (
+        <div className="glass-card p-12 rounded-2xl flex-1 flex flex-col items-center justify-center text-center">
+          <EmptyState
+            icon={<CheckSquare className="h-10 w-10 text-text-muted" />}
+            title="No tasks yet"
+            description="Create a task or let a connected agent add work to this project."
+            actionLabel="Create Task"
+            onAction={() => setIsCreateOpen(true)}
+          />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 flex-1 min-h-[550px]">
         {KANBAN_COLUMNS.map((col) => {
           const columnTasks = filteredTasks.filter((t) =>
             col.statuses.includes(t.status)
@@ -434,6 +446,7 @@ export function TasksPage() {
           );
         })}
       </div>
+      )}
 
       {/* Right Drawer: Task Details & Chips */}
       <TaskDetailDrawer

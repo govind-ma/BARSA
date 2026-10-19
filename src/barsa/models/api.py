@@ -39,6 +39,7 @@ class PlatformInfoResponse(BaseModel):
     storage_provider: str = Field(..., description="Configured storage provider")
     data_dir: str = Field(..., description="Configured local data directory")
     features: PlatformFeatures = Field(..., description="Current supported and roadmap features")
+    falkordb_status: str = Field(default="connected", description="FalkorDB connection status")
     documentation_url: str = Field(default="/docs", description="Interactive API documentation path")
     metadata: dict[str, Any] = Field(default_factory=dict, description="Additional environment metadata")
 

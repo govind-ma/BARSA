@@ -574,9 +574,9 @@ export function LiveKnowledgeGraph({
       )}
 
       {/* ======================================================== */}
-      {/* TOP-LEFT OVERLAY: Single-row Horizontal Scrollable Chips */}
+      {/* TOP-LEFT OVERLAY: Single-row Horizontal Filter Chips    */}
       {/* ======================================================== */}
-      <div className="absolute top-3 left-3 z-graph-overlay max-w-[50%] pointer-events-none">
+      <div className="absolute top-3 left-3 z-graph-overlay max-w-[calc(100%-180px)] pointer-events-none">
         <div className="flex items-center space-x-1 p-1 rounded-lg solid-floating-surface pointer-events-auto overflow-x-auto whitespace-nowrap no-scrollbar">
           {FILTER_PILLS.map((chip) => {
             const isActive = activeFilter === chip.id;
@@ -788,9 +788,9 @@ export function LiveKnowledgeGraph({
 
         <svg className="w-full h-full">
           <defs>
-            {/* Dotted Grid Pattern for Ice & Obsidian */}
-            <pattern id="faintGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="1" fill="currentColor" className="text-steel-500/25 dark:text-steel-500/15" />
+            {/* Dotted Grid Pattern for Ice & Obsidian - Soft & Unobtrusive */}
+            <pattern id="faintGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="0.75" fill="currentColor" className="text-steel-500/10 dark:text-steel-500/5" />
             </pattern>
 
             {/* Magma Gradient for Recommended Node */}
@@ -824,15 +824,6 @@ export function LiveKnowledgeGraph({
           {/* Graph Transform Group */}
           {hasNodes && (
             <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-              {/* Cluster Background Hulls */}
-              <g className="pointer-events-none opacity-20 dark:opacity-10">
-                <circle cx={CLUSTER_CENTERS.TASK.x} cy={CLUSTER_CENTERS.TASK.y} r={110} fill="#6F8FA8" />
-                <circle cx={CLUSTER_CENTERS.DECISION.x} cy={CLUSTER_CENTERS.DECISION.y} r={80} fill="#FFC93C" />
-                <circle cx={CLUSTER_CENTERS.CAPABILITY.x} cy={CLUSTER_CENTERS.CAPABILITY.y} r={75} fill="#B3CDE0" />
-                <circle cx={CLUSTER_CENTERS.AGENT.x} cy={CLUSTER_CENTERS.AGENT.y} r={80} fill="#FF7A1A" />
-                <circle cx={CLUSTER_CENTERS.ISSUE.x} cy={CLUSTER_CENTERS.ISSUE.y} r={75} fill="#E5301F" />
-              </g>
-
               {/* Edges (1px width, 25% default opacity, 90% on hover, 8% otherwise) */}
               {visibleEdges.map((edge, idx) => {
                 const src = nodePositions.get(edge.source);

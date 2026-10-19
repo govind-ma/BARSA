@@ -290,11 +290,11 @@ export function VersionControlPage() {
         </div>
       ) : activeTab === 'dag' ? (
         /* Vertical Commit DAG Area */
-        <div className="p-4 rounded-2xl bg-card/60 backdrop-blur-md border border-ice/15 shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
+        <div className="p-4 rounded-2xl glass-card border border-border-subtle shadow-sm">
           {commits.length === 0 ? (
-            <div className="py-16 text-center text-xs text-muted-foreground">
-              <GitCommit className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" />
-              <p className="font-semibold text-foreground">No commits recorded</p>
+            <div className="py-16 text-center text-xs text-text-muted">
+              <GitCommit className="h-10 w-10 mx-auto text-text-muted/40 mb-2" />
+              <p className="font-semibold text-text-primary">No commits recorded</p>
               <p className="text-[11px] mt-1">
                 Save or commit memory records from an AI agent to establish the DAG.
               </p>
@@ -313,15 +313,15 @@ export function VersionControlPage() {
         /* Conflicts Tab View */
         <div className="space-y-3">
           {conflicts.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground bg-card/50 rounded-2xl border border-border">
-              <ShieldCheck className="h-10 w-10 mx-auto text-emerald-400 mb-2" />
-              <h4 className="text-sm font-semibold text-foreground">Clean State</h4>
+            <div className="p-12 text-center text-text-muted glass-card rounded-2xl border border-border-subtle">
+              <ShieldCheck className="h-10 w-10 mx-auto text-emerald-500 mb-2" />
+              <h4 className="text-sm font-semibold text-text-primary">Clean State</h4>
               <p className="text-xs mt-1">No three-way merge conflicts detected across active branches.</p>
             </div>
           ) : (
-            <div className="p-6 rounded-2xl bg-card/60 backdrop-blur-md border border-chilli/30 text-center space-y-1">
-              <h4 className="text-sm font-semibold text-chilli">Active Merge Conflicts</h4>
-              <p className="text-xs text-muted-foreground">
+            <div className="p-6 rounded-2xl glass-card border border-lava-red/30 text-center space-y-1">
+              <h4 className="text-sm font-semibold text-lava-red">Active Merge Conflicts</h4>
+              <p className="text-xs text-text-muted">
                 {conflicts.length} conflict{conflicts.length > 1 ? 's' : ''} requiring adjudication in the Conflicts Inspector above.
               </p>
             </div>
@@ -331,21 +331,21 @@ export function VersionControlPage() {
         /* Reviews Tab View (satisfies test 10) */
         <div className="space-y-3">
           {reviews.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground bg-card/50 rounded-2xl border border-border">
-              <MessageSquare className="h-10 w-10 mx-auto text-muted-foreground/50 mb-2" />
-              <h4 className="text-sm font-semibold text-foreground">No active proposals</h4>
+            <div className="p-12 text-center text-text-muted glass-card rounded-2xl border border-border-subtle">
+              <MessageSquare className="h-10 w-10 mx-auto text-text-muted/50 mb-2" />
+              <h4 className="text-sm font-semibold text-text-primary">No active proposals</h4>
               <p className="text-xs mt-1">Click "Propose merge" to initiate an architectural review.</p>
             </div>
           ) : (
             reviews.map((r) => (
               <div
                 key={r.review_id}
-                className="p-4 rounded-xl bg-card/70 border border-ice/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                className="p-4 rounded-xl bg-surface border border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div>
-                  <h4 className="font-bold text-foreground text-sm">{r.title}</h4>
-                  <p className="text-muted-foreground mt-0.5">{r.description || 'No description'}</p>
-                  <div className="flex items-center space-x-2 font-mono text-[11px] text-ice mt-2">
+                  <h4 className="font-bold text-text-primary text-sm">{r.title}</h4>
+                  <p className="text-text-muted mt-0.5">{r.description || 'No description'}</p>
+                  <div className="flex items-center space-x-2 font-mono text-[11px] text-lava-orange mt-2">
                     <span>{r.source_branch} → {r.target_branch}</span>
                   </div>
                 </div>

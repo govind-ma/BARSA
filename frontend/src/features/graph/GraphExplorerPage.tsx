@@ -4,7 +4,6 @@ import { api } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Input } from '@/components/ui/Input';
 import { EmptyState, LoadingSpinner } from '@/components/ui/EmptyState';
 import type { GraphNode, GraphOverview, SubgraphResponse, GraphResumeResponse } from '@/types';
 import {
@@ -259,13 +258,13 @@ export function GraphExplorerPage() {
                   setSelectedAgentId(e.target.value);
                   loadResumeData(e.target.value);
                 }}
-                className="h-8 rounded-md border border-input bg-card px-2.5 text-xs text-foreground focus:outline-none"
+                className="h-8 rounded-lg border border-border-subtle bg-surface dark:bg-bg-elevated px-2.5 text-xs text-text-primary focus:outline-none"
                 aria-label="Filter continuation by agent"
               >
                 <option value="">Any / Unassigned Agent</option>
-                <option value="agent-backend-claude">Claude (Backend / Auth / DB)</option>
-                <option value="agent-frontend-gpt4o">GPT-4o (Frontend / React / UI)</option>
-                <option value="agent-tester">QA / Test Engineer</option>
+                <option value="claude-architect">Claude (System Architect)</option>
+                <option value="chatgpt-engineer">ChatGPT (Core Engineer)</option>
+                <option value="kimi-auditor">Kimi (Security Auditor)</option>
               </select>
 
               <Button
@@ -476,23 +475,24 @@ export function GraphExplorerPage() {
       </Card>
 
       {/* Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-card p-3 rounded-lg border border-border">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between glass-card p-3.5 rounded-2xl border border-border-subtle shadow-sm">
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+          <input
+            type="text"
             placeholder="Search graph entities..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-9 text-xs"
+            className="w-full pl-9 h-9 rounded-xl border border-border-subtle bg-surface dark:bg-bg-elevated text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-steel-500/50"
           />
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Filter className="h-4 w-4 text-text-muted" />
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="h-9 rounded-md border border-input bg-card px-3 text-xs focus:outline-none"
+            className="h-9 rounded-xl border border-border-subtle bg-surface dark:bg-bg-elevated px-3 text-xs text-text-primary focus:outline-none"
           >
             <option value="all">All Entity Types</option>
             <option value="Project">Project</option>

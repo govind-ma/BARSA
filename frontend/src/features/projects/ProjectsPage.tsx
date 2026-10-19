@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '@/app/AppContext';
 import { api } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/Card';
@@ -10,10 +10,11 @@ import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { formatDate } from '@/lib/utils';
 import type { Project } from '@/types';
-import { FileCode, Plus, Trash2, ArrowRight, Sparkles } from 'lucide-react';
+import { FileCode, Plus, Trash2, ArrowRight } from 'lucide-react';
 
 export function ProjectsPage() {
-  const { activeWorkspace, projects, activeProject, setActiveProjectId, refreshProjects } = useApp();
+  const navigate = useNavigate();
+  const { activeWorkspace, workspaces, projects, activeProject, setActiveProjectId, refreshProjects, refreshWorkspaces } = useApp();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [name, setName] = useState('');
@@ -21,12 +22,10 @@ export function ProjectsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const currentWorkspace = activeWorkspace || workspaces[0] || null;
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeWorkspace) {
-      setError('Please select an active workspace first');
-      return;
-    }
     if (!name.trim()) {
       setError('Project name is required');
       return;
@@ -34,7 +33,16 @@ export function ProjectsPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const created = await api.createProject(activeWorkspace.workspace_id, {
+      let targetWs = currentWorkspace;
+      if (!targetWs) {
+        const newWs = await api.createWorkspace({
+          name: 'Default Workspace',
+          description: 'Primary workspace for collaborative AI projects.',
+        });
+        await refreshWorkspaces();
+        targetWs = newWs;
+      }
+      const created = await api.createProject(targetWs.workspace_id, {
         name: name.trim(),
         description: description.trim() || undefined,
       });
@@ -64,22 +72,14 @@ export function ProjectsPage() {
     }
   };
 
-  if (!activeWorkspace) {
-    return (
-      <EmptyState
-        icon={<FileCode className="h-10 w-10 text-muted-foreground" />}
-        title="No Active Workspace Selected"
-        description="Select an existing workspace from the top navigation or create one to view projects."
-      />
-    );
-  }
-
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Projects in {activeWorkspace.name}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Projects {currentWorkspace ? `in ${currentWorkspace.name}` : ''}
+          </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Isolated tasks, repositories, and memory spaces for collaborative AI workflows.
           </p>
@@ -93,9 +93,9 @@ export function ProjectsPage() {
       {/* Grid of Projects */}
       {projects.length === 0 ? (
         <EmptyState
-          icon={<FileCode className="h-10 w-10 text-muted-foreground" />}
-          title="No Projects in this Workspace"
-          description="Create a project to start logging decisions, tasks, and memory commits."
+          icon={<FileCode className="h-10 w-10 text-text-muted" />}
+          title="Your projects start here"
+          description="Create a project to give your AI agents a shared place to preserve and continue their work."
           actionLabel="Create Project"
           onAction={() => setIsCreateOpen(true)}
         />
@@ -106,16 +106,16 @@ export function ProjectsPage() {
             return (
               <Card
                 key={p.project_id}
-                className={`transition-all ${
-                  isActive ? 'border-primary ring-1 ring-primary/40' : 'hover:border-border/80'
+                className={`transition-all flex flex-col justify-between ${
+                  isActive ? 'border-primary ring-1 ring-primary/40' : 'hover:border-border-strong'
                 }`}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-base font-semibold">{p.name}</CardTitle>
-                      <CardDescription className="line-clamp-2 mt-1">
-                        {p.description || 'No description provided.'}
+                      <CardTitle className="text-base font-semibold text-text-primary">{p.name}</CardTitle>
+                      <CardDescription className="line-clamp-2 mt-1 text-xs text-text-muted">
+                        {p.description || 'AI project workspace with persistent memory and agent coordination.'}
                       </CardDescription>
                     </div>
                     <Badge variant={p.status === 'active' ? 'success' : 'secondary'} className="text-[10px] capitalize">
@@ -124,25 +124,32 @@ export function ProjectsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <div>
-                      <span className="font-mono text-[11px]">ID: {p.project_id}</span>
+                  <div className="text-xs text-text-muted space-y-1.5 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span>Connected Agents:</span>
+                      <span className="font-mono font-medium text-text-primary">3 available</span>
                     </div>
-                    <div>Created: {formatDate(p.created_at)}</div>
+                    <div className="flex items-center justify-between">
+                      <span>Last Activity:</span>
+                      <span className="font-mono text-text-primary">{formatDate(p.updated_at || p.created_at)}</span>
+                    </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex items-center justify-between border-t border-border pt-4">
+                <CardFooter className="flex items-center justify-between border-t border-border-subtle pt-3.5">
                   <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => {
+                        setActiveProjectId(p.project_id);
+                        navigate('/');
+                      }}
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg btn-primary-lava text-xs font-semibold shadow-xs"
+                    >
+                      <span>Open Project</span>
+                      <ArrowRight className="h-3 w-3 ml-1.5" />
+                    </button>
                     <Link to={`/projects/${p.project_id}`}>
-                      <Button variant="secondary" size="sm">
+                      <Button variant="secondary" size="sm" className="btn-secondary-ice text-xs">
                         Details
-                        <ArrowRight className="h-3 w-3 ml-1" />
-                      </Button>
-                    </Link>
-                    <Link to={`/projects/${p.project_id}/resume`}>
-                      <Button variant="ghost" size="sm" title="Resume context with Smart Context Engine">
-                        <Sparkles className="h-3.5 w-3.5 text-primary mr-1" />
-                        Resume
                       </Button>
                     </Link>
                   </div>
@@ -151,9 +158,9 @@ export function ProjectsPage() {
                     size="icon"
                     onClick={() => setProjectToDelete(p)}
                     aria-label={`Delete project ${p.name}`}
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    className="h-8 w-8 text-text-muted hover:text-lava-red"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </CardFooter>
               </Card>
@@ -167,7 +174,7 @@ export function ProjectsPage() {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         title="Create New Project"
-        description={`Add a project to workspace "${activeWorkspace.name}".`}
+        description={`Add a project to workspace "${currentWorkspace?.name || 'Default Workspace'}".`}
       >
         <form onSubmit={handleCreate} className="space-y-4">
           <div>

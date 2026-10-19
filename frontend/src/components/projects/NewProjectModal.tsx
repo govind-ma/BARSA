@@ -13,7 +13,7 @@ export interface NewProjectModalProps {
 }
 
 export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalProps) {
-  const { activeWorkspace, workspaces, refreshProjects, setActiveProjectId } = useApp();
+  const { activeWorkspace, workspaces, refreshProjects, refreshWorkspaces, setActiveProjectId } = useApp();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [goals, setGoals] = useState('');
@@ -28,12 +28,19 @@ export function NewProjectModal({ isOpen, onClose, onSuccess }: NewProjectModalP
       return;
     }
 
-    const targetWsId = activeWorkspace?.workspace_id || (workspaces[0]?.workspace_id) || 'ws-atlas';
-
     setIsSubmitting(true);
     setError(null);
 
     try {
+      let targetWsId = activeWorkspace?.workspace_id || workspaces[0]?.workspace_id;
+      if (!targetWsId) {
+        const newWs = await api.createWorkspace({
+          name: 'Default Workspace',
+          description: 'Primary workspace for collaborative AI projects.',
+        });
+        await refreshWorkspaces();
+        targetWsId = newWs.workspace_id;
+      }
       const goalsList = goals
         .split('\n')
         .map((g) => g.trim())

@@ -33,6 +33,61 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
         settings.storage_provider.value,
     )
 
+    # Ensure standard default agents are seeded if missing
+    try:
+        from barsa.coordination.engine import CoordinatorEngine
+        from barsa.coordination.models import AgentRegistration
+        from barsa.storage.factory import get_storage_provider
+        from barsa.storage.sqlite import SQLiteStorageProvider
+
+        storage = get_storage_provider(settings)
+        if isinstance(storage, SQLiteStorageProvider):
+            engine = CoordinatorEngine(storage=storage)
+            existing = {a.agent_id for a in engine.list_agents()}
+
+            defaults = [
+                AgentRegistration(
+                    agent_id="claude-architect",
+                    display_name="Claude System Architect",
+                    provider="anthropic",
+                    model="claude-3-5-sonnet",
+                    claimed_capabilities=["architecture-design", "adr-authoring", "schema-validation"],
+                    allowed_projects=["*"],
+                ),
+                AgentRegistration(
+                    agent_id="chatgpt-engineer",
+                    display_name="ChatGPT Core Engineer",
+                    provider="openai",
+                    model="gpt-4o",
+                    claimed_capabilities=["fastapi-backend", "unit-testing", "refactoring"],
+                    allowed_projects=["*"],
+                ),
+                AgentRegistration(
+                    agent_id="kimi-auditor",
+                    display_name="Kimi Security Auditor",
+                    provider="moonshot",
+                    model="kimi-k1.5",
+                    claimed_capabilities=["security-audit", "cryptography", "adversarial-test"],
+                    allowed_projects=["*"],
+                ),
+            ]
+            for ag in defaults:
+                if ag.agent_id not in existing:
+                    engine.register_agent(ag)
+
+            from barsa.bms.records import Workspace
+            workspaces = storage.list_workspaces()
+            if not workspaces:
+                default_ws = Workspace(
+                    id="default",
+                    name="Default Workspace",
+                    owner_id="admin",
+                    description="Default workspace for collaborative AI projects.",
+                )
+                storage.create_workspace(default_ws)
+    except Exception as ex:
+        logger.warning("Could not auto-seed default agents: %s", ex)
+
     yield
 
     logger.info("Shutting down %s", settings.app_name)

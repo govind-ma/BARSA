@@ -238,9 +238,10 @@ class ApiClient {
     return normalizeWorkspace(res);
   }
 
-  async deleteWorkspace(id: string): Promise<void> {
+  async deleteWorkspace(id: string, cascade = true): Promise<void> {
     if (!id || id === 'undefined') return;
-    return this.request(`/api/v1/workspaces/${id}`, { method: 'DELETE' });
+    const query = cascade ? '?cascade=true' : '';
+    return this.request(`/api/v1/workspaces/${id}${query}`, { method: 'DELETE' });
   }
 
   // Projects
@@ -454,20 +455,20 @@ class ApiClient {
     }
   }
 
-  async getSubgraph(projectId: string, centerId?: string, radius?: number): Promise<SubgraphResponse> {
+  async getSubgraph(projectId: string, _centerId?: string, _radius?: number): Promise<SubgraphResponse> {
     try {
-      const overview = await this.getGraphOverview(projectId);
-      return {
-        nodes: (overview as any).nodes || [],
-        edges: (overview as any).edges || [],
-      } as any;
+      const res = await this.request<any>(`/api/v1/projects/${projectId}/graph/subgraph`);
+      if (res && Array.isArray(res.nodes)) {
+        return res as SubgraphResponse;
+      }
     } catch {
-      const params = new URLSearchParams();
-      if (centerId) params.append('center_id', centerId);
-      if (radius) params.append('radius', radius.toString());
-      const query = params.toString() ? `?${params.toString()}` : '';
-      return this.request(`/api/v1/graph/${projectId}/subgraph${query}`);
+      // Fallback to overview if subgraph fails
     }
+    const overview = await this.getGraphOverview(projectId);
+    return {
+      nodes: (overview as any).nodes || [],
+      edges: (overview as any).edges || [],
+    } as any;
   }
 
   async getGraphStatus(): Promise<{ status: string; is_connected: boolean }> {

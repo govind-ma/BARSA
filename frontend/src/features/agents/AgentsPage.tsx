@@ -65,14 +65,14 @@ export function AgentsPage() {
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Agent Registry & Coordination</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Registered AI agents, claimed vs verified capabilities, and task workloads.
+          <h1 className="text-2xl font-heading font-bold tracking-tight text-text-primary">Agents</h1>
+          <p className="text-sm text-text-muted mt-0.5">
+            AI agents connected to your workspace, their capabilities, and assigned tasks.
           </p>
         </div>
-        <Button onClick={() => setIsRegisterOpen(true)} size="sm">
+        <Button onClick={() => setIsRegisterOpen(true)} size="sm" className="btn-primary-lava text-xs font-semibold shadow-xs">
           <Plus className="h-4 w-4 mr-1.5" />
           Register Agent
         </Button>
@@ -82,9 +82,9 @@ export function AgentsPage() {
         <LoadingSpinner text="Retrieving agent registry..." />
       ) : agents.length === 0 ? (
         <EmptyState
-          icon={<Bot className="h-10 w-10 text-muted-foreground" />}
-          title="No Agents Registered"
-          description="Register your Claude, GPT-4, or local AI copilot to start assigning collaborative tasks."
+          icon={<Bot className="h-10 w-10 text-text-muted" />}
+          title="No agents connected yet"
+          description="Connect a compatible AI client or register an agent profile to share project memory."
           actionLabel="Register Agent"
           onAction={() => setIsRegisterOpen(true)}
         />

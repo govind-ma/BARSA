@@ -6,11 +6,9 @@ import { CommandPalette } from './CommandPalette';
 import { BarsaLogo } from '@/components/ui/BarsaLogo';
 import {
   Command,
-  Bell,
   Menu,
   Sun,
   Moon,
-  Palette,
 } from 'lucide-react';
 
 export interface TopBarProps {
@@ -159,25 +157,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             ) : (
               <Moon className="h-4 w-4 text-steel-700" />
             )}
-          </button>
-
-          {/* Style Guide Link */}
-          <Link
-            to="/styleguide"
-            className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-ice-100 dark:hover:bg-white/[0.08] transition-colors focus:outline-none focus:ring-2 focus:ring-steel-500 dark:focus:ring-lava-yellow"
-            title="Design System Style Guide"
-            aria-label="Design System Style Guide"
-          >
-            <Palette className="h-4 w-4 text-steel-500" />
-          </Link>
-
-          {/* Notification Bell */}
-          <button
-            className="relative p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-ice-100 dark:hover:bg-white/[0.08] transition-colors focus:outline-none focus:ring-2 focus:ring-steel-500"
-            title="Notifications"
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-lava-orange shadow-[0_0_6px_rgba(255,122,26,0.8)]" />
           </button>
 
           {/* User Avatar */}

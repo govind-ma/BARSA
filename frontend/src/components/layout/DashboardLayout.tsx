@@ -1,37 +1,42 @@
+import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { IconRail } from './IconRail';
+import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { ProjectOnboarding } from '@/components/projects/ProjectOnboarding';
-import { useApp } from '@/app/AppContext';
 
 export function DashboardLayout() {
-  const { activeProject, projects } = useApp();
   const location = useLocation();
-
-  // If no project is selected and user is on home screen, show clean onboarding state
-  const isNoProjectSelected = !activeProject && (location.pathname === '/' || location.pathname.startsWith('/projects'));
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-bg-base bg-ice-facets text-text-primary antialiased selection:bg-lava-orange/20 selection:text-lava-orange font-sans relative">
-      {/* Desktop 64px Icon Rail (Expands to 220px on hover) & Mobile Bottom Tab */}
-      <IconRail />
+    <div className="flex min-h-screen bg-bg-base text-text-primary antialiased font-sans relative">
+      {/* Desktop Persistent Sidebar (256px wide, sticky, calm dark surface) */}
+      <Sidebar className="hidden md:flex shrink-0 sticky top-0 h-screen" />
 
-      {/* Main Content Area */}
-      <div className="flex flex-col flex-1 w-full md:pl-16 min-h-screen transition-all duration-300">
-        {/* Top 56px Frosted Glass Bar */}
-        <TopBar />
+      {/* Main Workspace Area */}
+      <div className="flex flex-col flex-1 min-w-0 min-h-screen">
+        {/* Simplified Header */}
+        <TopBar onMenuClick={() => setIsMobileMenuOpen(true)} />
 
-        {/* Page View with upward slide transition */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8">
-          {isNoProjectSelected && projects.length > 0 ? (
-            <ProjectOnboarding />
-          ) : (
-            <div key={location.pathname} className="animate-page-enter">
-              <Outlet />
-            </div>
-          )}
+        {/* Clean Page View */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-16">
+          <div key={location.pathname} className="animate-page-enter">
+            <Outlet />
+          </div>
         </main>
       </div>
+
+      {/* Mobile Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="relative z-10 w-64 bg-surface h-full shadow-2xl">
+            <Sidebar onItemClick={() => setIsMobileMenuOpen(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

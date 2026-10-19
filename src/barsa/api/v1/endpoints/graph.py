@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, Query, status
 
 from barsa.api.deps import (
+    get_graph,
     get_graph_retrieval,
     get_projection_worker,
     get_storage,
@@ -76,6 +77,57 @@ def get_project_overview(
     worker.process_pending_events(project_id=project_id)
     proj_meta = worker.get_projection_status(project_id)
     return retrieval.get_project_overview(project_id, limit=limit, projection_metadata=proj_meta)
+
+
+@router.get(
+    "/subgraph",
+    summary="Get complete interactive mind map subgraph with all nodes and connecting edges",
+)
+def get_project_subgraph(
+    project_id: str,
+    storage: StorageProvider = Depends(get_storage),
+    graph_provider: Any = Depends(get_graph),
+) -> dict[str, Any]:
+    _verify_project(project_id, storage)
+
+    nodes = []
+    edges = []
+
+    if hasattr(graph_provider, "_get_graph"):
+        try:
+            g = graph_provider._get_graph(project_id)
+            res_nodes = g.query("MATCH (n) RETURN labels(n), n.id, properties(n)")
+            for row in res_nodes.result_set:
+                lbls, nid, props = row
+                ntype = lbls[0] if lbls else "Node"
+                label = props.get("title") or props.get("name") or nid
+                nodes.append({
+                    "id": nid,
+                    "label": label,
+                    "type": ntype,
+                    "status": props.get("status", "active"),
+                    "data": props,
+                })
+
+            res_edges = g.query("MATCH (s)-[r]->(t) RETURN s.id, type(r), t.id, id(r)")
+            for row in res_edges.result_set:
+                sid, rtype, tid, rid = row
+                edges.append({
+                    "id": f"edge-{rid}",
+                    "source": sid,
+                    "target": tid,
+                    "type": rtype,
+                })
+        except Exception as e:
+            logger.warning("Error querying FalkorDB subgraph: %s", e)
+
+    return {
+        "nodes": nodes,
+        "edges": edges,
+        "project_id": project_id,
+        "total_nodes": len(nodes),
+        "total_edges": len(edges),
+    }
 
 
 @router.get(

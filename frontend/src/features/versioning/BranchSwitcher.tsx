@@ -43,15 +43,15 @@ export function BranchSwitcher({
       {/* Switcher Button */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-card/80 hover:bg-card border border-ice/25 hover:border-ice/45 text-foreground text-xs font-medium shadow-sm transition-all"
+        className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg btn-secondary-ice text-xs font-medium shadow-xs transition-all"
         title="Switch active branch"
       >
-        <GitBranch className="h-3.5 w-3.5 text-ice" />
-        <span className="font-mono font-bold text-ice truncate max-w-[140px]">
+        <GitBranch className="h-3.5 w-3.5 text-lava-orange" />
+        <span className="font-mono font-bold text-text-primary truncate max-w-[140px]">
           {currentBranchName}
         </span>
         <ChevronDown
-          className={`h-3 w-3 text-muted-foreground transition-transform duration-150 ${
+          className={`h-3 w-3 text-text-muted transition-transform duration-150 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
@@ -59,16 +59,16 @@ export function BranchSwitcher({
 
       {/* Frosted Glass Dropdown Popover */}
       {isOpen && (
-        <div className="absolute left-0 top-full mt-2 w-72 p-2.5 rounded-2xl bg-card/95 border border-ice/25 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.6)] z-50 animate-page-enter">
+        <div className="absolute left-0 top-full mt-2 w-72 p-2.5 rounded-xl solid-floating-surface border border-border-subtle shadow-xl z-50 animate-page-enter">
           {/* Search Input */}
           <div className="relative mb-2">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search branches..."
-              className="w-full pl-8 pr-2.5 py-1.5 bg-secondary/50 border border-ice/15 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ice/40"
+              className="w-full pl-8 pr-2.5 py-1.5 bg-surface dark:bg-bg-elevated border border-border-subtle rounded-lg text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-steel-500/50"
               autoFocus
             />
           </div>

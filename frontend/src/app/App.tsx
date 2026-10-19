@@ -16,6 +16,7 @@ import { StoragePage } from '@/features/storage/StoragePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { CheckpointsPage } from '@/features/checkpoints/CheckpointsPage';
 import { StyleGuidePage } from '@/features/styleguide/StyleGuidePage';
+import { HistoryPage } from '@/features/history/HistoryPage';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { NotFoundPage } from '@/features/notfound/NotFoundPage';
 
@@ -42,6 +43,7 @@ export function App() {
                 <Route path="projects/:projectId" element={<ProjectDetailPage />} />
                 <Route path="projects/:projectId/resume" element={<ProjectDetailPage />} />
                 <Route path="memory" element={<MemoryExplorerPage />} />
+                <Route path="history" element={<HistoryPage />} />
                 <Route path="version-control" element={<VersionControlPage />} />
                 <Route path="checkpoints" element={<CheckpointsPage />} />
                 <Route path="graph" element={<GraphExplorerPage />} />

@@ -83,13 +83,13 @@ export function ProposeMergeModal({
         {/* Source -> Target Selectors */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 p-3 rounded-xl bg-secondary/30 border border-ice/15 font-mono">
           <div>
-            <label className="text-[10px] uppercase text-muted-foreground block mb-1">
+            <label className="text-[10px] uppercase text-text-muted block mb-1">
               Source Branch (from)
             </label>
             <select
               value={sourceBranch}
               onChange={(e) => setSourceBranch(e.target.value)}
-              className="w-full h-8 rounded-lg bg-card border border-border px-2 text-xs text-foreground focus:outline-none"
+              className="w-full h-8 rounded-lg bg-surface dark:bg-bg-elevated border border-border-subtle px-2 text-xs text-text-primary focus:outline-none"
             >
               {branches.map((b) => (
                 <option key={b.name} value={b.name}>
@@ -99,16 +99,16 @@ export function ProposeMergeModal({
             </select>
           </div>
 
-          <ArrowRight className="h-4 w-4 text-ice mt-4 shrink-0" />
+          <ArrowRight className="h-4 w-4 text-lava-orange mt-4 shrink-0" />
 
           <div>
-            <label className="text-[10px] uppercase text-muted-foreground block mb-1">
+            <label className="text-[10px] uppercase text-text-muted block mb-1">
               Target Branch (into)
             </label>
             <select
               value={targetBranch}
               onChange={(e) => setTargetBranch(e.target.value)}
-              className="w-full h-8 rounded-lg bg-card border border-border px-2 text-xs text-foreground focus:outline-none"
+              className="w-full h-8 rounded-lg bg-surface dark:bg-bg-elevated border border-border-subtle px-2 text-xs text-text-primary focus:outline-none"
             >
               {branches.map((b) => (
                 <option key={b.name} value={b.name}>
